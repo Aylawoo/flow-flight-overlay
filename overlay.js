@@ -22,10 +22,6 @@ loop_15hz(() => {
     this.hdg_label.innerText = `Heading: ${Math.round(heading)}`;
 });
 
-exit(() => {
-
-});
-
 html_created((el) => {
     this.container = el.querySelector("#luckayla_overlay");
     this.as_label = el.querySelector("#airspeed");
