@@ -11,9 +11,9 @@ let get = this.$api.variables.get;
 // TODO: Plane input
 
 loop_15hz(() => {
-    let airspeed = get("AIRSPEED INDICATED", "number");
-    let vs = get("VERTICAL SPEED", "number") * 60;
-    let altitude = get("PLANE ALTITUDE", "number");
+    let airspeed = get("AIRSPEED INDICATED", "number") * 1.944;
+    let vs = get("VERTICAL SPEED", "number") * 200;
+    let altitude = get("PLANE ALTITUDE", "number") * 3.281;
     let heading = get("PLANE HEADING DEGREES MAGNETIC", "number") * (180/Math.PI);
 
     this.as_label.innerText = `Airspeed: ${Math.round(airspeed)} kts`;
