@@ -7,3 +7,7 @@ Intended for use by livestreamers.
 
 Simply copy the HTML/CSS/JS into a new script on Flow. I will provide a
 community-folder installable package at a later time.
+
+## Example
+
+![example]("https://uploads.wolfie.space/images/FlightSimulator_1671592539.png")
