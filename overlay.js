@@ -13,6 +13,7 @@ let get = this.$api.variables.get;
 loop_15hz(() => {
     let groundspeed = get("A:GROUND VELOCITY", "number") * 1.944;
 
+    this.as_label.innerText = `Indicated: ${Math.round(airspeed)} kts`;
     this.gs_label.innerText = `Ground: ${Math.round(groundspeed)} kts`;
     this.vs_label.innerText = `V/S: ${Math.round(vs)} fpm`
     this.alt_label.innerText = `Altitude: ${Math.round(altitude)} ft`;
