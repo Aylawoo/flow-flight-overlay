@@ -10,4 +10,4 @@ community-folder installable package at a later time.
 
 ## Example
 
-![example]("https://uploads.wolfie.space/images/FlightSimulator_1671592539.png")
+![example](https://uploads.wolfie.space/images/FlightSimulator_1671592539.png)
