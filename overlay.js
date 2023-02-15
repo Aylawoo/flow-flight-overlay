@@ -205,7 +205,7 @@ script_message_rcv((ref_name, message, callback) => {
 */
 
 loop_15hz(() => {
-    let ete = "Eventually";
+    let ete = "10:15 (2000nm)";
     let airspeed = get("A:AIRSPEED INDICATED", "knots");
     let vs = get("A:VERTICAL SPEED", "ft/min");
     let altitude = get("A:PLANE ALTITUDE", "feet");
