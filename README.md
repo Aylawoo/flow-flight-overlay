@@ -14,4 +14,4 @@ Also with the next update will include re-added SimBrief support and some bugfix
 
 ## Example
 
-![example](https://uploads.wolfie.space/images/FlightSimulator_1676447874)
+![example](https://cdn.wolfie.space/images/FlightSimulator_1676447874.png)
