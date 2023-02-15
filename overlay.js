@@ -18,6 +18,7 @@ let twitch_send = this.$api.twitch.send_message,
 
 // ---- Helper functions
 function define_option(storage, setting_name, input_type, ui_label) {
+    // Define setting options for Flow
     return {
         type: input_type,
         label: ui_label,
