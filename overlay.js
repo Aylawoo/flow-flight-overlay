@@ -1,4 +1,6 @@
 // ---- To-do list
+// TODO: Add distance
+// TODO: Outline option to text
 // TODO: Change settings via Otto
 // TODO: Simbrief integration
 // TODO: Distance/ETE calculation
@@ -16,7 +18,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.3.0";
+const VERSION = "0.3.1";
 
 const BOX = "checkbox",
       TXT = "text";
@@ -28,6 +30,7 @@ let container = null,
     airline_label = null,
     origin_label = null,
     destination_label = null,
+    distance_label = null,
     rules_label = null,
     network_label = null,
     ete_label = null,
@@ -152,6 +155,8 @@ this.store = {
     origin: "KPDX",
     destination_enabled: true,
     destination: "KSEA",
+    distance_enabled: true,
+    distance: "1000nm",
     rules_enabled: true,
     rules: "VFR",
     network_enabled: true,
@@ -235,7 +240,8 @@ loop_1hz(() => {
 });
 
 loop_15hz(() => {
-    let ete = "10:15 (2000nm)";
+    let ete = "10:15";
+    let distance = "1200nm";
     let airspeed = get("A:AIRSPEED INDICATED", "knots");
     let vs = get("A:VERTICAL SPEED", "ft/min");
     let altitude = get("A:PLANE ALTITUDE", "feet");
@@ -256,6 +262,7 @@ loop_15hz(() => {
         airline_label.innerText = `Airline: ${this.store.airline}`;
         origin_label.innerText = `Orig: ${this.store.origin}`;
         destination_label.innerText = `Dest: ${this.store.destination}`;
+        distance_label.innerText = `Dist: ${distance}`;
         rules_label.innerText = `Rules: ${this.store.rules}`;
         network_label.innerText = `Network: ${this.store.network}`;
         ete_label.innerText = `ETE: ${ete}`;
@@ -275,6 +282,7 @@ html_created((el) => {
     airline_label = el.querySelector("#airline");
     origin_label = el.querySelector("#origin");
     destination_label = el.querySelector("#destination");
+    distance_label = el.querySelector("#distance");
     rules_label = el.querySelector("#rules");
     network_label = el.querySelector("#network");
     ete_label = el.querySelector("#ete");
