@@ -15,21 +15,33 @@ let ds_export = this.$api.datastore.export,
 let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
+// ---- Script variables
+const VERSION = "0.3.0";
+
+const BOX = "checkbox",
+      TXT = "text";
+
+let container = null,
+    var_list = null,
+    type_label = null,
+    registration_label = null,
+    airline_label = null,
+    origin_label = null,
+    destination_label = null,
+    rules_label = null,
+    network_label = null,
+    ete_label = null,
+    airspeed_label = null,
+    vertspeed_label = null,
+    altitude_label = null,
+    heading_label = null;
+
+let enabled_items = [],
+    disabled_items = [];
+
+let non_visual = ["script_enabled", "simbrief_enabled"];
+
 // ---- Helper functions
-function define_option(storage, setting_name, input_type, ui_label) {
-    // Define setting options for Flow
-    return {
-        type: input_type,
-        label: ui_label,
-        value: storage[setting_name],
-
-        changed: (value) => {
-            storage[setting_name] = value;
-            ds_export(storage);
-        }
-    };
-}
-
 function set_colors(store) {
     // Set custom element colors
     let var_list = document.querySelector("#vars");
@@ -61,29 +73,65 @@ function load_views(enabled, disabled) {
     }
 }
 
-// ---- Script variables
-const VERSION = "0.1.0";
+function define_option(storage, setting_name, input_type, ui_label, enabled, disabled) {
+    // Define setting options for Flow
+    return {
+        type: input_type,
+        label: ui_label,
+        value: storage[setting_name],
 
-const BOX = "checkbox",
-      TXT = "text";
+        changed: (value) => {
+            storage[setting_name] = value;
 
-let container = null,
-    var_list = null,
-    type_label = null,
-    registration_label = null,
-    airline_label = null,
-    origin_label = null,
-    destination_label = null,
-    rules_label = null,
-    network_label = null,
-    ete_label = null,
-    airspeed_label = null,
-    vertspeed_label = null,
-    altitude_label = null,
-    heading_label = null;
+            if (setting_name.includes("_enabled") && !non_visual.includes(setting_name)) {
+                let item_name = setting_name.split("_")[0];
 
-let enabled_items = [],
-    disabled_items = [];
+                if (value) {
+                    enabled.push(item_name);
+                    disabled.splice(disabled.indexOf(item_name), 1);
+                } else {
+                    disabled.push(item_name);
+                    enabled.splice(enabled.indexOf(item_name), 1);
+                }
+            }
+
+            ds_export(storage);
+        }
+    };
+}
+
+function load_enabled(store, enabled, disabled) {
+    let settings = {}
+    for (let item in store) {
+        let enable_switch = typeof store[item] === "boolean";
+        let name = item.split("_").join(" ").toUpperCase();
+
+        settings[item] = define_option(
+            store,
+            item,
+            enable_switch ? BOX: TXT,
+            name,
+            enabled,
+            disabled
+        );
+
+        // Skip non-display items and setting values
+        if (!enable_switch || non_visual.includes(item)) {
+            continue;
+        }
+
+        // Add values to the enabled/disabled lists
+        let item_name = item.split("_")[0];
+
+        if (store[item] == true) {
+            enabled.push(item_name);
+        } else {
+            disabled.push(item_name);
+        }
+    }
+
+    return settings;
+}
 
 // ---- Configuration
 this.store = {
@@ -120,30 +168,8 @@ this.store = {
 }
 ds_import(this.store);
 
-let non_visual = ["script_enabled", "simbrief_enabled"];
-
 // Take all config options and place them in a `settings` object
-let settings = {}
-for (let item in this.store) {
-    let enable_switch = typeof this.store[item] === "boolean";
-    let name = item.split("_").join(" ").toUpperCase();
-
-    settings[item] = define_option(this.store, item, enable_switch ? BOX: TXT, name);
-
-    // Skip non-display items and setting values
-    if (!enable_switch || non_visual.includes(item)) {
-        continue;
-    }
-
-    // Add values to the enabled/disabled lists
-    let item_name = item.split("_")[0];
-
-    if (this.store[item] == true) {
-        enabled_items.push(item_name);
-    } else {
-        disabled_items.push(item_name);
-    }
-}
+let settings = load_enabled(this.store, enabled_items, disabled_items);
 
 settings.color_wrapper.changed = (value) => {
     this.store["color_wrapper"] = value;
@@ -203,6 +229,10 @@ script_message_rcv((ref_name, message, callback) => {
     callback(true);
 });
 */
+
+loop_1hz(() => {
+    load_views(enabled_items, disabled_items);
+});
 
 loop_15hz(() => {
     let ete = "10:15 (2000nm)";
