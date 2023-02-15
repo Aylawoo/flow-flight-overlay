@@ -1,5 +1,4 @@
 // ---- To-do list
-// TODO: Config colors
 // TODO: Change settings via Otto
 // TODO: Simbrief integration
 // TODO: Distance/ETE calculation
@@ -29,6 +28,37 @@ function define_option(storage, setting_name, input_type, ui_label) {
             ds_export(storage);
         }
     };
+}
+
+function set_colors(store) {
+    // Set custom element colors
+    let var_list = document.querySelector("#vars");
+    let items = document.querySelectorAll("#luckayla_overlay > div > span");
+
+    var_list.style.backgroundColor = store.color_wrapper;
+
+    items.forEach((item) => {
+        item.style.color = store.color_text;
+        item.style.borderColor = store.color_outline;
+        item.style.backgroundColor = store.color_background;
+    });
+}
+
+function load_views(enabled, disabled) {
+    // Set enabled and disabled items
+    for (let index in disabled) {
+        let id = `#${disabled[index]}`;
+        let elem = document.querySelector(id);
+
+        elem.style.display = "none";
+    }
+
+    for (let index in enabled) {
+        let id = `#${enabled[index]}`;
+        let elem = document.querySelector(id);
+
+        elem.style.display = "inline-flex";
+    }
 }
 
 // ---- Script variables
@@ -82,7 +112,11 @@ this.store = {
     airspeed_enabled: true,
     vertspeed_enabled: true,
     altitude_enabled: true,
-    heading_enabled: true
+    heading_enabled: true,
+    color_wrapper: "#000000BF",
+    color_outline: "#A967CEFF",
+    color_background: "#51236C80",
+    color_text: "#FFFFFFFF"
 }
 ds_import(this.store);
 
@@ -111,11 +145,29 @@ for (let item in this.store) {
     }
 }
 
-/* Template for adding to settings changed value
-settings.simbrief_enabled.changed = (value) => {
-     console.log(value);
-}
-*/
+settings.color_wrapper.changed = (value) => {
+    this.store["color_wrapper"] = value;
+    ds_export(this.store);
+    set_colors(this.store);
+};
+
+settings.color_outline.changed = (value) => {
+    this.store["color_outline"] = value;
+    ds_export(this.store);
+    set_colors(this.store);
+};
+
+settings.color_background.changed = (value) => {
+    this.store["color_background"] = value;
+    ds_export(this.store);
+    set_colors(this.store);
+};
+
+settings.color_text.changed = (value) => {
+    this.store["color_text"] = value;
+    ds_export(this.store);
+    set_colors(this.store);
+};
 
 settings_define(settings);
 
@@ -123,6 +175,7 @@ settings_define(settings);
 run((event) => {
     this.store.script_enabled = !this.store.script_enabled;
     ds_export(this.store);
+
     return true;
 });
 
@@ -184,6 +237,7 @@ loop_15hz(() => {
 });
 
 html_created((el) => {
+    // Get referneces to the overlay elements
     container = el.querySelector("#luckayla_overlay");
     var_list = el.querySelector("#vars");
     type_label = el.querySelector("#type");
@@ -199,21 +253,7 @@ html_created((el) => {
     altitude_label = el.querySelector("#altitude");
     heading_label = el.querySelector("#heading");
 
-    for (let index in disabled_items) {
-        let id = `#${disabled_items[index]}`;
-        let elem = el.querySelector(id);
+    set_colors(this.store);
 
-        elem.style.display = "none";
-    }
-
-    for (let index in enabled_items) {
-        let id = `#${enabled_items[index]}`;
-        let elem = el.querySelector(id);
-
-        elem.style.display = "inline-flex";
-    }
-});
-
-exit(() => {
-    console.log("Overlay shutting down...")
+    load_views(enabled_items, disabled_items);
 });
