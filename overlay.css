@@ -15,7 +15,7 @@
 
 	justify-content: space-between;
 
-	background-color: #000000BF;
+	background-color: #00000060;
 	box-shadow: 0px 0px 20px #00000080;
 	border-radius: 8px;
 
@@ -30,8 +30,8 @@
 	padding: 4px;
 
 	color: #FFFFFFFF;
-	background-color: #51236C80;
-	border: 2px solid #A967CE;
+	background-color: #20202080;
+	border: 2px solid #A0A0A0FF;
 	box-shadow: 0px 0px 10px #00000080;
 	border-radius: 8px;
 }

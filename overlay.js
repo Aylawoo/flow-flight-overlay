@@ -1,5 +1,5 @@
 // ---- To-do list
-// TODO: Add distance
+// TODO: Add distance calculation
 // TODO: Outline option to text
 // TODO: Change settings via Otto
 // TODO: Simbrief integration
@@ -18,7 +18,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.3.1";
+const VERSION = "0.3.2";
 
 const BOX = "checkbox",
       TXT = "text";
@@ -166,9 +166,9 @@ this.store = {
     vertspeed_enabled: true,
     altitude_enabled: true,
     heading_enabled: true,
-    color_wrapper: "#000000BF",
-    color_outline: "#A967CEFF",
-    color_background: "#51236C80",
+    color_wrapper: "#00000060",
+    color_outline: "#A0A0A0FF",
+    color_background: "#20202080",
     color_text: "#FFFFFFFF"
 }
 ds_import(this.store);
