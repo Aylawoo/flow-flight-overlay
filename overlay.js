@@ -85,6 +85,8 @@ this.store = {
 }
 ds_import(this.store);
 
+let non_visual = ["script_enabled", "simbrief_enabled"];
+
 // Take all config options and place them in a `settings` object
 let settings = {}
 for (let item in this.store) {
@@ -94,7 +96,7 @@ for (let item in this.store) {
     settings[item] = define_option(this.store, item, enable_switch ? BOX: TXT, name);
 
     // Skip non-display items and setting values
-    if (!enable_switch || ["script_enabled", "simbrief_enabled"].includes(item)) {
+    if (!enable_switch || non_visual.includes(item)) {
         continue;
     }
 
