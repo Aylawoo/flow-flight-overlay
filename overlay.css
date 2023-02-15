@@ -1,28 +1,36 @@
 #luckayla_overlay {
-	position: absolute;
-	background-color: rgba(0,0,0,0.75);
-	box-shadow: 0 0 0.2em rgba(0,0,0,0.1), 0 0.4em 1.6em rgba(0,0,0,0.2);
-	border-radius: 0.4em;
-	overflow: hidden;
+	display: inline-flex;
+	position: top;
+	margin: 8px auto;
+
+	text-align: center;
+
 	pointer-events: all;
-	transition: background-color 0.1s ease-out, opacity 0.2s ease-out;
-}
-#luckayla_overlay.dragging {
-	background-color: rgba(0,0,0,0.75);
 }
 
 #luckayla_overlay > div {
 	display: inline-flex;
+	height: 56px;
+	padding: 8px;
+
 	justify-content: space-between;
+
+	background-color: #000000BF;
+	box-shadow: 0px 0px 20px #00000080;
+	border-radius: 8px;
+
 	font-size: x-large;
 	font-weight: bold;
 }
 
 #luckayla_overlay > div > span {
-	padding: 8px;
-}
+	display: none;
+	margin-left: 4px;
+	margin-right: 4px;
+	padding: 4px;
 
-#luckayla_overlay > div > div {
-	padding: 8px;
-	color: #A967CE;
+	background-color: #51236C80;
+	border: 2px solid #A967CE;
+	box-shadow: 0px 0px 10px #00000080;
+	border-radius: 8px;
 }
