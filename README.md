@@ -3,6 +3,8 @@
 This one is simple, displays flight information as a bar in realtime.
 Intended for use by livestreamers.
 
+Note: Display with all options enabled will not display correctly on screen resolutions below 1080p. This is a conscious design decision to compromise between readability, and I firmly believe that VERY few people are running MSFS on screens lower than 1080p.
+
 ## Installation
 
 Simply copy the HTML/CSS/JS into a new script on Flow, and configure the settings in the panel.
