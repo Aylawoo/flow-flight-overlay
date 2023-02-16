@@ -17,7 +17,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.4.1";
+const VERSION = "0.4.2";
 
 const BOX = "checkbox",
       TXT = "text";
@@ -323,18 +323,18 @@ loop_15hz(() => {
     processing speed limitation of the JavaScript engine MSFS forces us to use.
     */
     setTimeout(() => {
-        type_label.innerText = `Type: ${this.store.type}`;
-        registration_label.innerText = `Reg: ${this.store.registration}`;
-        airline_label.innerText = `Airline: ${this.store.airline}`;
-        origin_label.innerText = `Orig: ${this.store.origin}`;
-        destination_label.innerText = `Dest: ${this.store.destination}`;
-        distance_label.innerText = `Dist: ${Math.round(distance)}nm`;
-        rules_label.innerText = `Rules: ${this.store.rules}`;
-        network_label.innerText = `Network: ${this.store.network}`;
+        type_label.innerText = `✈️${this.store.type}`;
+        registration_label.innerText = `# ${this.store.registration}`;
+        airline_label.innerText = `$ ${this.store.airline}`;
+        origin_label.innerText = `↗️${this.store.origin}`;
+        destination_label.innerText = `↘️${this.store.destination}`;
+        distance_label.innerText = `DTG: ${Math.round(distance)}nm`;
+        rules_label.innerText = `♟${this.store.rules}`;
+        network_label.innerText = `▶ ${this.store.network}`;
         ete_label.innerText = `ETE: ${ete}`;
         airspeed_label.innerText = `IAS: ${Math.round(airspeed)}kt`;
-        vertspeed_label.innerText = `V/S: ${Math.round(vs)}fpm`;
-        altitude_label.innerText = `ALT: ${Math.round(altitude)}ft`;
+        vertspeed_label.innerText = `⬆️${Math.round(vs)}fpm`;
+        altitude_label.innerText = `☁️${Math.round(altitude)}ft`;
         heading_label.innerText = `HDG: ${Math.round(heading)}`;
     }, 1);
 });

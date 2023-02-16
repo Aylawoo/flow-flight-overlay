@@ -3,12 +3,14 @@
 This one is simple, displays flight information as a bar in realtime.
 Intended for use by livestreamers.
 
-Note: Display with all options enabled will not display correctly on screen resolutions below 1080p. This is a conscious design decision to compromise between readability, and I firmly believe that VERY few people are running MSFS on screens lower than 1080p.
+Note: Display with all options enabled may not display correctly on screen resolutions below 1080p. This is a conscious design decision to compromise between readability, and I firmly believe that VERY few people are running MSFS on screens lower than 1080p.
 
 Note 2: Simbrief integration is currently NOT IMPLEMENTED! The option box will do nothing until a future update.
 
 Note 3: It is normal to see the occasional TypeError in the console log, this happens during refresh of the overlay occasionally due to variable checks happening before they have been completely reloaded.
 This will NOT affect performance and as I find them, I'm working to patch them out.
+
+Note 4: Emojis used are due to availability. MSFS seems incapable of rendering ~90% of the emoji library. I spent a very long time going through the available options and these were the best I found. This is also the reason that some fields do not have an emoji.
 
 ## Installation
 
