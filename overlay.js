@@ -70,14 +70,22 @@ function load_views(enabled, disabled) {
         let id = `#${disabled[index]}`;
         let elem = document.querySelector(id);
 
-        elem.style.display = "none";
+        try {
+            elem.style.display = "none";
+        } catch (e) {
+            if (e instanceof TypeError) {} // Expected occasionally on reloads
+        }
     }
 
     for (let index in enabled) {
         let id = `#${enabled[index]}`;
         let elem = document.querySelector(id);
 
-        elem.style.display = "inline-flex";
+        try {
+            elem.style.display = "inline-flex";
+        } catch (e) {
+            if (e instanceof TypeError) {} // Expected occasionally on reloads
+        }
     }
 }
 
