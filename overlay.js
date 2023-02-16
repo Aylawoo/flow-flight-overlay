@@ -2,7 +2,6 @@
 // TODO: Outline option to text
 // TODO: Change settings via Otto
 // TODO: Simbrief integration
-// TODO: ETE calculation
 // TODO: Messages from Twitch Bot plugin
 
 // ---- API function shorthands
@@ -292,8 +291,16 @@ loop_1hz(() => {
 
 loop_15hz(() => {
     // More dynamic items loop at 15hz
-    let ete = "10:15";
     let airspeed = get("A:AIRSPEED INDICATED", "knots");
+
+    // Calculate ETE by distance / airspeed
+    let ete = distance / airspeed;
+    let date = new Date(0, 0);
+    date.setSeconds(Number(ete) * 60 * 60);
+    ete = date.toTimeString();
+    ete[1] == "0" ? ete = ete.slice(3, 8) : ete = ete.slice(0, 5);
+    ete === "Inval" ? ete = "Soon™" : {}
+
     let vs = get("A:VERTICAL SPEED", "ft/min");
     let altitude = get("A:PLANE ALTITUDE", "feet");
     let heading = get("A:PLANE HEADING DEGREES MAGNETIC", "degrees");
