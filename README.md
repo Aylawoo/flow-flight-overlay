@@ -7,6 +7,9 @@ Note: Display with all options enabled will not display correctly on screen reso
 
 Note 2: Simbrief integration is currently NOT IMPLEMENTED! The option box will do nothing until a future update.
 
+Note 3: It is normal to see the occasional TypeError in the console log, this happens during refresh of the overlay occasionally due to variable checks happening before they have been completely reloaded.
+This will NOT affect performance and as I find them, I'm working to patch them out.
+
 ## Installation
 
 Simply copy the HTML/CSS/JS into a new script on Flow, and configure the settings in the panel.
