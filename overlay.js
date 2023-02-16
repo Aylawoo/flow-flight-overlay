@@ -17,7 +17,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.4.0";
+const VERSION = "0.4.1";
 
 const BOX = "checkbox",
       TXT = "text";
@@ -325,7 +325,7 @@ loop_15hz(() => {
         network_label.innerText = `Network: ${this.store.network}`;
         ete_label.innerText = `ETE: ${ete}`;
         airspeed_label.innerText = `IAS: ${Math.round(airspeed)}kt`;
-        vertspeed_label.innerText = `V/S: ${Math.round(vs)}f/m`;
+        vertspeed_label.innerText = `V/S: ${Math.round(vs)}fpm`;
         altitude_label.innerText = `ALT: ${Math.round(altitude)}ft`;
         heading_label.innerText = `HDG: ${Math.round(heading)}`;
     }, 1);
