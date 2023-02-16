@@ -1,15 +1,15 @@
 // ---- To-do list
-// TODO: Add distance calculation
 // TODO: Outline option to text
 // TODO: Change settings via Otto
 // TODO: Simbrief integration
-// TODO: Distance/ETE calculation
+// TODO: ETE calculation
 // TODO: Messages from Twitch Bot plugin
 
 // ---- API function shorthands
 let get = this.$api.variables.get,
     get_server = this.$api.community.get_server,
-    get_metar = this.$api.weather.find_metar_by_icao;
+    get_metar = this.$api.weather.find_metar_by_icao,
+    get_airport = this.$api.airports.find_airport_by_icao;
 
 let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
@@ -18,7 +18,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.3.2";
+const VERSION = "0.4.0";
 
 const BOX = "checkbox",
       TXT = "text";
@@ -43,6 +43,12 @@ let enabled_items = [],
     disabled_items = [];
 
 let non_visual = ["script_enabled", "simbrief_enabled"];
+
+// Global flight variables
+let target_airport = null;
+let ap_lat = null;
+let ap_lon = null;
+let distance = null;
 
 // ---- Helper functions
 function set_colors(store) {
@@ -136,6 +142,30 @@ function load_enabled(store, enabled, disabled) {
     return settings;
 }
 
+function deg_to_rad(number) {
+    // Convert degrees to radians
+    return number * (Math.PI / 180);
+}
+
+function calc_distance(lat_a, lon_a, lat_b, lon_b) {
+    // Calculate distance from two lat/long pairs in Nautical Miles
+    let radius = 6371;
+
+    let total_lat = lat_b - lat_a;
+    let total_lon = lon_b - lon_a;
+    total_lat = deg_to_rad(total_lat);
+    total_lon = deg_to_rad(total_lon);
+
+    let step_one =
+        Math.sin(total_lat / 2) * Math.sin(total_lat / 2) +
+        Math.cos(deg_to_rad(lat_a)) * Math.cos(deg_to_rad(lat_b)) *
+        Math.sin(total_lon / 2) * Math.sin(total_lon / 2);
+
+    let step_two = 2 * Math.atan2(Math.sqrt(step_one), Math.sqrt(1 - step_one));
+
+    return (radius * step_two) / 1.852;
+}
+
 // ---- Configuration
 this.store = {
     /*
@@ -155,8 +185,6 @@ this.store = {
     origin: "KPDX",
     destination_enabled: true,
     destination: "KSEA",
-    distance_enabled: true,
-    distance: "1000nm",
     rules_enabled: true,
     rules: "VFR",
     network_enabled: true,
@@ -166,6 +194,7 @@ this.store = {
     vertspeed_enabled: true,
     altitude_enabled: true,
     heading_enabled: true,
+    distance_enabled: true,
     color_wrapper: "#00000060",
     color_outline: "#A0A0A0FF",
     color_background: "#20202080",
@@ -175,6 +204,12 @@ ds_import(this.store);
 
 // Take all config options and place them in a `settings` object
 let settings = load_enabled(this.store, enabled_items, disabled_items);
+
+settings.destination.changed = (value) => {
+    this.store["destination"] = value;
+    ds_export(this.store);
+    target_airport = null;
+}
 
 settings.color_wrapper.changed = (value) => {
     this.store["color_wrapper"] = value;
@@ -236,12 +271,28 @@ script_message_rcv((ref_name, message, callback) => {
 */
 
 loop_1hz(() => {
+    // Less important things loop at 1hz for performance
     load_views(enabled_items, disabled_items);
+
+    if (this.store.distance_enabled) {
+        let ac_lat = get("A:PLANE LATITUDE", "degrees");
+        let ac_lon = get("A:PLANE LONGITUDE", "degrees");
+
+        if (target_airport == null) {
+            get_airport("luckayla-lookup", this.store.destination, (results) => {
+                target_airport = results[0];
+                ap_lat = target_airport["lat"];
+                ap_lon = target_airport["lon"];
+            });
+        }
+
+        distance = calc_distance(ac_lat, ac_lon, ap_lat, ap_lon);
+    }
 });
 
 loop_15hz(() => {
+    // More dynamic items loop at 15hz
     let ete = "10:15";
-    let distance = "1200nm";
     let airspeed = get("A:AIRSPEED INDICATED", "knots");
     let vs = get("A:VERTICAL SPEED", "ft/min");
     let altitude = get("A:PLANE ALTITUDE", "feet");
@@ -262,7 +313,7 @@ loop_15hz(() => {
         airline_label.innerText = `Airline: ${this.store.airline}`;
         origin_label.innerText = `Orig: ${this.store.origin}`;
         destination_label.innerText = `Dest: ${this.store.destination}`;
-        distance_label.innerText = `Dist: ${distance}`;
+        distance_label.innerText = `Dist: ${Math.round(distance)}nm`;
         rules_label.innerText = `Rules: ${this.store.rules}`;
         network_label.innerText = `Network: ${this.store.network}`;
         ete_label.innerText = `ETE: ${ete}`;
