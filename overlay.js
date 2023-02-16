@@ -17,7 +17,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.4.2";
+const VERSION = "0.4.3";
 
 const BOX = "checkbox",
       TXT = "text";
