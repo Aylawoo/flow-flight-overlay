@@ -1,9 +1,3 @@
-// ---- To-do list
-// TODO: Outline option to text
-// TODO: Change settings via Otto
-// TODO: Simbrief integration
-// TODO: Messages from Twitch Bot plugin
-
 // ---- API function shorthands
 let get = this.$api.variables.get,
     get_server = this.$api.community.get_server,
