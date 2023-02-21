@@ -7,10 +7,7 @@ Note: Display with all options enabled may not display correctly on screen resol
 
 Note 2: Simbrief integration is currently NOT IMPLEMENTED! The option box will do nothing until a future update.
 
-Note 3: It is normal to see the occasional TypeError in the console log, this happens during refresh of the overlay occasionally due to variable checks happening before they have been completely reloaded.
-This will NOT affect performance and as I find them, I'm working to patch them out.
-
-Note 4: Emojis used are due to availability. MSFS seems incapable of rendering ~90% of the emoji library. I spent a very long time going through the available options and these were the best I found. This is also the reason that some fields do not have an emoji.
+Note 3: Emojis have been removed temporarily due to limited availability.
 
 ## Installation
 
@@ -23,4 +20,4 @@ Also with the next update will include re-added SimBrief support and some bugfix
 
 ## Example
 
-![example](https://cdn.wolfie.space/images/FlightSimulator_1676447874.png)
+![example](https://cdn.wolfie.space/images/FlightSimulator_1676942446.png)
