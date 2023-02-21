@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.4.5";
+const VERSION = "0.4.6";
 
 const BOX = "checkbox",
       TXT = "text";
@@ -206,31 +206,31 @@ ds_import(this.store);
 let settings = load_enabled(this.store, enabled_items, disabled_items);
 
 settings.destination.changed = (value) => {
-    this.store["destination"] = value;
+    this.store.destination = value;
     ds_export(this.store);
     target_airport = null;
 };
 
 settings.color_wrapper.changed = (value) => {
-    this.store["color_wrapper"] = value;
+    this.store.color_wrapper = value;
     ds_export(this.store);
     set_colors(this.store);
 };
 
 settings.color_outline.changed = (value) => {
-    this.store["color_outline"] = value;
+    this.store.color_outline = value;
     ds_export(this.store);
     set_colors(this.store);
 };
 
 settings.color_background.changed = (value) => {
-    this.store["color_background"] = value;
+    this.store.color_background = value;
     ds_export(this.store);
     set_colors(this.store);
 };
 
 settings.color_text.changed = (value) => {
-    this.store["color_text"] = value;
+    this.store.color_text = value;
     ds_export(this.store);
     set_colors(this.store);
 };
@@ -281,8 +281,8 @@ loop_1hz(() => {
         if (target_airport == null) {
             get_airport("luckayla-lookup", this.store.destination, (results) => {
                 target_airport = results[0];
-                ap_lat = target_airport["lat"];
-                ap_lon = target_airport["lon"];
+                ap_lat = target_airport.lat;
+                ap_lon = target_airport.lon;
             });
         }
 
