@@ -46,8 +46,8 @@ let distance = null;
 // ---- Helper functions
 function set_colors(store) {
     // Set custom element colors
-    let var_list = document.querySelector("#vars");
-    let items = document.querySelectorAll("#luckayla_overlay > div > span");
+    let var_list = document.querySelector("#streamer_overlay_vars");
+    let items = document.querySelectorAll("#streamer_overlay > div > span");
 
     var_list.style.backgroundColor = store.color_wrapper;
 
@@ -59,26 +59,25 @@ function set_colors(store) {
 }
 
 function load_views(enabled, disabled) {
-    // Set enabled and disabled items
-    for (let index in disabled) {
-        let id = `#${disabled[index]}`;
-        let elem = document.querySelector(id);
+    for (let item of disabled) {
+        let elem = document.querySelector(`#streamer_overlay_${item}`);
 
         try {
             elem.style.display = "none";
         } catch (e) {
-            if (e instanceof TypeError) {} // Expected occasionally on reloads
+            // TypeError (null) expected occasionally on reloads, harmless
+            if (e instanceof TypeError) {} else { console.error(e); }
         }
     }
 
-    for (let index in enabled) {
-        let id = `#${enabled[index]}`;
-        let elem = document.querySelector(id);
+    for (let item of enabled) {
+        let elem = document.querySelector(`#streamer_overlay_${item}`);
 
         try {
             elem.style.display = "inline-flex";
         } catch (e) {
-            if (e instanceof TypeError) {} // Expected occasionally on reloads
+            // TypeError (null) expected occasionally on reloads, harmless
+            if (e instanceof TypeError) {} else { console.error(e); }
         }
     }
 }
@@ -317,18 +316,18 @@ loop_15hz(() => {
     processing speed limitation of the JavaScript engine MSFS forces us to use.
     */
     setTimeout(() => {
-        type_label.innerText = `✈️${this.store.type}`;
+        type_label.innerText = `${this.store.type}`;
         registration_label.innerText = `# ${this.store.registration}`;
         airline_label.innerText = `$ ${this.store.airline}`;
-        origin_label.innerText = `↗️${this.store.origin}`;
-        destination_label.innerText = `↘️${this.store.destination}`;
+        origin_label.innerText = `From: ${this.store.origin}`;
+        destination_label.innerText = `To: ${this.store.destination}`;
         distance_label.innerText = `DTG: ${Math.round(distance)}nm`;
-        rules_label.innerText = `♟${this.store.rules}`;
-        network_label.innerText = `▶ ${this.store.network}`;
+        rules_label.innerText = `Rules: ${this.store.rules}`;
+        network_label.innerText = `Net: ${this.store.network}`;
         ete_label.innerText = `ETE: ${ete}`;
         airspeed_label.innerText = `IAS: ${Math.round(airspeed)}kt`;
-        vertspeed_label.innerText = `⬆️${Math.round(vs)}fpm`;
-        altitude_label.innerText = `☁️${Math.round(altitude)}ft`;
+        vertspeed_label.innerText = `V/S: ${Math.round(vs)}fpm`;
+        altitude_label.innerText = `Alt: ${Math.round(altitude)}ft`;
         heading_label.innerText =
             `HDG: ${Math.round(heading).toString().padStart(3, "0")}`;
     }, 1);
@@ -336,21 +335,21 @@ loop_15hz(() => {
 
 html_created((el) => {
     // Get referneces to the overlay elements
-    container = el.querySelector("#luckayla_overlay");
-    var_list = el.querySelector("#vars");
-    type_label = el.querySelector("#type");
-    registration_label = el.querySelector("#registration");
-    airline_label = el.querySelector("#airline");
-    origin_label = el.querySelector("#origin");
-    destination_label = el.querySelector("#destination");
-    distance_label = el.querySelector("#distance");
-    rules_label = el.querySelector("#rules");
-    network_label = el.querySelector("#network");
-    ete_label = el.querySelector("#ete");
-    airspeed_label = el.querySelector("#airspeed");
-    vertspeed_label = el.querySelector("#vertspeed");
-    altitude_label = el.querySelector("#altitude");
-    heading_label = el.querySelector("#heading");
+    container = el.querySelector("#streamer_overlay");
+    var_list = el.querySelector("#streamer_overlay_vars");
+    type_label = el.querySelector("#streamer_overlay_type");
+    registration_label = el.querySelector("#streamer_overlay_registration");
+    airline_label = el.querySelector("#streamer_overlay_airline");
+    origin_label = el.querySelector("#streamer_overlay_origin");
+    destination_label = el.querySelector("#streamer_overlay_destination");
+    distance_label = el.querySelector("#streamer_overlay_distance");
+    rules_label = el.querySelector("#streamer_overlay_rules");
+    network_label = el.querySelector("#streamer_overlay_network");
+    ete_label = el.querySelector("#streamer_overlay_ete");
+    airspeed_label = el.querySelector("#streamer_overlay_airspeed");
+    vertspeed_label = el.querySelector("#streamer_overlay_vertspeed");
+    altitude_label = el.querySelector("#streamer_overlay_altitude");
+    heading_label = el.querySelector("#streamer_overlay_heading");
 
     set_colors(this.store);
 

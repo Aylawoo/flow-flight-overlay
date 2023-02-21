@@ -1,6 +1,6 @@
-#luckayla_overlay {
+#streamer_overlay {
 	display: inline-flex;
-	position: top;
+	position: relative;
 	height: 55px;
 	margin: 8px auto;
 
@@ -10,7 +10,7 @@
 	pointer-events: all;
 }
 
-#luckayla_overlay > div {
+#streamer_overlay > div {
 	display: inline-flex;
 	padding: 8px;
 	padding-top: 9px;
@@ -25,7 +25,7 @@
 	font-weight: bold;
 }
 
-#luckayla_overlay > div > span {
+#streamer_overlay > div > span {
 	display: none;
 	margin-left: 4px;
 	margin-right: 4px;
