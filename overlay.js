@@ -111,7 +111,7 @@ function define_option(storage, setting_name, input_type, ui_label, enabled, dis
 }
 
 function load_enabled(store, enabled, disabled) {
-    let settings = {}
+    let settings = {};
     for (let item in store) {
         let enable_switch = typeof store[item] === "boolean";
         let name = item.split("_").join(" ").toUpperCase();
@@ -200,7 +200,7 @@ this.store = {
     color_outline: "#A0A0A0FF",
     color_background: "#20202080",
     color_text: "#FFFFFFFF"
-}
+};
 ds_import(this.store);
 
 // Take all config options and place them in a `settings` object
@@ -210,7 +210,7 @@ settings.destination.changed = (value) => {
     this.store["destination"] = value;
     ds_export(this.store);
     target_airport = null;
-}
+};
 
 settings.color_wrapper.changed = (value) => {
     this.store["color_wrapper"] = value;
@@ -301,7 +301,7 @@ loop_15hz(() => {
     date.setSeconds(Number(ete) * 60 * 60);
     ete = date.toTimeString();
     ete[1] == "0" ? ete = ete.slice(3, 8) : ete = ete.slice(0, 5);
-    ete === "Inval" ? ete = "Soon™" : {}
+    ete === "Inval" ? ete = "Soon™" : {};
 
     let vs = get("A:VERTICAL SPEED", "ft/min");
     let altitude = get("A:PLANE ALTITUDE", "feet");
