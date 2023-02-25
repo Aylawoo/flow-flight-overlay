@@ -294,11 +294,10 @@ loop_1hz(() => {
     // Simple ETE calculation
     let ete = distance / groundspeed;
     let date = new Date(0, 0);
-    date.setSeconds(Number(ete) * 60 * 60);
-    ete = date.toTimeString();
-    ete[1] == "0" ? ete = (ete.slice(3, 5) + " Mins") : ete = (ete.slice(0, 2)) +" Hrs";
-    ete === "Inval" ? ete = "Soon™" : {};
-    ete_label.innerText = `ETE: ${ete}`;
+
+    // This will not work for spans greater than 99h99m
+    date.setSeconds(ete === Infinity ? 0 : ete * 60 * 60);
+    ete_label.innerText = `ETE: ${date.toTimeString().slice(0, 5)}`;
 
     // Update the rest of the labels
     let airspeed = get("A:AIRSPEED INDICATED", "knots");
