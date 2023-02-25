@@ -288,49 +288,36 @@ loop_1hz(() => {
 
         distance = calc_distance(ac_lat, ac_lon, ap_lat, ap_lon);
     }
-});
 
-loop_15hz(() => {
-    // More dynamic items loop at 15hz
-    let airspeed = get("A:AIRSPEED INDICATED", "knots");
+    let groundspeed = get("A:GROUND VELOCITY", "knots");
 
-    // Calculate ETE by distance / airspeed
-    let ete = distance / airspeed;
+    // Simple ETE calculation
+    let ete = distance / groundspeed;
     let date = new Date(0, 0);
     date.setSeconds(Number(ete) * 60 * 60);
     ete = date.toTimeString();
-    ete[1] == "0" ? ete = ete.slice(3, 8) : ete = ete.slice(0, 5);
+    ete[1] == "0" ? ete = (ete.slice(3, 5) + " Mins") : ete = (ete.slice(0, 2)) +" Hrs";
     ete === "Inval" ? ete = "Soon™" : {};
+    ete_label.innerText = `ETE: ${ete}`;
 
-    let vs = get("A:VERTICAL SPEED", "ft/min");
+    // Update the rest of the labels
+    let airspeed = get("A:AIRSPEED INDICATED", "knots");
+    let vertspeed = get("A:VERTICAL SPEED", "ft/min");
     let altitude = get("A:PLANE ALTITUDE", "feet");
     let heading = get("A:PLANE HEADING DEGREES MAGNETIC", "degrees");
 
-    /* HACK:
-    For some reason, without setTimeout() at any higher than loop_1hz() this
-    code produces a single, consistently reproducible error in the log, saying that
-    the very first label in the list is null, however it still displays correctly
-    as if the error had not happened. I decided to add a delay, and it worked. I reduced
-    the delay all the way down to 1ms and it STILL works without an error. So this
-    is staying here for the time being. I'll poke //42 about it but I assume it's a
-    processing speed limitation of the JavaScript engine MSFS forces us to use.
-    */
-    setTimeout(() => {
-        type_label.innerText = `${this.store.type}`;
-        registration_label.innerText = `# ${this.store.registration}`;
-        airline_label.innerText = `$ ${this.store.airline}`;
-        origin_label.innerText = `From: ${this.store.origin}`;
-        destination_label.innerText = `To: ${this.store.destination}`;
-        distance_label.innerText = `DTG: ${Math.round(distance)}nm`;
-        rules_label.innerText = `Rules: ${this.store.rules}`;
-        network_label.innerText = `Net: ${this.store.network}`;
-        ete_label.innerText = `ETE: ${ete}`;
-        airspeed_label.innerText = `IAS: ${Math.round(airspeed)}kt`;
-        vertspeed_label.innerText = `V/S: ${Math.round(vs)}fpm`;
-        altitude_label.innerText = `Alt: ${Math.round(altitude)}ft`;
-        heading_label.innerText =
-            `HDG: ${Math.round(heading).toString().padStart(3, "0")}`;
-    }, 1);
+    airspeed_label.innerText = `IAS: ${Math.round(airspeed)}kt`;
+    vertspeed_label.innerText = `V/S: ${Math.round(vertspeed)}fpm`;
+    altitude_label.innerText = `Alt: ${Math.round(altitude)}ft`;
+    type_label.innerText = `${this.store.type}`;
+    registration_label.innerText = `# ${this.store.registration}`;
+    airline_label.innerText = `$ ${this.store.airline}`;
+    origin_label.innerText = `From: ${this.store.origin}`;
+    destination_label.innerText = `To: ${this.store.destination}`;
+    distance_label.innerText = `DTG: ${Math.round(distance)}nm`;
+    rules_label.innerText = `Rules: ${this.store.rules}`;
+    network_label.innerText = `Net: ${this.store.network}`;
+    heading_label.innerText = `HDG: ${Math.round(heading).toString().padStart(3, "0")}`;
 });
 
 html_created((el) => {
