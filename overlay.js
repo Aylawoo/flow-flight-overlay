@@ -279,7 +279,7 @@ loop_1hz(() => {
         let ac_lon = get("A:PLANE LONGITUDE", "degrees");
 
         if (target_airport == null) {
-            get_airport("luckayla-lookup", this.store.destination, (results) => {
+            get_airport("streamer-overlay-lookup", this.store.destination, (results) => {
                 target_airport = results[0];
                 ap_lat = target_airport.lat;
                 ap_lon = target_airport.lon;
