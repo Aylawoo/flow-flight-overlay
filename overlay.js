@@ -166,6 +166,14 @@ function calc_distance(lat_a, lon_a, lat_b, lon_b) {
     return (radius * step_two) / 1.852;
 }
 
+function pad_number(number, pad_amount, pad_char) {
+    if (Math.sign(number) >= 0) {
+        return number.toString().padStart(pad_amount, pad_char);
+    } else {
+        return "-" + Math.abs(number).toString().padStart(pad_amount, pad_char);
+    }
+}
+
 // ---- Configuration
 this.store = {
     /*
@@ -305,9 +313,9 @@ loop_1hz(() => {
     let altitude = get("A:PLANE ALTITUDE", "feet");
     let heading = get("A:PLANE HEADING DEGREES MAGNETIC", "degrees");
 
-    airspeed_label.innerText = `IAS: ${Math.round(airspeed)}kt`;
-    vertspeed_label.innerText = `V/S: ${Math.round(vertspeed)}fpm`;
-    altitude_label.innerText = `Alt: ${Math.round(altitude)}ft`;
+    airspeed_label.innerText = `IAS: ${pad_number(Math.round(airspeed), 3, "0")}kt`;
+    vertspeed_label.innerText = `V/S: ${pad_number(Math.round(vertspeed), 4, "0")}fpm`;
+    altitude_label.innerText = `Alt: ${pad_number(Math.round(altitude), 5, "0")}ft`;
     type_label.innerText = `${this.store.type}`;
     registration_label.innerText = `# ${this.store.registration}`;
     airline_label.innerText = `$ ${this.store.airline}`;
@@ -316,7 +324,7 @@ loop_1hz(() => {
     distance_label.innerText = `DTG: ${Math.round(distance)}nm`;
     rules_label.innerText = `Rules: ${this.store.rules}`;
     network_label.innerText = `Net: ${this.store.network}`;
-    heading_label.innerText = `HDG: ${Math.round(heading).toString().padStart(3, "0")}`;
+    heading_label.innerText = `HDG: ${pad_number(Math.round(heading), 3, "0")}`;
 });
 
 html_created((el) => {
