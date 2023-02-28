@@ -7,10 +7,12 @@ Note: Display with all options enabled may not display correctly on screen resol
 
 ## Installation
 
-Simply copy the HTML/CSS/JS into a new script on Flow, and configure the settings in the panel.
+### Latest "Released" version
+Visit [The releases page](https://github.com/AylaCodes/flow-flight-overlay/releases/) and download/install the latest Release
 
-I will provide a community-folder installable package at a later time once I'm happy with the state of the script. (Coming soon!)
+### Latest "Dev" version
+Simply copy the HTML/CSS/JS into a new script on Flow, and configure the settings in the panel.
 
 ## Example
 
-![example](https://cdn.wolfie.space/images/FlightSimulator_1676942446.png)
+![example](https://cdn.wolfie.space/images/FlightSimulator_1677622577.png)
