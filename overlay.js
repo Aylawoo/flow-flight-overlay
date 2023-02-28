@@ -325,26 +325,30 @@ loop_1hz(() => {
     let altitude = Math.round(get("A:PLANE ALTITUDE", "feet"));
     let heading = Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees"));
 
-    airspeed_label.innerText = `IAS: ${
-        this.store.pad_numbers ? pad_number(airspeed, 3, "0") : airspeed
-    }kt`;
-    vertspeed_label.innerText = `V/S: ${
-        this.store.pad_numbers ? pad_number(vertspeed, 4, "0") : vertspeed
-    }fpm`;
-    altitude_label.innerText = `Alt: ${
-        this.store.pad_numbers ? pad_number(altitude, 5, "0") : altitude
-    }ft`;
-    type_label.innerText = `${this.store.type}`;
-    registration_label.innerText = `# ${this.store.registration}`;
-    airline_label.innerText = `$ ${this.store.airline}`;
-    origin_label.innerText = `From: ${this.store.origin}`;
-    destination_label.innerText = `To: ${this.store.destination}`;
-    distance_label.innerText = `DTG: ${distance}nm`;
-    rules_label.innerText = `Rules: ${this.store.rules}`;
-    network_label.innerText = `Net: ${this.store.network}`;
-    heading_label.innerText = `HDG: ${
-        this.store.pad_numbers ? pad_number(heading, 3, "0") : heading
-    }`;
+    try {
+        airspeed_label.innerText = `IAS: ${
+            this.store.pad_numbers ? pad_number(airspeed, 3, "0") : airspeed
+        }kt`;
+        vertspeed_label.innerText = `V/S: ${
+            this.store.pad_numbers ? pad_number(vertspeed, 4, "0") : vertspeed
+        }fpm`;
+        altitude_label.innerText = `Alt: ${
+            this.store.pad_numbers ? pad_number(altitude, 5, "0") : altitude
+        }ft`;
+        type_label.innerText = `${this.store.type}`;
+        registration_label.innerText = `# ${this.store.registration}`;
+        airline_label.innerText = `$ ${this.store.airline}`;
+        origin_label.innerText = `From: ${this.store.origin}`;
+        destination_label.innerText = `To: ${this.store.destination}`;
+        distance_label.innerText = `DTG: ${distance}nm`;
+        rules_label.innerText = `Rules: ${this.store.rules}`;
+        network_label.innerText = `Net: ${this.store.network}`;
+        heading_label.innerText = `HDG: ${
+            this.store.pad_numbers ? pad_number(heading, 3, "0") : heading
+        }`;
+    } catch (e) {
+        if (e instanceof TypeError) {} else { console.error(e); }
+    }
 });
 
 html_created((el) => {
