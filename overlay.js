@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.6.0";
+const VERSION = "0.7.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -54,14 +54,18 @@ function ignore_type_error(e) {
 function set_colors(store) {
     // Set custom element colors
     let var_list = document.querySelector("#streamer_overlay_vars");
-    let items = document.querySelectorAll("#streamer_overlay > div > span");
+    let items = document.querySelectorAll("#streamer_overlay_vars > span");
+    let labels = document.querySelectorAll(".streamer_overlay_itext");
 
     var_list.style.backgroundColor = store.color_wrapper;
 
     items.forEach((item) => {
-        item.style.color = store.color_text;
         item.style.borderColor = store.color_outline;
         item.style.backgroundColor = store.color_background;
+    });
+
+    labels.forEach((label) => {
+        label.style.color = store.color_text;
     });
 }
 
@@ -341,25 +345,25 @@ loop_1hz(() => {
     let heading = Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees"));
 
     try {
-        ete_label.innerText = `ETE: ${date.toTimeString().slice(0, 5)}`;
-        airspeed_label.innerText = `IAS: ${
+        ete_label.innerText = `${date.toTimeString().slice(0, 5)}`;
+        airspeed_label.innerText = `${
             this.store.pad_numbers ? pad_number(airspeed, 3, "0") : airspeed
         }kt`;
-        vertspeed_label.innerText = `V/S: ${
+        vertspeed_label.innerText = `${
             this.store.pad_numbers ? pad_number(vertspeed, 4, "0") : vertspeed
         }fpm`;
-        altitude_label.innerText = `Alt: ${
+        altitude_label.innerText = `${
             this.store.pad_numbers ? pad_number(altitude, 5, "0") : altitude
         }ft`;
         type_label.innerText = `${this.store.type}`;
-        registration_label.innerText = `# ${this.store.registration}`;
-        airline_label.innerText = `$ ${this.store.airline}`;
-        origin_label.innerText = `From: ${this.store.origin}`;
-        destination_label.innerText = `To: ${this.store.destination}`;
-        distance_label.innerText = `DTG: ${distance}nm`;
-        rules_label.innerText = `Rules: ${this.store.rules}`;
-        network_label.innerText = `Net: ${this.store.network}`;
-        heading_label.innerText = `HDG: ${
+        registration_label.innerText = `${this.store.registration}`;
+        airline_label.innerText = `${this.store.airline}`;
+        origin_label.innerText = `${this.store.origin}`;
+        destination_label.innerText = `${this.store.destination}`;
+        distance_label.innerText = `${distance}nm`;
+        rules_label.innerText = `${this.store.rules}`;
+        network_label.innerText = `${this.store.network}`;
+        heading_label.innerText = `${
             this.store.pad_numbers ? pad_number(heading, 3, "0") : heading
         }`;
     } catch (e) {
@@ -371,19 +375,19 @@ html_created((el) => {
     // Get referneces to the overlay elements
     container = el.querySelector("#streamer_overlay");
     var_list = el.querySelector("#streamer_overlay_vars");
-    type_label = el.querySelector("#streamer_overlay_type");
-    registration_label = el.querySelector("#streamer_overlay_registration");
-    airline_label = el.querySelector("#streamer_overlay_airline");
-    origin_label = el.querySelector("#streamer_overlay_origin");
-    destination_label = el.querySelector("#streamer_overlay_destination");
-    distance_label = el.querySelector("#streamer_overlay_distance");
-    rules_label = el.querySelector("#streamer_overlay_rules");
-    network_label = el.querySelector("#streamer_overlay_network");
-    ete_label = el.querySelector("#streamer_overlay_ete");
-    airspeed_label = el.querySelector("#streamer_overlay_airspeed");
-    vertspeed_label = el.querySelector("#streamer_overlay_vertspeed");
-    altitude_label = el.querySelector("#streamer_overlay_altitude");
-    heading_label = el.querySelector("#streamer_overlay_heading");
+    type_label = el.querySelector("#streamer_overlay_type > p");
+    registration_label = el.querySelector("#streamer_overlay_registration > p");
+    airline_label = el.querySelector("#streamer_overlay_airline > p");
+    origin_label = el.querySelector("#streamer_overlay_origin > p");
+    destination_label = el.querySelector("#streamer_overlay_destination > p");
+    distance_label = el.querySelector("#streamer_overlay_distance > p");
+    rules_label = el.querySelector("#streamer_overlay_rules > p");
+    network_label = el.querySelector("#streamer_overlay_network > p");
+    ete_label = el.querySelector("#streamer_overlay_ete > p");
+    airspeed_label = el.querySelector("#streamer_overlay_airspeed > p");
+    vertspeed_label = el.querySelector("#streamer_overlay_vertspeed > p");
+    altitude_label = el.querySelector("#streamer_overlay_altitude > p");
+    heading_label = el.querySelector("#streamer_overlay_heading > p");
 
     set_colors(this.store);
 
