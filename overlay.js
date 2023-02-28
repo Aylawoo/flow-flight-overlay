@@ -320,7 +320,6 @@ loop_1hz(() => {
 
     // This will not work for spans greater than 99h99m
     date.setSeconds(ete === Infinity ? 0 : ete * 60 * 60);
-    ete_label.innerText = `ETE: ${date.toTimeString().slice(0, 5)}`;
 
     // Update the rest of the labels
     let airspeed = Math.round(get("A:AIRSPEED INDICATED", "knots"));
@@ -329,6 +328,7 @@ loop_1hz(() => {
     let heading = Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees"));
 
     try {
+        ete_label.innerText = `ETE: ${date.toTimeString().slice(0, 5)}`;
         airspeed_label.innerText = `IAS: ${
             this.store.pad_numbers ? pad_number(airspeed, 3, "0") : airspeed
         }kt`;
