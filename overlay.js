@@ -35,7 +35,7 @@ let container = null,
 let enabled_items = [],
     disabled_items = [];
 
-let non_visual = ["script_enabled", "simbrief_enabled"];
+let non_visual = ["overlay_enabled", "simbrief_enabled"];
 
 // Global flight variables
 let target_airport = null;
@@ -180,7 +180,7 @@ this.store = {
     Each display item is a pair of <name> strings and <name>_enabled bools.
     This allows programmatically setting the `enabled_items` list easily.
     */
-    script_enabled: true,
+    overlay_enabled: true,
     simbrief_enabled: false,
     simbrief_username: "USERNAME",
     type_enabled: true,
@@ -247,7 +247,7 @@ settings_define(settings);
 
 // ---- Events
 run((event) => {
-    this.store.script_enabled = !this.store.script_enabled;
+    this.store.overlay_enabled = !this.store.overlay_enabled;
     ds_export(this.store);
 
     return true;
@@ -258,11 +258,11 @@ state(() => {
 });
 
 info(() => {
-    return "Overlain'";
+    return this.store.overlay_enabled ? "Enabled" : "Disabled";
 });
 
 style(() => {
-    return this.store.script_enabled ? "active" : null;
+    return this.store.overlay_enabled ? "active" : null;
 });
 
 /* Otto search
@@ -279,6 +279,12 @@ script_message_rcv((ref_name, message, callback) => {
 */
 
 loop_1hz(() => {
+    if (!this.store.overlay_enabled) {
+        container.style.display = "none";
+    } else {
+        container.style.display = "inline-flex";
+    }
+
     // Less important things loop at 1hz for performance
     load_views(enabled_items, disabled_items);
 
