@@ -273,7 +273,7 @@ run((event) => {
 });
 
 state(() => {
-    return "mdi:airplane";
+    return this.store.overlay_enabled ? "mdi:airplane-check" : "mdi:airplane-off";
 });
 
 info(() => {
