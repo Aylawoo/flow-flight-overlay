@@ -281,6 +281,7 @@ script_message_rcv((ref_name, message, callback) => {
 loop_1hz(() => {
     if (!this.store.overlay_enabled) {
         container.style.display = "none";
+        return;
     } else {
         container.style.display = "inline-flex";
     }
