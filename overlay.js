@@ -181,6 +181,7 @@ this.store = {
     This allows programmatically setting the `enabled_items` list easily.
     */
     overlay_enabled: true,
+    overlay_bottom: false,
     simbrief_enabled: false,
     simbrief_username: "USERNAME",
     type_enabled: true,
@@ -287,14 +288,19 @@ loop_1hz(() => {
         } else {
             container.style.display = "inline-flex";
         }
+
+        if (this.store.outline_text) {
+            var_list.classList.add("streamer_overlay_outline");
+        } else {
+            var_list.classList.remove("streamer_overlay_outline");
+        }
+
+        container.style.alignSelf = (
+            this.store.overlay_bottom ? "flex-end" : "flex-start"
+        );
+
     } catch (e) {
         if (e instanceof TypeError) {} else { console.error(e); }
-    }
-
-    if (this.store.outline_text) {
-        var_list.classList.add("streamer_overlay_outline");
-    } else {
-        var_list.classList.remove("streamer_overlay_outline");
     }
 
     // Less important things loop at 1hz for performance

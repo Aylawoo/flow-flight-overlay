@@ -3,6 +3,7 @@
 	position: relative;
 	height: 55px;
 	margin: 8px auto;
+ 	align-self: flex-start;
 
 	font-family: sans-serif;
 	text-align: center;
