@@ -268,19 +268,6 @@ style(() => {
     return this.store.overlay_enabled ? "active" : null;
 });
 
-/* Otto search
-search(["ol"], (query, callback) => {
-    let results = [];
-    callback(results);
-});
-
-
-script_message_rcv((ref_name, message, callback) => {
-    console.log(`Message: ${message} from ${ref_name}`);
-    callback(true);
-});
-*/
-
 loop_1hz(() => {
     try {
         if (!this.store.overlay_enabled) {
