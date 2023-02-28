@@ -11,7 +11,9 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.5.0";
+const VERSION = "0.6.0";
+
+const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
 const BOX = "checkbox",
       TXT = "text";
@@ -253,10 +255,21 @@ settings_define(settings);
 
 // ---- Events
 run((event) => {
-    this.store.overlay_enabled = !this.store.overlay_enabled;
-    ds_export(this.store);
+    // Click wheel to update SimBrief, instead of toggle overlay
+    if (!this.store.simbrief_enabled || this.store.simbrief_username === "USERNAME") {
+        return false;
+    }
 
-    return true;
+    fetch(`${SIMBRIEF_URL}${this.store.simbrief_username}&json=1`)
+        .then(response => response.json())
+        .then(data => {
+            this.store.type = data.aircraft.icaocode;
+            this.store.registration = data.aircraft.reg;
+            this.store.origin = data.origin.icao_code;
+            this.store.destination = data.destination.icao_code;
+            this.store.airline = `${data.general.icao_airline} - ${data.atc.callsign}`;
+            ds_export(this.store);
+        });
 });
 
 state(() => {
