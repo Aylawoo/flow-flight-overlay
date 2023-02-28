@@ -204,6 +204,7 @@ this.store = {
     altitude_enabled: true,
     heading_enabled: true,
     distance_enabled: true,
+    pad_numbers: true,
     outline_text: true,
     color_wrapper: "#00000060",
     color_outline: "#A0A0A0FF",
@@ -318,7 +319,7 @@ loop_1hz(() => {
             });
         }
 
-        distance = calc_distance(ac_lat, ac_lon, ap_lat, ap_lon);
+        distance = Math.round(calc_distance(ac_lat, ac_lon, ap_lat, ap_lon));
     }
 
     let groundspeed = get("A:GROUND VELOCITY", "knots");
@@ -332,23 +333,31 @@ loop_1hz(() => {
     ete_label.innerText = `ETE: ${date.toTimeString().slice(0, 5)}`;
 
     // Update the rest of the labels
-    let airspeed = get("A:AIRSPEED INDICATED", "knots");
-    let vertspeed = get("A:VERTICAL SPEED", "ft/min");
-    let altitude = get("A:PLANE ALTITUDE", "feet");
-    let heading = get("A:PLANE HEADING DEGREES MAGNETIC", "degrees");
+    let airspeed = Math.round(get("A:AIRSPEED INDICATED", "knots"));
+    let vertspeed = Math.round(get("A:VERTICAL SPEED", "ft/min"));
+    let altitude = Math.round(get("A:PLANE ALTITUDE", "feet"));
+    let heading = Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees"));
 
-    airspeed_label.innerText = `IAS: ${pad_number(Math.round(airspeed), 3, "0")}kt`;
-    vertspeed_label.innerText = `V/S: ${pad_number(Math.round(vertspeed), 4, "0")}fpm`;
-    altitude_label.innerText = `Alt: ${pad_number(Math.round(altitude), 5, "0")}ft`;
+    airspeed_label.innerText = `IAS: ${
+        this.store.pad_numbers ? pad_number(airspeed, 3, "0") : airspeed
+    }kt`;
+    vertspeed_label.innerText = `V/S: ${
+        this.store.pad_numbers ? pad_number(vertspeed, 4, "0") : vertspeed
+    }fpm`;
+    altitude_label.innerText = `Alt: ${
+        this.store.pad_numbers ? pad_number(altitude, 5, "0") : altitude
+    }ft`;
     type_label.innerText = `${this.store.type}`;
     registration_label.innerText = `# ${this.store.registration}`;
     airline_label.innerText = `$ ${this.store.airline}`;
     origin_label.innerText = `From: ${this.store.origin}`;
     destination_label.innerText = `To: ${this.store.destination}`;
-    distance_label.innerText = `DTG: ${Math.round(distance)}nm`;
+    distance_label.innerText = `DTG: ${distance}nm`;
     rules_label.innerText = `Rules: ${this.store.rules}`;
     network_label.innerText = `Net: ${this.store.network}`;
-    heading_label.innerText = `HDG: ${pad_number(Math.round(heading), 3, "0")}`;
+    heading_label.innerText = `HDG: ${
+        this.store.pad_numbers ? pad_number(heading, 3, "0") : heading
+    }`;
 });
 
 html_created((el) => {
