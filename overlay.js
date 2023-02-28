@@ -44,6 +44,11 @@ let ap_lon = null;
 let distance = null;
 
 // ---- Helper functions
+function ignore_type_error(e) {
+    // Ignore harmless TypeError on hot reloads when data isn't available fast enough
+    if (e instanceof TypeError) {} else { throw e; }
+}
+
 function set_colors(store) {
     // Set custom element colors
     let var_list = document.querySelector("#streamer_overlay_vars");
@@ -65,8 +70,7 @@ function load_views(enabled, disabled) {
         try {
             elem.style.display = "none";
         } catch (e) {
-            // TypeError (null) expected occasionally on reloads, harmless
-            if (e instanceof TypeError) {} else { console.error(e); }
+            ignore_type_error(e);
         }
     }
 
@@ -76,8 +80,7 @@ function load_views(enabled, disabled) {
         try {
             elem.style.display = "inline-flex";
         } catch (e) {
-            // TypeError (null) expected occasionally on reloads, harmless
-            if (e instanceof TypeError) {} else { console.error(e); }
+            ignore_type_error(e);
         }
     }
 }
@@ -288,7 +291,7 @@ loop_1hz(() => {
         );
 
     } catch (e) {
-        if (e instanceof TypeError) {} else { console.error(e); }
+        ignore_type_error(e);
     }
 
     // Less important things loop at 1hz for performance
@@ -347,7 +350,7 @@ loop_1hz(() => {
             this.store.pad_numbers ? pad_number(heading, 3, "0") : heading
         }`;
     } catch (e) {
-        if (e instanceof TypeError) {} else { console.error(e); }
+        ignore_type_error(e);
     }
 });
 
