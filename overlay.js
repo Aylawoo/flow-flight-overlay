@@ -203,6 +203,7 @@ this.store = {
     altitude_enabled: true,
     heading_enabled: true,
     distance_enabled: true,
+    outline_text: true,
     color_wrapper: "#00000060",
     color_outline: "#A0A0A0FF",
     color_background: "#20202080",
@@ -284,6 +285,12 @@ loop_1hz(() => {
         return;
     } else {
         container.style.display = "inline-flex";
+    }
+
+    if (this.store.outline_text) {
+        var_list.classList.add("streamer_overlay_outline");
+    } else {
+        var_list.classList.remove("streamer_overlay_outline");
     }
 
     // Less important things loop at 1hz for performance
