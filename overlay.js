@@ -215,9 +215,9 @@ this.store = {
     distance_enabled: true,
     pad_numbers: true,
     outline_text: true,
-    color_wrapper: "#00000060",
+    color_wrapper: "#00000090",
     color_outline: "#A0A0A0FF",
-    color_background: "#20202080",
+    color_background: "#00000090",
     color_text: "#FFFFFFFF"
 };
 ds_import(this.store);
