@@ -134,7 +134,7 @@ function load_enabled(store, enabled, disabled) {
         settings[item] = define_option(
             store,
             item,
-            enable_switch ? BOX: TXT,
+            enable_switch ? BOX : TXT,
             name,
             enabled,
             disabled
