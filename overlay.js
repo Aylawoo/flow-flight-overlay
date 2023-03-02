@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.7.5";
+const VERSION = "0.7.6";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -232,6 +232,13 @@ ds_import(this.store);
 // Take all config options and place them in a `settings` object
 let settings = load_enabled(this.store, enabled_items, disabled_items);
 
+settings.overlay_enabled.changed = (value) => {
+    this.store.overlay_enabled = value;
+    ds_export(this.store);
+
+    container.style.display = value ? "inline-flex" : "none";
+};
+
 settings.destination.changed = (value) => {
     this.store.destination = value;
     ds_export(this.store);
@@ -267,6 +274,8 @@ settings_define(settings);
 // ---- Events
 run((event) => {
     this.store.overlay_enabled = !this.store.overlay_enabled;
+    container.style.display = this.store.overlay_enabled ? "inline-flex" : "none";
+
     ds_export(this.store);
 });
 
@@ -323,13 +332,6 @@ style(() => {
 
 loop_1hz(() => {
     try {
-        if (!this.store.overlay_enabled) {
-            container.style.display = "none";
-            return;
-        } else {
-            container.style.display = "inline-flex";
-        }
-
         if (this.store.outline_text) {
             var_list.classList.add("streamer_overlay_outline");
         } else {
