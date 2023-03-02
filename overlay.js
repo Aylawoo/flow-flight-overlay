@@ -266,7 +266,8 @@ settings_define(settings);
 
 // ---- Events
 run((event) => {
-
+    this.store.overlay_enabled = !this.store.overlay_enabled;
+    ds_export(this.store);
 });
 
 scroll((event) => {
