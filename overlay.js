@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.7.3";
+const VERSION = "0.7.4";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -371,7 +371,7 @@ loop_1hz(() => {
     // Doesn't seem to work with "Bool" or "Boolean"?
     let slew = get("A:IS SLEW ACTIVE", "number");
 
-    if (groundspeed > 10 && !slew) {
+    if (!slew && distance > 0 && groundspeed > 10) {
         ete = distance / groundspeed;
         // This will not work for spans greater than 99h99m
         date.setSeconds(ete === Infinity ? 0 : ete * 60 * 60);
