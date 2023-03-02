@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.7.2";
+const VERSION = "0.7.3";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -365,11 +365,17 @@ loop_1hz(() => {
     let groundspeed = get("A:GROUND VELOCITY", "knots");
 
     // Simple ETE calculation
-    let ete = distance / groundspeed;
+    let ete = 0;
     let date = new Date(0, 0);
 
-    // This will not work for spans greater than 99h99m
-    date.setSeconds(ete === Infinity ? 0 : ete * 60 * 60);
+    // Doesn't seem to work with "Bool" or "Boolean"?
+    let slew = get("A:IS SLEW ACTIVE", "number");
+
+    if (groundspeed > 10 && !slew) {
+        ete = distance / groundspeed;
+        // This will not work for spans greater than 99h99m
+        date.setSeconds(ete === Infinity ? 0 : ete * 60 * 60);
+    }
 
     // Update the rest of the labels
     let airspeed = Math.round(get("A:AIRSPEED INDICATED", "knots"));
