@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.7.8";
+const VERSION = "0.7.9";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -239,6 +239,12 @@ settings.overlay_enabled.changed = (value) => {
     container.style.visibility = value ? "visible" : "hidden";
 };
 
+settings.overlay_bottom.changed = (value) => {
+    this.store.overlay_bottom = value;
+    ds_export(this.store);
+    container.style.alignSelf = (this.store.overlay_bottom ? "flex-end" : "flex-start");
+};
+
 settings.destination.changed = (value) => {
     this.store.destination = value;
     ds_export(this.store);
@@ -341,15 +347,6 @@ style(() => {
 });
 
 loop_1hz(() => {
-    try {
-        container.style.alignSelf = (
-            this.store.overlay_bottom ? "flex-end" : "flex-start"
-        );
-
-    } catch (e) {
-        ignore_type_error(e);
-    }
-
     // Less important things loop at 1hz for performance
     load_views(enabled_items, disabled_items);
 
