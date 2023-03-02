@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.7.1";
+const VERSION = "0.7.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -44,6 +44,13 @@ let target_airport = null;
 let ap_lat = null;
 let ap_lon = null;
 let distance = null;
+
+/*
+    Time since last SimBrief refresh.
+    Setting this to "now" upon script load will prevent sending bad/unwanted requests
+    on the first load of the script.
+*/
+let sb_refresh_timer = Date.now();
 
 // ---- Helper functions
 function ignore_type_error(e) {
@@ -259,10 +266,25 @@ settings_define(settings);
 
 // ---- Events
 run((event) => {
+
+});
+
+scroll((event) => {
     // Click wheel to update SimBrief, instead of toggle overlay
     if (!this.store.simbrief_enabled || this.store.simbrief_username === "USERNAME") {
         return false;
     }
+
+    // Only allow updating SimBrief once per 20s
+    let now = Date.now();
+    let time_since_refresh = (now - sb_refresh_timer) / 1000;
+
+    if (time_since_refresh < 20) {
+        return false;
+    }
+
+    // We're going to send a request to SimBrief, reset the timer
+    sb_refresh_timer = now;
 
     fetch(`${SIMBRIEF_URL}${this.store.simbrief_username}&json=1`)
         .then(response => response.json())
@@ -281,7 +303,17 @@ state(() => {
 });
 
 info(() => {
-    return this.store.overlay_enabled ? "Enabled" : "Disabled";
+    if (this.store.overlay_enabled) {
+        // Display countdown for SimBrief refresh if applicable
+        if (this.store.simbrief_enabled) {
+            let now = Date.now();
+            let time = 20 - Math.round((now - sb_refresh_timer) / 1000);
+
+            return time > 0 ? `SimBrief available in ${time}s` : "Overlay enabled";
+        }
+        return "Overlay enabled";
+    }
+    return "Overlay disabled";
 });
 
 style(() => {
