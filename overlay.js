@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.7.4";
+const VERSION = "0.7.5";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -362,16 +362,18 @@ loop_1hz(() => {
         distance = Math.round(calc_distance(ac_lat, ac_lon, ap_lat, ap_lon));
     }
 
-    let groundspeed = get("A:GROUND VELOCITY", "knots");
+    // Don't calculate anything if the user is in slew mode
+    if (get("A:IS SLEW ACTIVE", "number")) { return; };
+
+    let groundspeed = 0;
+
+    groundspeed = get("A:GROUND VELOCITY", "knots");
 
     // Simple ETE calculation
     let ete = 0;
     let date = new Date(0, 0);
 
-    // Doesn't seem to work with "Bool" or "Boolean"?
-    let slew = get("A:IS SLEW ACTIVE", "number");
-
-    if (!slew && distance > 0 && groundspeed > 10) {
+    if (distance > 0 && groundspeed > 10) {
         ete = distance / groundspeed;
         // This will not work for spans greater than 99h99m
         date.setSeconds(ete === Infinity ? 0 : ete * 60 * 60);
