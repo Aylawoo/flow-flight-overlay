@@ -235,7 +235,6 @@ let settings = load_enabled(this.store, enabled_items, disabled_items);
 settings.overlay_enabled.changed = (value) => {
     this.store.overlay_enabled = value;
     ds_export(this.store);
-
     container.style.visibility = value ? "visible" : "hidden";
 };
 
