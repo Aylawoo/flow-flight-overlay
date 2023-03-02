@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.7.6";
+const VERSION = "0.7.7";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -236,7 +236,7 @@ settings.overlay_enabled.changed = (value) => {
     this.store.overlay_enabled = value;
     ds_export(this.store);
 
-    container.style.display = value ? "inline-flex" : "none";
+    container.style.visibility = value ? "visible" : "hidden";
 };
 
 settings.destination.changed = (value) => {
@@ -274,7 +274,7 @@ settings_define(settings);
 // ---- Events
 run((event) => {
     this.store.overlay_enabled = !this.store.overlay_enabled;
-    container.style.display = this.store.overlay_enabled ? "inline-flex" : "none";
+    container.style.visibility = this.store.overlay_enabled ? "visible" : "hidden";
 
     ds_export(this.store);
 });
