@@ -11,12 +11,14 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.7.9";
+const VERSION = "0.7.10";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
 const BOX = "checkbox",
       TXT = "text";
+
+const non_visual = ["overlay_enabled", "simbrief_enabled"];
 
 let container = null,
     var_list = null,
@@ -36,8 +38,6 @@ let container = null,
 
 let enabled_items = [],
     disabled_items = [];
-
-let non_visual = ["overlay_enabled", "simbrief_enabled"];
 
 // Global flight variables
 let target_airport = null;
@@ -190,6 +190,11 @@ function pad_number(number, pad_amount, pad_char) {
     }
 }
 
+function toggle_element(elem, value) {
+    elem = document.querySelector(`#streamer_overlay_${elem}`);
+    elem.style.display = value ? "inline-flex" : "none";
+}
+
 // ---- Configuration
 this.store = {
     /*
@@ -244,10 +249,88 @@ settings.overlay_bottom.changed = (value) => {
     container.style.alignSelf = (this.store.overlay_bottom ? "flex-end" : "flex-start");
 };
 
+settings.type_enabled.changed = (value) => {
+    this.store.type_enabled = value;
+    ds_export(this.store);
+    toggle_element("type", value);
+};
+
+settings.registration_enabled.changed = (value) => {
+    this.store.registration_enabled = value;
+    ds_export(this.store);
+    toggle_element("registration", value);
+};
+
+settings.airline_enabled.changed = (value) => {
+    this.store.airline_enabled = value;
+    ds_export(this.store);
+    toggle_element("airline", value);
+};
+
+settings.origin_enabled.changed = (value) => {
+    this.store.origin_enabled = value;
+    ds_export(this.store);
+    toggle_element("origin", value);
+};
+
+settings.destination_enabled.changed = (value) => {
+    this.store.destination_enabled = value;
+    ds_export(this.store);
+    toggle_element("destination", value);
+};
+
 settings.destination.changed = (value) => {
     this.store.destination = value;
     ds_export(this.store);
     target_airport = null;
+};
+
+settings.rules_enabled.changed = (value) => {
+    this.store.rules_enabled = value;
+    ds_export(this.store);
+    toggle_element("rules", value);
+};
+
+settings.network_enabled.changed = (value) => {
+    this.store.network_enabled = value;
+    ds_export(this.store);
+    toggle_element("network", value);
+};
+
+settings.ete_enabled.changed = (value) => {
+    this.store.ete_enabled = value;
+    ds_export(this.store);
+    toggle_element("ete", value);
+};
+
+settings.airspeed_enabled.changed = (value) => {
+    this.store.airspeed_enabled = value;
+    ds_export(this.store);
+    toggle_element("airspeed", value);
+};
+
+settings.vertspeed_enabled.changed = (value) => {
+    this.store.vertspeed_enabled = value;
+    ds_export(this.store);
+    toggle_element("vertspeed", value);
+};
+
+settings.altitude_enabled.changed = (value) => {
+    this.store.altitude_enabled = value;
+    ds_export(this.store);
+    toggle_element("altitude", value);
+};
+
+settings.heading_enabled.changed = (value) => {
+    this.store.heading_enabled = value;
+    ds_export(this.store);
+    toggle_element("heading", value);
+};
+
+settings.distance_enabled.changed = (value) => {
+    this.store.distance_enabled = value;
+    ds_export(this.store);
+    toggle_element("distance", value);
 };
 
 settings.outline_text.changed = (value) => {
@@ -346,9 +429,6 @@ style(() => {
 });
 
 loop_1hz(() => {
-    // Less important things loop at 1hz for performance
-    load_views(enabled_items, disabled_items);
-
     if (this.store.distance_enabled) {
         let ac_lat = get("A:PLANE LATITUDE", "degrees");
         let ac_lon = get("A:PLANE LONGITUDE", "degrees");
