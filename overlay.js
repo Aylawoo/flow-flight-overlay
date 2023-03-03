@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.8.1";
+const VERSION = "0.8.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -216,19 +216,19 @@ this.store = {
     overlay_bottom: false,
     simbrief_enabled: false,
     simbrief_username: "USERNAME",
-    type_enabled: true,
+    type_enabled: false,
     type: "C172",
-    registration_enabled: true,
+    registration_enabled: false,
     registration: "N172SP",
     airline_enabled: false,
-    airline: "My VA",
+    airline: "My Airline",
     origin_enabled: true,
-    origin: "KPDX",
+    origin: "----",
     destination_enabled: true,
-    destination: "KSEA",
-    rules_enabled: true,
+    destination: "----",
+    rules_enabled: false,
     rules: "VFR",
-    network_enabled: true,
+    network_enabled: false,
     network: "Multiplayer",
     ete_enabled: false,
     airspeed_enabled: true,
