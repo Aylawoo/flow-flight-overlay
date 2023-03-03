@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.8.0";
+const VERSION = "0.8.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -195,6 +195,16 @@ function toggle_element(elem, value) {
     elem.style.display = value ? "inline-flex" : "none";
 }
 
+function icon_toggle(value) {
+    let icons = document.querySelectorAll(".streamer_overlay_mdi");
+    let labels = document.querySelectorAll(".streamer_overlay_label");
+
+    for (i = 0; i < icons.length; i++) {
+        icons[i].style.display = value ? "inline-flex" : "none";
+        labels[i].style.display = value ? "none" : "inline-flex";
+    }
+}
+
 // ---- Configuration
 this.store = {
     /*
@@ -202,6 +212,7 @@ this.store = {
     This allows programmatically setting the `enabled_items` list easily.
     */
     overlay_enabled: true,
+    display_icons: true,
     overlay_bottom: false,
     simbrief_enabled: false,
     simbrief_username: "USERNAME",
@@ -245,6 +256,12 @@ settings.overlay_enabled.changed = (value) => {
     this.store.overlay_enabled = value;
     ds_export(this.store);
     container.style.visibility = value ? "visible" : "hidden";
+};
+
+settings.display_icons.changed = (value) => {
+    this.store.display_icons = value;
+    ds_export(this.store);
+    icon_toggle(value);
 };
 
 settings.overlay_bottom.changed = (value) => {
@@ -504,21 +521,21 @@ html_created((el) => {
     // Get referneces to the overlay elements
     container = el.querySelector("#streamer_overlay");
     var_list = el.querySelector("#streamer_overlay_vars");
-    type_label = el.querySelector("#streamer_overlay_type > p");
-    registration_label = el.querySelector("#streamer_overlay_registration > p");
-    airline_label = el.querySelector("#streamer_overlay_airline > p");
-    origin_label = el.querySelector("#streamer_overlay_origin > p");
-    destination_label = el.querySelector("#streamer_overlay_destination > p");
-    distance_label = el.querySelector("#streamer_overlay_distance > p");
-    rules_label = el.querySelector("#streamer_overlay_rules > p");
-    network_label = el.querySelector("#streamer_overlay_network > p");
-    ete_label = el.querySelector("#streamer_overlay_ete > p");
-    airspeed_label = el.querySelector("#streamer_overlay_airspeed > p");
-    vertspeed_label = el.querySelector("#streamer_overlay_vertspeed > p");
-    altitude_label = el.querySelector("#streamer_overlay_altitude > p");
-    heading_label = el.querySelector("#streamer_overlay_heading > p");
+    type_label = el.querySelector("#streamer_overlay_type > .streamer_overlay_itext");
+    registration_label = el.querySelector("#streamer_overlay_registration .streamer_overlay_itext");
+    airline_label = el.querySelector("#streamer_overlay_airline .streamer_overlay_itext");
+    origin_label = el.querySelector("#streamer_overlay_origin .streamer_overlay_itext");
+    destination_label = el.querySelector("#streamer_overlay_destination .streamer_overlay_itext");
+    distance_label = el.querySelector("#streamer_overlay_distance .streamer_overlay_itext");
+    rules_label = el.querySelector("#streamer_overlay_rules .streamer_overlay_itext");
+    network_label = el.querySelector("#streamer_overlay_network .streamer_overlay_itext");
+    ete_label = el.querySelector("#streamer_overlay_ete .streamer_overlay_itext");
+    airspeed_label = el.querySelector("#streamer_overlay_airspeed .streamer_overlay_itext");
+    vertspeed_label = el.querySelector("#streamer_overlay_vertspeed .streamer_overlay_itext");
+    altitude_label = el.querySelector("#streamer_overlay_altitude .streamer_overlay_itext");
+    heading_label = el.querySelector("#streamer_overlay_heading .streamer_overlay_itext");
 
     set_colors(this.store);
-
     load_views(enabled_items, disabled_items);
+    icon_toggle(this.store.display_icons);
 });
