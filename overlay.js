@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.8.4";
+const VERSION = "0.8.5";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -43,7 +43,7 @@ let enabled_items = [],
 let target_airport = null;
 let ap_lat = null;
 let ap_lon = null;
-let distance = null;
+let distance = "---";
 
 /*
     Time since last SimBrief refresh.
@@ -456,15 +456,17 @@ loop_1hz(() => {
 
         if (target_airport == null) {
             get_airport("streamer-overlay-lookup", this.store.destination, (results) => {
-                target_airport = results[0];
-                ap_lat = target_airport.lat;
-                ap_lon = target_airport.lon;
+                target_airport = typeof results[0] != undefined ? results[0] : null;
             });
         }
 
-        distance = Math.round(calc_distance(ac_lat, ac_lon, ap_lat, ap_lon));
-    } else {
-        distance = "---";
+        if (target_airport != null) {
+            ap_lat = target_airport.lat;
+            ap_lon = target_airport.lon;
+            distance = Math.round(calc_distance(ac_lat, ac_lon, ap_lat, ap_lon));
+        } else {
+            distance = "---";
+        }
     }
 
     // Don't calculate anything if the user is in slew mode
