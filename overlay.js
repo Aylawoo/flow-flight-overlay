@@ -488,20 +488,20 @@ loop_1hz(() => {
 
     // Update the rest of the labels
     let airspeed = Math.round(get("A:AIRSPEED INDICATED", "knots"));
-    if (this.store.pad_airspeed) { airspeed = pad_number(airspeed, 3, "-"); }
+    if (this.store.pad_airspeed) { airspeed = pad_number(airspeed, 3, "0"); }
 
     let vertspeed = Math.round(get("A:VERTICAL SPEED", "ft/min"));
-    if (this.store.pad_vertspeed) { vertspeed = pad_number(vertspeed, 4, "-"); }
+    if (this.store.pad_vertspeed) { vertspeed = pad_number(vertspeed, 4, "0"); }
 
     let altitude = Math.round(get("A:PLANE ALTITUDE", "feet"));
-    if (this.store.pad_altitude) { altitude = pad_number(altitude, 5, "-"); }
+    if (this.store.pad_altitude) { altitude = pad_number(altitude, 5, "0"); }
 
     let heading = Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees"));
-    if (this.store.pad_heading) { heading = pad_number(heading, 3, "-"); }
+    if (this.store.pad_heading) { heading = pad_number(heading, 3, "0"); }
 
     let display_distance = distance
     if (distance != "---" && this.store.pad_distance) {
-        display_distance = pad_number(distance, 4, "-");
+        display_distance = pad_number(distance, 4, "0");
     }
 
     try {
