@@ -527,19 +527,45 @@ html_created((el) => {
     // Get referneces to the overlay elements
     container = el.querySelector("#streamer_overlay");
     var_list = el.querySelector("#streamer_overlay_vars");
-    type_label = el.querySelector("#streamer_overlay_type > .streamer_overlay_itext");
-    registration_label = el.querySelector("#streamer_overlay_registration .streamer_overlay_itext");
-    airline_label = el.querySelector("#streamer_overlay_airline .streamer_overlay_itext");
-    origin_label = el.querySelector("#streamer_overlay_origin .streamer_overlay_itext");
-    destination_label = el.querySelector("#streamer_overlay_destination .streamer_overlay_itext");
-    distance_label = el.querySelector("#streamer_overlay_distance .streamer_overlay_itext");
-    rules_label = el.querySelector("#streamer_overlay_rules .streamer_overlay_itext");
-    network_label = el.querySelector("#streamer_overlay_network .streamer_overlay_itext");
-    ete_label = el.querySelector("#streamer_overlay_ete .streamer_overlay_itext");
-    airspeed_label = el.querySelector("#streamer_overlay_airspeed .streamer_overlay_itext");
-    vertspeed_label = el.querySelector("#streamer_overlay_vertspeed .streamer_overlay_itext");
-    altitude_label = el.querySelector("#streamer_overlay_altitude .streamer_overlay_itext");
-    heading_label = el.querySelector("#streamer_overlay_heading .streamer_overlay_itext");
+    type_label = el.querySelector(
+      "#streamer_overlay_type > .streamer_overlay_itext"
+    );
+    registration_label = el.querySelector(
+      "#streamer_overlay_registration .streamer_overlay_itext"
+    );
+    airline_label = el.querySelector(
+      "#streamer_overlay_airline .streamer_overlay_itext"
+    );
+    origin_label = el.querySelector(
+      "#streamer_overlay_origin .streamer_overlay_itext"
+    );
+    destination_label = el.querySelector(
+      "#streamer_overlay_destination .streamer_overlay_itext"
+    );
+    distance_label = el.querySelector(
+      "#streamer_overlay_distance .streamer_overlay_itext"
+    );
+    rules_label = el.querySelector(
+      "#streamer_overlay_rules .streamer_overlay_itext"
+    );
+    network_label = el.querySelector(
+      "#streamer_overlay_network .streamer_overlay_itext"
+    );
+    ete_label = el.querySelector(
+      "#streamer_overlay_ete .streamer_overlay_itext"
+    );
+    airspeed_label = el.querySelector(
+      "#streamer_overlay_airspeed .streamer_overlay_itext"
+    );
+    vertspeed_label = el.querySelector(
+      "#streamer_overlay_vertspeed .streamer_overlay_itext"
+    );
+    altitude_label = el.querySelector(
+      "#streamer_overlay_altitude .streamer_overlay_itext"
+    );
+    heading_label = el.querySelector(
+      "#streamer_overlay_heading .streamer_overlay_itext"
+    );
 
     set_colors(this.store);
     load_views(enabled_items, disabled_items);
