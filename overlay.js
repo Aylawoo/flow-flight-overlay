@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.8.3";
+const VERSION = "0.8.4";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -450,7 +450,7 @@ style(() => {
 });
 
 loop_1hz(() => {
-    if (this.store.distance_enabled) {
+    if (this.store.distance_enabled && this.store.destination != "----") {
         let ac_lat = get("A:PLANE LATITUDE", "degrees");
         let ac_lon = get("A:PLANE LONGITUDE", "degrees");
 
@@ -463,6 +463,8 @@ loop_1hz(() => {
         }
 
         distance = Math.round(calc_distance(ac_lat, ac_lon, ap_lat, ap_lon));
+    } else {
+        distance = "---";
     }
 
     // Don't calculate anything if the user is in slew mode
@@ -496,7 +498,9 @@ loop_1hz(() => {
     if (this.store.pad_heading) { heading = pad_number(heading, 3, "-"); }
 
     let display_distance = distance
-    if (this.store.pad_distance) { display_distance = pad_number(distance, 4, "-"); }
+    if (distance != "---" && this.store.pad_distance) {
+        display_distance = pad_number(distance, 4, "-");
+    }
 
     try {
         ete_label.innerText = `${date.toTimeString().slice(0, 5)}`;
