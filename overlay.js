@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.7.10";
+const VERSION = "0.8.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -221,11 +221,15 @@ this.store = {
     network: "Multiplayer",
     ete_enabled: false,
     airspeed_enabled: true,
+    pad_airspeed: true,
     vertspeed_enabled: true,
+    pad_vertspeed: true,
     altitude_enabled: true,
+    pad_altitude: true,
     heading_enabled: true,
+    pad_heading: true,
     distance_enabled: true,
-    pad_numbers: true,
+    pad_distance: true,
     outline_text: true,
     color_wrapper: "#00000090",
     color_outline: "#A0A0A0FF",
@@ -463,32 +467,34 @@ loop_1hz(() => {
 
     // Update the rest of the labels
     let airspeed = Math.round(get("A:AIRSPEED INDICATED", "knots"));
+    if (this.store.pad_airspeed) { airspeed = pad_number(airspeed, 3, "0"); }
+
     let vertspeed = Math.round(get("A:VERTICAL SPEED", "ft/min"));
+    if (this.store.pad_vertspeed) { vertspeed = pad_number(vertspeed, 4, "0"); }
+
     let altitude = Math.round(get("A:PLANE ALTITUDE", "feet"));
+    if (this.store.pad_altitude) { altitude = pad_number(altitude, 5, "0"); }
+
     let heading = Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees"));
+    if (this.store.pad_heading) { heading = pad_number(heading, 3, "0"); }
+
+    let display_distance = distance
+    if (this.store.pad_distance) { display_distance = pad_number(distance, 4, "0"); }
 
     try {
         ete_label.innerText = `${date.toTimeString().slice(0, 5)}`;
-        airspeed_label.innerText = `${
-            this.store.pad_numbers ? pad_number(airspeed, 3, "0") : airspeed
-        }kt`;
-        vertspeed_label.innerText = `${
-            this.store.pad_numbers ? pad_number(vertspeed, 4, "0") : vertspeed
-        }fpm`;
-        altitude_label.innerText = `${
-            this.store.pad_numbers ? pad_number(altitude, 5, "0") : altitude
-        }ft`;
+        airspeed_label.innerText = `${airspeed}kt`;
+        vertspeed_label.innerText = `${vertspeed}fpm`;
+        altitude_label.innerText = `${altitude}ft`;
         type_label.innerText = `${this.store.type}`;
         registration_label.innerText = `${this.store.registration}`;
         airline_label.innerText = `${this.store.airline}`;
         origin_label.innerText = `${this.store.origin}`;
         destination_label.innerText = `${this.store.destination}`;
-        distance_label.innerText = `${distance}nm`;
+        distance_label.innerText = `${display_distance}nm`;
         rules_label.innerText = `${this.store.rules}`;
         network_label.innerText = `${this.store.network}`;
-        heading_label.innerText = `${
-            this.store.pad_numbers ? pad_number(heading, 3, "0") : heading
-        }`;
+        heading_label.innerText = `${heading}`;
     } catch (e) {
         ignore_type_error(e);
     }
