@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.11.4";
+const VERSION = "0.11.5";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -95,15 +95,21 @@ function scroll_handler(store, event) {
     resize_ui(store);
 }
 
-function set_colors(store) {
+function set_styles(store) {
     // Set custom element colors
-    let var_list = document.querySelector("#streamer_overlay_vars");
+    let vars_list = document.querySelector("#streamer_overlay_vars");
     let items = document.querySelectorAll("#streamer_overlay_vars > span");
     let icons = document.querySelectorAll(".streamer_overlay_mdi");
     let labels = document.querySelectorAll(".streamer_overlay_label");
     let itexts = document.querySelectorAll(".streamer_overlay_itext");
 
-    var_list.style.backgroundColor = store.color_wrapper;
+    vars_list.style.backgroundColor = store.color_wrapper;
+
+    if (store.outline_text) {
+        vars_list.classList.add("streamer_overlay_outline");
+    } else {
+        vars_list.classList.remove("streamer_overlay_outline");
+    }
 
     items.forEach((item) => {
         item.style.borderColor = store.color_outline;
@@ -114,6 +120,11 @@ function set_colors(store) {
     });
     labels.forEach((label) => {
         label.style.color = store.color_text;
+        if (store.outline_text) {
+            label.classList.add("streamer_overlay_outline");
+        } else {
+            label.classList.remove("streamer_overlay_outline");
+        }
     });
     itexts.forEach((itext) => {
         itext.style.color = store.color_text;
@@ -428,41 +439,37 @@ settings.display_icons.changed = (value) => {
 settings.black_icons.changed = (value) => {
     this.store.black_icons = value;
     ds_export(this.store);
-    set_colors(this.store);
+    set_styles(this.store);
 };
 
 settings.outline_text.changed = (value) => {
     this.store.outline_text = value;
     ds_export(this.store);
-    if (value) {
-        var_list.classList.add("streamer_overlay_outline");
-    } else {
-        var_list.classList.remove("streamer_overlay_outline");
-    }
+    set_styles(this.store);
 };
 
 settings.color_wrapper.changed = (value) => {
     this.store.color_wrapper = value;
     ds_export(this.store);
-    set_colors(this.store);
+    set_styles(this.store);
 };
 
 settings.color_outline.changed = (value) => {
     this.store.color_outline = value;
     ds_export(this.store);
-    set_colors(this.store);
+    set_styles(this.store);
 };
 
 settings.color_background.changed = (value) => {
     this.store.color_background = value;
     ds_export(this.store);
-    set_colors(this.store);
+    set_styles(this.store);
 };
 
 settings.color_text.changed = (value) => {
     this.store.color_text = value;
     ds_export(this.store);
-    set_colors(this.store);
+    set_styles(this.store);
 };
 
 settings_define(settings);
@@ -696,7 +703,7 @@ html_created((el) => {
     el.onmousewheel = (event) => { scroll_handler(this.store, event); }
 
     resize_ui(this.store);
-    set_colors(this.store);
+    set_styles(this.store);
     load_views(enabled_items, disabled_items);
     icon_toggle(this.store.display_icons);
 });
