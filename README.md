@@ -16,7 +16,7 @@ Note: Display with all options enabled may not display correctly on screen resol
   - Destination airport
   - Flight rules
   - Multiplayer network
-  - ETE (Very rough early calculation)
+  - ETE (Calculation WIP)
   - Current indicated airspeed
   - Current vertical speed
   - Current altitude
