@@ -252,11 +252,7 @@ this.store = {
     This allows programmatically setting the `enabled_items` list easily.
     */
     overlay_enabled: true,
-    font_size: "23",
     metric_units: false,
-    display_icons: true,
-    black_icons: false,
-    overlay_bottom: false,
     simbrief_enabled: false,
     simbrief_username: "USERNAME",
     type_enabled: false,
@@ -285,6 +281,10 @@ this.store = {
     heading_enabled: true,
     wind_enabled: false,
     pad_wind: true,
+    font_size: "23",
+    overlay_bottom: false,
+    display_icons: true,
+    black_icons: false,
     outline_text: true,
     color_wrapper: "#00000090",
     color_outline: "#A0A0A0FF",
@@ -295,30 +295,6 @@ ds_import(this.store);
 
 // Take all config options and place them in a `settings` object
 let settings = load_enabled(this.store, enabled_items, disabled_items);
-
-settings.font_size.changed = (value) => {
-    this.store.font_size = clamp(value, 8, 128);
-    ds_export(this.store);
-    resize_ui(this.store);
-};
-
-settings.display_icons.changed = (value) => {
-    this.store.display_icons = value;
-    ds_export(this.store);
-    icon_toggle(value);
-};
-
-settings.black_icons.changed = (value) => {
-    this.store.black_icons = value;
-    ds_export(this.store);
-    set_colors(this.store);
-};
-
-settings.overlay_bottom.changed = (value) => {
-    this.store.overlay_bottom = value;
-    ds_export(this.store);
-    container.style.alignSelf = (this.store.overlay_bottom ? "flex-end" : "flex-start");
-};
 
 settings.type_enabled.changed = (value) => {
     this.store.type_enabled = value;
@@ -408,6 +384,30 @@ settings.wind_enabled.changed = (value) => {
     this.store.wind_enabled = value;
     ds_export(this.store);
     toggle_element("wind", value);
+};
+
+settings.font_size.changed = (value) => {
+    this.store.font_size = clamp(value, 8, 128);
+    ds_export(this.store);
+    resize_ui(this.store);
+};
+
+settings.overlay_bottom.changed = (value) => {
+    this.store.overlay_bottom = value;
+    ds_export(this.store);
+    container.style.alignSelf = (this.store.overlay_bottom ? "flex-end" : "flex-start");
+};
+
+settings.display_icons.changed = (value) => {
+    this.store.display_icons = value;
+    ds_export(this.store);
+    icon_toggle(value);
+};
+
+settings.black_icons.changed = (value) => {
+    this.store.black_icons = value;
+    ds_export(this.store);
+    set_colors(this.store);
 };
 
 settings.outline_text.changed = (value) => {
