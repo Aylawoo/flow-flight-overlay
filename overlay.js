@@ -280,7 +280,6 @@ this.store = {
     pad_altitude: true,
     heading_enabled: true,
     wind_enabled: false,
-    pad_wind: true,
     font_size: "23",
     overlay_bottom: false,
     display_icons: true,
