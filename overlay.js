@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.11.5";
+const VERSION = "0.11.6";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -28,9 +28,9 @@ let container = null,
     origin_label = null,
     destination_label = null,
     distance_label = null,
+    ete_label = null,
     rules_label = null,
     network_label = null,
-    ete_label = null,
     airspeed_label = null,
     vertspeed_label = null,
     vs_icon = null,
@@ -298,13 +298,13 @@ this.store = {
     origin: "----",
     destination_enabled: true,
     destination: "----",
+    distance_enabled: true,
+    pad_distance: true,
+    ete_enabled: false,
     rules_enabled: false,
     rules: "VFR",
     network_enabled: false,
     network: "Multiplayer",
-    ete_enabled: false,
-    distance_enabled: true,
-    pad_distance: true,
     airspeed_enabled: true,
     pad_airspeed: true,
     vertspeed_enabled: true,
@@ -364,6 +364,18 @@ settings.destination.changed = (value) => {
     target_airport = null;
 };
 
+settings.distance_enabled.changed = (value) => {
+    this.store.distance_enabled = value;
+    ds_export(this.store);
+    toggle_element("distance", value);
+};
+
+settings.ete_enabled.changed = (value) => {
+    this.store.ete_enabled = value;
+    ds_export(this.store);
+    toggle_element("ete", value);
+};
+
 settings.rules_enabled.changed = (value) => {
     this.store.rules_enabled = value;
     ds_export(this.store);
@@ -376,17 +388,6 @@ settings.network_enabled.changed = (value) => {
     toggle_element("network", value);
 };
 
-settings.ete_enabled.changed = (value) => {
-    this.store.ete_enabled = value;
-    ds_export(this.store);
-    toggle_element("ete", value);
-};
-
-settings.distance_enabled.changed = (value) => {
-    this.store.distance_enabled = value;
-    ds_export(this.store);
-    toggle_element("distance", value);
-};
 
 settings.airspeed_enabled.changed = (value) => {
     this.store.airspeed_enabled = value;
@@ -619,9 +620,9 @@ loop_1hz(() => {
         origin_label.innerText = `${this.store.origin}`;
         destination_label.innerText = `${this.store.destination}`;
         distance_label.innerText = `${display_distance}${metric ? "km" : "nm"}`;
+        ete_label.innerText = `${date.toTimeString().slice(0, 5)}`;
         rules_label.innerText = `${this.store.rules}`;
         network_label.innerText = `${this.store.network}`;
-        ete_label.innerText = `${date.toTimeString().slice(0, 5)}`;
         airspeed_label.innerText = `${airspeed}${metric ? "kmh" : "kt"}`;
         vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
         altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
@@ -665,14 +666,14 @@ html_created((el) => {
     distance_label = el.querySelector(
       "#streamer_overlay_distance .streamer_overlay_itext"
     );
+    ete_label = el.querySelector(
+      "#streamer_overlay_ete .streamer_overlay_itext"
+    );
     rules_label = el.querySelector(
       "#streamer_overlay_rules .streamer_overlay_itext"
     );
     network_label = el.querySelector(
       "#streamer_overlay_network .streamer_overlay_itext"
-    );
-    ete_label = el.querySelector(
-      "#streamer_overlay_ete .streamer_overlay_itext"
     );
     airspeed_label = el.querySelector(
       "#streamer_overlay_airspeed .streamer_overlay_itext"
