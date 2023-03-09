@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.10.1";
+const VERSION = "0.11.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -33,9 +33,10 @@ let container = null,
     ete_label = null,
     airspeed_label = null,
     vertspeed_label = null,
+    vs_icon = null,
     altitude_label = null,
     heading_label = null,
-    vs_icon = null;
+    wind_label = null;
 
 let label_list = null,
     itext_list = null,
@@ -281,6 +282,8 @@ this.store = {
     pad_altitude: true,
     heading_enabled: true,
     pad_heading: true,
+    wind_enabled: false,
+    pad_wind: true,
     outline_text: true,
     color_wrapper: "#00000090",
     color_outline: "#A0A0A0FF",
@@ -400,6 +403,11 @@ settings.heading_enabled.changed = (value) => {
     toggle_element("heading", value);
 };
 
+settings.wind_enabled.changed = (value) => {
+    this.store.wind_enabled = value;
+    ds_export(this.store);
+    toggle_element("wind", value);
+};
 
 settings.outline_text.changed = (value) => {
     this.store.outline_text = value;
@@ -536,6 +544,11 @@ loop_1hz(() => {
         date.setSeconds(ete === Infinity ? 0 : ete * 60 * 60);
     }
 
+    let display_distance = distance
+    if (distance != "---" && this.store.pad_distance) {
+        display_distance = pad_number(distance, 4, "0");
+    }
+
     // Update the rest of the labels
     let airspeed = Math.round(get("A:AIRSPEED INDICATED", metric ? "kph" : "knots"));
     if (this.store.pad_airspeed) { airspeed = pad_number(airspeed, 3, "0"); }
@@ -560,16 +573,7 @@ loop_1hz(() => {
     let heading = Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees"));
     if (this.store.pad_heading) { heading = pad_number(heading, 3, "0"); }
 
-    let display_distance = distance
-    if (distance != "---" && this.store.pad_distance) {
-        display_distance = pad_number(distance, 4, "0");
-    }
-
     try {
-        ete_label.innerText = `${date.toTimeString().slice(0, 5)}`;
-        airspeed_label.innerText = `${airspeed}${metric ? "kmh" : "kt"}`;
-        vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
-        altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
         type_label.innerText = `${this.store.type}`;
         registration_label.innerText = `${this.store.registration}`;
         airline_label.innerText = `${this.store.airline}`;
@@ -578,7 +582,23 @@ loop_1hz(() => {
         distance_label.innerText = `${display_distance}${metric ? "km" : "nm"}`;
         rules_label.innerText = `${this.store.rules}`;
         network_label.innerText = `${this.store.network}`;
+        ete_label.innerText = `${date.toTimeString().slice(0, 5)}`;
+        airspeed_label.innerText = `${airspeed}${metric ? "kmh" : "kt"}`;
+        vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
+        altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
         heading_label.innerText = `${heading}`;
+    } catch (e) { ignore_type_error(e); }
+});
+
+loop_15hz(() => {
+    let wind_direction = Math.round(get("A:AMBIENT WIND DIRECTION", "degrees"));
+    let wind_speed = Math.round(get("A:AMBIENT WIND VELOCITY", metric ? "kph" : "knots"));
+    let compass = get("A:PLANE HEADING DEGREES GYRO", "degrees");
+    let wind_arrow_rotation = -Math.abs((360 + ((compass-wind_direction))) % 360) + 180;
+
+    try {
+        wind_label.innerText = `${wind_direction}@${wind_speed}${metric ? "kmh" : "kt"}`;
+        wind_icon.style.transform = `rotate(${wind_arrow_rotation}deg)`;
     } catch (e) { ignore_type_error(e); }
 });
 
@@ -619,15 +639,22 @@ html_created((el) => {
     vertspeed_label = el.querySelector(
       "#streamer_overlay_vertspeed .streamer_overlay_itext"
     );
+    vs_icon = el.querySelector(
+        "#streamer_overlay_vertspeed > img"
+    );
     altitude_label = el.querySelector(
       "#streamer_overlay_altitude .streamer_overlay_itext"
     );
     heading_label = el.querySelector(
       "#streamer_overlay_heading .streamer_overlay_itext"
     );
-    vs_icon = el.querySelector(
-        "#streamer_overlay_vertspeed > img"
+    wind_label = el.querySelector(
+        "#streamer_overlay_wind .streamer_overlay_itext"
     );
+    wind_icon = el.querySelector(
+        "#streamer_overlay_wind > img"
+    );
+
     label_list = el.querySelectorAll(".streamer_overlay_label");
     itext_list = el.querySelectorAll(".streamer_overlay_itext");
     icon_list = el.querySelectorAll(".streamer_overlay_mdi");
