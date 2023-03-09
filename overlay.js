@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.11.3";
+const VERSION = "0.11.4";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -47,11 +47,13 @@ let enabled_items = [],
     disabled_items = [];
 
 // Global flight variables
-metric = false;
+let metric = false;
 let target_airport = null;
 let ap_lat = null;
 let ap_lon = null;
 let distance = "---";
+let relative_wind = 0;
+let wind_speed = 0;
 
 /*
     Time since last SimBrief refresh.
@@ -203,6 +205,11 @@ function deg_to_rad(number) {
     return number * (Math.PI / 180);
 }
 
+function rad_to_deg(number) {
+    // Convert radians to degrees
+    return number * (180 / Math.PI);
+}
+
 function calc_distance(lat_a, lon_a, lat_b, lon_b) {
     // Calculate distance from two lat/long pairs in Nautical Miles
     let radius = 6371;
@@ -220,6 +227,21 @@ function calc_distance(lat_a, lon_a, lat_b, lon_b) {
     let step_two = 2 * Math.atan2(Math.sqrt(step_one), Math.sqrt(1 - step_one));
 
     return (radius * step_two) / 1.852;
+}
+
+function calc_bearing(lat_a, lon_a, lat_b, lon_b) {
+    // Calculate the bearing between two lat/long pairs
+    lat_a = deg_to_rad(lat_a);
+    lon_a = deg_to_rad(lon_a);
+    lat_b = deg_to_rad(lat_b);
+    lon_b = deg_to_rad(lon_b);
+
+    let step_one = Math.sin(lon_b - lon_a) * Math.cos(lat_b);
+    let step_two =
+        Math.cos(lat_a) * Math.sin(lat_b) -
+        Math.sin(lat_a) * Math.cos(lat_b) * Math.cos(lon_b - lon_a);
+
+    return (rad_to_deg(Math.atan2(step_one, step_two)) + 360) % 360;
 }
 
 function pad_number(number, pad_amount, pad_char) {
@@ -507,10 +529,12 @@ style(() => {
 loop_1hz(() => {
     metric = this.store.metric_units;
 
-    if (this.store.distance_enabled && this.store.destination != "----") {
-        let ac_lat = get("A:PLANE LATITUDE", "degrees");
-        let ac_lon = get("A:PLANE LONGITUDE", "degrees");
+    let ac_lat = get("A:PLANE LATITUDE", "degrees");
+    let ac_lon = get("A:PLANE LONGITUDE", "degrees");
+    let ap_lat = null;
+    let ap_lon = null;
 
+    if (this.store.destination != "----") {
         if (target_airport == null) {
             get_airport("streamer-overlay-lookup", this.store.destination, (results) => {
                 target_airport = typeof results[0] != undefined ? results[0] : null;
@@ -535,15 +559,6 @@ loop_1hz(() => {
 
     if (metric && distance != "---") { distance = Math.round(distance * 1.852); }
 
-    // Simple ETE calculation
-    let ete = 0;
-    let date = new Date(0, 0);
-
-    if (distance > 1 && groundspeed > 15) {
-        ete = distance / groundspeed;
-        // This will not work for spans greater than 99h99m
-        date.setSeconds(ete === Infinity ? 0 : ete * 60 * 60);
-    }
 
     let display_distance = distance
     if (distance != "---" && this.store.pad_distance) {
@@ -575,6 +590,21 @@ loop_1hz(() => {
         Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees")), 3, "0"
     );
 
+    // Simple ETE calculation
+    let ete = 0;
+    let date = new Date(0, 0);
+
+    if (distance > 1 && groundspeed > 15 && (ap_lat != null && ap_lon != null)) {
+        let bearing = calc_bearing(ac_lat, ac_lon, ap_lat, ap_lon);
+        let theta = Math.abs((bearing - heading) - Math.atan2(
+                wind_speed * Math.sin(relative_wind - bearing),
+                groundspeed + (relative_wind * Math.cos(relative_wind - bearing))
+            )
+        );
+        ete = distance / (groundspeed * Math.cos(deg_to_rad(theta)));
+        date.setSeconds(ete === Infinity ? 0 : ete * 3600);
+    }
+
     try {
         type_label.innerText = `${this.store.type}`;
         registration_label.innerText = `${this.store.registration}`;
@@ -596,13 +626,13 @@ loop_15hz(() => {
     metric = this.store.metric_units;
 
     let wind_direction = Math.round(get("A:AMBIENT WIND DIRECTION", "degrees"));
-    let wind_speed = Math.round(get("A:AMBIENT WIND VELOCITY", metric ? "kph" : "knots"));
+    wind_speed = Math.round(get("A:AMBIENT WIND VELOCITY", metric ? "kph" : "knots"));
     let compass = get("A:PLANE HEADING DEGREES GYRO", "degrees");
-    let wind_arrow_rotation = -Math.abs((360 + ((compass-wind_direction))) % 360) + 180;
+    relative_wind = -Math.abs((360 + ((compass - wind_direction))) % 360) + 180;
 
     try {
         wind_label.innerText = `${wind_direction}@${wind_speed}${metric ? "kmh" : "kt"}`;
-        wind_icon.style.transform = `rotate(${wind_arrow_rotation}deg)`;
+        wind_icon.style.transform = `rotate(${relative_wind}deg)`;
     } catch (e) { ignore_type_error(e); }
 });
 
