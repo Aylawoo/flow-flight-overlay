@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.9.2";
+const VERSION = "0.10.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -246,6 +246,7 @@ this.store = {
     */
     overlay_enabled: true,
     font_size: "23",
+    metric_units: false,
     display_icons: true,
     overlay_bottom: false,
     simbrief_enabled: false,
@@ -484,6 +485,7 @@ style(() => {
 });
 
 loop_1hz(() => {
+    metric = this.store.metric_units;
     if (this.store.distance_enabled && this.store.destination != "----") {
         let ac_lat = get("A:PLANE LATITUDE", "degrees");
         let ac_lon = get("A:PLANE LONGITUDE", "degrees");
@@ -508,36 +510,39 @@ loop_1hz(() => {
 
     let groundspeed = 0;
 
-    groundspeed = get("A:GROUND VELOCITY", "knots");
+    groundspeed = get("A:GROUND VELOCITY", metric ? "kph" : "knots");
+
+    if (metric && distance != "---") { distance = Math.round(distance * 1.852); }
 
     // Simple ETE calculation
     let ete = 0;
     let date = new Date(0, 0);
 
-    if (distance > 0 && groundspeed > 10) {
+    if (distance > 1 && groundspeed > 15) {
         ete = distance / groundspeed;
         // This will not work for spans greater than 99h99m
         date.setSeconds(ete === Infinity ? 0 : ete * 60 * 60);
     }
 
     // Update the rest of the labels
-    let airspeed = Math.round(get("A:AIRSPEED INDICATED", "knots"));
+    let airspeed = Math.round(get("A:AIRSPEED INDICATED", metric ? "kph" : "knots"));
     if (this.store.pad_airspeed) { airspeed = pad_number(airspeed, 3, "0"); }
 
-    let vertspeed = Math.round(get("A:VERTICAL SPEED", "ft/min"));
+    let vertspeed = Math.round(get("A:VERTICAL SPEED", metric ? "m/s" : "ft/min"));
     if (this.store.pad_vertspeed) { vertspeed = pad_number(vertspeed, 4, "0"); }
 
     try {
-        if (vertspeed <= -50) {
+        vs_threshold = metric ? 0.25 : 50;
+        if (vertspeed <= -vs_threshold) {
             vs_icon.src = "mdi/icons/arrow-down-circle.svg";
-        } else if (vertspeed >= 50) {
+        } else if (vertspeed >= vs_threshold) {
             vs_icon.src = "mdi/icons/arrow-up-circle.svg";
         } else {
             vs_icon.src = "mdi/icons/minus-circle.svg";
         }
     } catch (e) { ignore_type_error(e); }
 
-    let altitude = Math.round(get("A:PLANE ALTITUDE", "feet"));
+    let altitude = Math.round(get("A:PLANE ALTITUDE", metric ? "meters" : "feet"));
     if (this.store.pad_altitude) { altitude = pad_number(altitude, 5, "0"); }
 
     let heading = Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees"));
@@ -550,15 +555,15 @@ loop_1hz(() => {
 
     try {
         ete_label.innerText = `${date.toTimeString().slice(0, 5)}`;
-        airspeed_label.innerText = `${airspeed}kt`;
-        vertspeed_label.innerText = `${vertspeed}fpm`;
-        altitude_label.innerText = `${altitude}ft`;
+        airspeed_label.innerText = `${airspeed}${metric ? "kmh" : "kt"}`;
+        vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
+        altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
         type_label.innerText = `${this.store.type}`;
         registration_label.innerText = `${this.store.registration}`;
         airline_label.innerText = `${this.store.airline}`;
         origin_label.innerText = `${this.store.origin}`;
         destination_label.innerText = `${this.store.destination}`;
-        distance_label.innerText = `${display_distance}nm`;
+        distance_label.innerText = `${display_distance}${metric ? "km" : "nm"}`;
         rules_label.innerText = `${this.store.rules}`;
         network_label.innerText = `${this.store.network}`;
         heading_label.innerText = `${heading}`;
