@@ -24,6 +24,10 @@ Note: Display with all options enabled may not display correctly on screen resol
   - Distance from current position to selected destination airport
   - Pad numbers with leading 0s to avoid overlay changing size
 - Custom style
+  - Customizable UI scale
+    - From wheel options menu OR by scrolling up/down while hovering over the bar
+    - Size unit is pixels
+    - Limited to 8px minimum, 128px maximum.
   - Toggleable text outline
   - Text color
   - Background color

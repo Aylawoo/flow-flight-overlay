@@ -2,12 +2,12 @@
 	display: inline-flex;
 	visibility: visible;
 	position: relative;
-	height: 55px;
 	margin: 8px auto;
  	align-self: flex-start;
 
 	font-family: sans-serif;
 	text-align: center;
+	pointer-events: all;
 }
 
 #streamer_overlay_vars {
@@ -41,8 +41,8 @@
 	align-self: center;
 	margin-right: 4px;
 	padding: 0px;
-	width: 24px;
-	height: 24px;
+	width: 23px;
+	height: 23px;
 
 	filter: invert(100%);
 }

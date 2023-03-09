@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.9.0";
+const VERSION = "0.9.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -37,6 +37,9 @@ let container = null,
     heading_label = null,
     vs_icon = null;
 
+let label_list = null,
+    icon_list = null;
+
 let enabled_items = [],
     disabled_items = [];
 
@@ -57,6 +60,30 @@ let sb_refresh_timer = Date.now();
 function ignore_type_error(e) {
     // Ignore harmless TypeError on hot reloads when data isn't available fast enough
     if (e instanceof TypeError) {} else { throw e; }
+}
+
+function clamp(number, min, max) {
+    return Math.min(Math.max(number, min), max);
+}
+
+function resize_ui(store) {
+    if (!label_list || !icon_list) { return; }
+
+    label_list.forEach((label) => {
+        label.style.fontSize = store.font_size + "px";
+    });
+    icon_list.forEach((icon) => {
+        icon.style.width = store.font_size + "px";
+        icon.style.height = store.font_size + "px";
+    });
+}
+
+function scroll_handler(store, event) {
+    // handle wheel scroll to change UI size
+    event.deltaY < 0 ? store.font_size += 1 : store.font_size -= 1;
+    store.font_size = clamp(store.font_size, 8, 128);
+    ds_export(store);
+    resize_ui(store);
 }
 
 function set_colors(store) {
@@ -215,6 +242,7 @@ this.store = {
     This allows programmatically setting the `enabled_items` list easily.
     */
     overlay_enabled: true,
+    font_size: "23",
     display_icons: true,
     overlay_bottom: false,
     simbrief_enabled: false,
@@ -254,6 +282,12 @@ ds_import(this.store);
 
 // Take all config options and place them in a `settings` object
 let settings = load_enabled(this.store, enabled_items, disabled_items);
+
+settings.font_size.changed = (value) => {
+    this.store.font_size = clamp(value, 8, 128);
+    ds_export(this.store);
+    resize_ui(this.store);
+};
 
 settings.display_icons.changed = (value) => {
     this.store.display_icons = value;
@@ -573,6 +607,10 @@ html_created((el) => {
     vs_icon = el.querySelector(
         "#streamer_overlay_vertspeed > img"
     );
+    label_list = el.querySelectorAll(".streamer_overlay_itext");
+    icon_list = el.querySelectorAll(".streamer_overlay_mdi");
+
+    el.onmousewheel = (event) => { scroll_handler(this.store, event); }
 
     set_colors(this.store);
     load_views(enabled_items, disabled_items);
