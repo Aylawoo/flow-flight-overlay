@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.11.1";
+const VERSION = "0.11.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -283,7 +283,6 @@ this.store = {
     altitude_enabled: true,
     pad_altitude: true,
     heading_enabled: true,
-    pad_heading: true,
     wind_enabled: false,
     pad_wind: true,
     outline_text: true,
@@ -573,8 +572,9 @@ loop_1hz(() => {
     let altitude = Math.round(get("A:PLANE ALTITUDE", metric ? "meters" : "feet"));
     if (this.store.pad_altitude) { altitude = pad_number(altitude, 5, "0"); }
 
-    let heading = Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees"));
-    if (this.store.pad_heading) { heading = pad_number(heading, 3, "0"); }
+    let heading = pad_number(
+        Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees")), 3, "0"
+    );
 
     try {
         type_label.innerText = `${this.store.type}`;
