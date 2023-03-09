@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.11.6";
+const VERSION = "0.11.7";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -623,7 +623,7 @@ loop_1hz(() => {
         ete_label.innerText = `${date.toTimeString().slice(0, 5)}`;
         rules_label.innerText = `${this.store.rules}`;
         network_label.innerText = `${this.store.network}`;
-        airspeed_label.innerText = `${airspeed}${metric ? "kmh" : "kt"}`;
+        airspeed_label.innerText = `${airspeed}${metric ? "km/h" : "kt"}`;
         vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
         altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
         heading_label.innerText = `${heading}`;
