@@ -617,6 +617,7 @@ html_created((el) => {
 
     el.onmousewheel = (event) => { scroll_handler(this.store, event); }
 
+    resize_ui(this.store);
     set_colors(this.store);
     load_views(enabled_items, disabled_items);
     icon_toggle(this.store.display_icons);
