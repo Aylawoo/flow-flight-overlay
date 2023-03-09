@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.8.5";
+const VERSION = "0.8.6";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -128,6 +128,8 @@ function define_option(storage, setting_name, input_type, ui_label, enabled, dis
 function load_enabled(store, enabled, disabled) {
     let settings = {};
     for (let item in store) {
+        if (item == "overlay_enabled") { continue; }
+
         let enable_switch = typeof store[item] === "boolean";
         let name = item.split("_").join(" ").toUpperCase();
 
@@ -251,12 +253,6 @@ ds_import(this.store);
 
 // Take all config options and place them in a `settings` object
 let settings = load_enabled(this.store, enabled_items, disabled_items);
-
-settings.overlay_enabled.changed = (value) => {
-    this.store.overlay_enabled = value;
-    ds_export(this.store);
-    container.style.visibility = value ? "visible" : "hidden";
-};
 
 settings.display_icons.changed = (value) => {
     this.store.display_icons = value;
