@@ -370,6 +370,12 @@ settings.ete_enabled.changed = (value) => {
     toggle_element("ete", value);
 };
 
+settings.distance_enabled.changed = (value) => {
+    this.store.distance_enabled = value;
+    ds_export(this.store);
+    toggle_element("distance", value);
+};
+
 settings.airspeed_enabled.changed = (value) => {
     this.store.airspeed_enabled = value;
     ds_export(this.store);
@@ -394,11 +400,6 @@ settings.heading_enabled.changed = (value) => {
     toggle_element("heading", value);
 };
 
-settings.distance_enabled.changed = (value) => {
-    this.store.distance_enabled = value;
-    ds_export(this.store);
-    toggle_element("distance", value);
-};
 
 settings.outline_text.changed = (value) => {
     this.store.outline_text = value;
