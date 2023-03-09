@@ -46,6 +46,7 @@ let enabled_items = [],
     disabled_items = [];
 
 // Global flight variables
+metric = false;
 let target_airport = null;
 let ap_lat = null;
 let ap_lon = null;
@@ -506,6 +507,7 @@ style(() => {
 
 loop_1hz(() => {
     metric = this.store.metric_units;
+
     if (this.store.distance_enabled && this.store.destination != "----") {
         let ac_lat = get("A:PLANE LATITUDE", "degrees");
         let ac_lon = get("A:PLANE LONGITUDE", "degrees");
@@ -591,6 +593,8 @@ loop_1hz(() => {
 });
 
 loop_15hz(() => {
+    metric = this.store.metric_units;
+
     let wind_direction = Math.round(get("A:AMBIENT WIND DIRECTION", "degrees"));
     let wind_speed = Math.round(get("A:AMBIENT WIND VELOCITY", metric ? "kph" : "knots"));
     let compass = get("A:PLANE HEADING DEGREES GYRO", "degrees");
