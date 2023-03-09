@@ -21,6 +21,8 @@ Note: Display with all options enabled may not display correctly on screen resol
   - Current vertical speed
   - Current altitude
   - Current heading
+  - Wind direction/speed
+    - Arrow will rotate to show relative wind direction
   - Distance from current position to selected destination airport
   - Pad numbers with leading 0s to avoid overlay changing size
 - Custom style
