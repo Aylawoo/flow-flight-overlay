@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.8.6";
+const VERSION = "0.9.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -34,7 +34,8 @@ let container = null,
     airspeed_label = null,
     vertspeed_label = null,
     altitude_label = null,
-    heading_label = null;
+    heading_label = null,
+    vs_icon = null;
 
 let enabled_items = [],
     disabled_items = [];
@@ -488,6 +489,13 @@ loop_1hz(() => {
 
     let vertspeed = Math.round(get("A:VERTICAL SPEED", "ft/min"));
     if (this.store.pad_vertspeed) { vertspeed = pad_number(vertspeed, 4, "0"); }
+    if (vertspeed <= -50) {
+        vs_icon.src = "mdi/icons/arrow-down-circle.svg";
+    } else if (vertspeed >= 50) {
+        vs_icon.src = "mdi/icons/arrow-up-circle.svg";
+    } else {
+        vs_icon.src = "mdi/icons/minus-circle.svg";
+    }
 
     let altitude = Math.round(get("A:PLANE ALTITUDE", "feet"));
     if (this.store.pad_altitude) { altitude = pad_number(altitude, 5, "0"); }
@@ -561,6 +569,9 @@ html_created((el) => {
     );
     heading_label = el.querySelector(
       "#streamer_overlay_heading .streamer_overlay_itext"
+    );
+    vs_icon = el.querySelector(
+        "#streamer_overlay_vertspeed > img"
     );
 
     set_colors(this.store);
