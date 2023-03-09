@@ -38,6 +38,7 @@ let container = null,
     vs_icon = null;
 
 let label_list = null,
+    itext_list = null,
     icon_list = null;
 
 let enabled_items = [],
@@ -67,10 +68,13 @@ function clamp(number, min, max) {
 }
 
 function resize_ui(store) {
-    if (!label_list || !icon_list) { return; }
+    if (!itext_list || !icon_list || !label_list) { return; }
 
     label_list.forEach((label) => {
-        label.style.fontSize = store.font_size + "px";
+        label.style.fontSize = Math.round(store.font_size * 0.75) + "px";
+    });
+    itext_list.forEach((itext) => {
+        itext.style.fontSize = store.font_size + "px";
     });
     icon_list.forEach((icon) => {
         icon.style.width = store.font_size + "px";
@@ -90,7 +94,8 @@ function set_colors(store) {
     // Set custom element colors
     let var_list = document.querySelector("#streamer_overlay_vars");
     let items = document.querySelectorAll("#streamer_overlay_vars > span");
-    let labels = document.querySelectorAll(".streamer_overlay_itext");
+    let labels = document.querySelectorAll(".streamer_overlay_label");
+    let itexts = document.querySelectorAll(".streamer_overlay_itext");
 
     var_list.style.backgroundColor = store.color_wrapper;
 
@@ -98,9 +103,11 @@ function set_colors(store) {
         item.style.borderColor = store.color_outline;
         item.style.backgroundColor = store.color_background;
     });
-
     labels.forEach((label) => {
         label.style.color = store.color_text;
+    });
+    itexts.forEach((itext) => {
+        itext.style.color = store.color_text;
     });
 }
 
@@ -604,7 +611,8 @@ html_created((el) => {
     vs_icon = el.querySelector(
         "#streamer_overlay_vertspeed > img"
     );
-    label_list = el.querySelectorAll(".streamer_overlay_itext");
+    label_list = el.querySelectorAll(".streamer_overlay_label");
+    itext_list = el.querySelectorAll(".streamer_overlay_itext");
     icon_list = el.querySelectorAll(".streamer_overlay_mdi");
 
     el.onmousewheel = (event) => { scroll_handler(this.store, event); }

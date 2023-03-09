@@ -49,9 +49,9 @@
 
 .streamer_overlay_itext {
 	margin: 0px;
-	margin-top: -1px;
-	width: 100%;
-	height: 100%;
+	margin-top: -0.1em;
+
+	align-self: center;
 
 	color: #FFFFFFFF;
 
@@ -61,10 +61,14 @@
 
 .streamer_overlay_label {
 	display: none;
-	margin-top: -1px;
-	margin-right: 4px;
-	width: 100%;
-	height: 100%;
+	margin: auto;
+
+	align-self: center;
+
+	margin-left: 2px;
+	margin-right: 2px;
+
+	font-size: 17.2px;
 }
 
 .streamer_overlay_outline {
