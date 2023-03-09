@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.11.0";
+const VERSION = "0.11.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -36,7 +36,8 @@ let container = null,
     vs_icon = null,
     altitude_label = null,
     heading_label = null,
-    wind_label = null;
+    wind_label = null,
+    wind_icon = null;
 
 let label_list = null,
     itext_list = null,
