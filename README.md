@@ -30,6 +30,8 @@ Note: Display with all options enabled may not display correctly on screen resol
   - Item background color
   - Item outline color
   - Supports all HTML color formats (#000000, color name, rgb(), rgba(), etc)
+  - Icons or text for info labels
+    - V/S icon will change between flat, up, and down arrows.
 - Import data from SimBrief
   - Import by setting SimBrief username and SIMBRIEF ENABLED in settings
   - Download by scrolling up or down over the widget on the wheel
