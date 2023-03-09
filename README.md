@@ -28,7 +28,7 @@ Note: Display with all options enabled may not display correctly on screen resol
   - Customizable UI scale
     - From wheel options menu OR by scrolling up/down while hovering over the bar
     - Size unit is pixels
-    - Limited to 8px minimum, 128px maximum.
+    - Limited to 8px minimum, 128px maximum
   - Toggleable text outline
   - Text color
   - Background color
@@ -36,11 +36,11 @@ Note: Display with all options enabled may not display correctly on screen resol
   - Item outline color
   - Supports all HTML color formats (#000000, color name, rgb(), rgba(), etc)
   - Icons or text for info labels
-    - V/S icon will change between flat, up, and down arrows.
+    - V/S icon will change between flat, up, and down arrows
 - Import data from SimBrief
   - Import by setting SimBrief username and SIMBRIEF ENABLED in settings
   - Download by scrolling up or down over the widget on the wheel
-    - Limited to once per 20s to avoid excess requests. Subject to change.
+    - Limited to once per 20s to avoid excess requests. Subject to change
   - Aircraft type
   - Aircraft registration
   - Origin airport
