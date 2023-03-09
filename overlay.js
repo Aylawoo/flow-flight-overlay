@@ -575,6 +575,7 @@ loop_1hz(() => {
 
     // Update the rest of the labels
     let airspeed = Math.round(get("A:AIRSPEED INDICATED", metric ? "kph" : "knots"));
+    if (airspeed < 5) { airspeed = 0; }
     if (this.store.pad_airspeed) { airspeed = pad_number(airspeed, 3, "0"); }
 
     let vertspeed = Math.round(get("A:VERTICAL SPEED", metric ? "m/s" : "ft/min"));
