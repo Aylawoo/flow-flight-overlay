@@ -110,9 +110,7 @@ function load_views(enabled, disabled) {
 
         try {
             elem.style.display = "none";
-        } catch (e) {
-            ignore_type_error(e);
-        }
+        } catch (e) { ignore_type_error(e); }
     }
 
     for (let item of enabled) {
@@ -120,9 +118,7 @@ function load_views(enabled, disabled) {
 
         try {
             elem.style.display = "inline-flex";
-        } catch (e) {
-            ignore_type_error(e);
-        }
+        } catch (e) { ignore_type_error(e); }
     }
 }
 
@@ -559,9 +555,7 @@ loop_1hz(() => {
         rules_label.innerText = `${this.store.rules}`;
         network_label.innerText = `${this.store.network}`;
         heading_label.innerText = `${heading}`;
-    } catch (e) {
-        ignore_type_error(e);
-    }
+    } catch (e) { ignore_type_error(e); }
 });
 
 html_created((el) => {
