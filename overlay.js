@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.12.1";
+const VERSION = "0.12.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -316,6 +316,7 @@ this.store = {
     heading_enabled: true,
     wind_enabled: false,
     oat_enabled: false,
+    oat_fahrenheit: false,
     font_size: 23,
     overlay_bottom: false,
     display_icons: true,
@@ -635,7 +636,7 @@ loop_1hz(() => {
         }
     } catch (e) { ignore_type_error(e); }
 
-    if (!metric) { oat = Math.round((oat * 1.8) + 32); }
+    if (this.store.oat_fahrenheit) { oat = Math.round((oat * 1.8) + 32); }
 
     try {
         type_label.innerText = `${this.store.type}`;
@@ -651,7 +652,7 @@ loop_1hz(() => {
         vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
         altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
         heading_label.innerText = `${heading}`;
-        oat_label.innerText = `${oat}${metric ? "c" : "f"}`;
+        oat_label.innerText = `${oat}${this.store.oat_fahrenheit ? "f" : "c"}`;
     } catch (e) { ignore_type_error(e); }
 });
 

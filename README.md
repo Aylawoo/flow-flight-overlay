@@ -26,6 +26,7 @@ Note: Display with all options enabled may not display correctly on screen resol
     - Arrow will rotate to show relative wind direction
   - Outside air temperature
     - Icon changes when below freezing or above 37c/98.6f
+    - Toggle between Fahrenheit/Celsius separate to "USE METRIC" setting
   - Pad numbers with leading 0s to avoid overlay changing size
 - Custom style
   - Imperial or metric units
