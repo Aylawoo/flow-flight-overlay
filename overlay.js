@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.11.7";
+const VERSION = "0.12.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -37,7 +37,8 @@ let container = null,
     altitude_label = null,
     heading_label = null,
     wind_label = null,
-    wind_icon = null;
+    wind_icon = null,
+    oat_label = null;
 
 let label_list = null,
     itext_list = null,
@@ -313,6 +314,7 @@ this.store = {
     pad_altitude: true,
     heading_enabled: true,
     wind_enabled: false,
+    oat_enabled: false,
     font_size: 23,
     overlay_bottom: false,
     display_icons: true,
@@ -417,6 +419,12 @@ settings.wind_enabled.changed = (value) => {
     this.store.wind_enabled = value;
     ds_export(this.store);
     toggle_element("wind", value);
+};
+
+settings.oat_enabled.changed = (value) => {
+    this.store.oat_enabled = value;
+    ds_export(this.store);
+    toggle_element("oat", value);
 };
 
 settings.font_size.changed = (value) => {
@@ -614,6 +622,8 @@ loop_1hz(() => {
         date.setSeconds(ete === Infinity ? 0 : ete * 3600);
     }
 
+    let oat = Math.round(get("A:AMBIENT TEMPERATURE", "celsius"));
+
     try {
         type_label.innerText = `${this.store.type}`;
         registration_label.innerText = `${this.store.registration}`;
@@ -628,6 +638,7 @@ loop_1hz(() => {
         vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
         altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
         heading_label.innerText = `${heading}`;
+        oat_label.innerText = `${oat}c`;
     } catch (e) { ignore_type_error(e); }
 });
 
@@ -696,6 +707,9 @@ html_created((el) => {
     );
     wind_icon = el.querySelector(
         "#streamer_overlay_wind > img"
+    );
+    oat_label = el.querySelector(
+        "#streamer_overlay_oat .streamer_overlay_itext"
     );
 
     label_list = el.querySelectorAll(".streamer_overlay_label");
