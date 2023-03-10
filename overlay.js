@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.12.0";
+const VERSION = "0.12.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -38,7 +38,8 @@ let container = null,
     heading_label = null,
     wind_label = null,
     wind_icon = null,
-    oat_label = null;
+    oat_label = null,
+    oat_icon = null;
 
 let label_list = null,
     itext_list = null,
@@ -625,6 +626,18 @@ loop_1hz(() => {
     let oat = Math.round(get("A:AMBIENT TEMPERATURE", "celsius"));
 
     try {
+        if (oat <= 0) {
+            oat_icon.src = "mdi/icons/snowflake-alert.svg";
+        } else if (oat >= 37) {
+            oat_icon.src = "mdi/icons/fire-alert.svg";
+        } else {
+            oat_icon.src = "mdi/icons/thermometer-lines.svg";
+        }
+    } catch (e) { ignore_type_error(e); }
+
+    if (!metric) { oat = Math.round((oat * 1.8) + 32); }
+
+    try {
         type_label.innerText = `${this.store.type}`;
         registration_label.innerText = `${this.store.registration}`;
         airline_label.innerText = `${this.store.airline}`;
@@ -638,7 +651,7 @@ loop_1hz(() => {
         vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
         altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
         heading_label.innerText = `${heading}`;
-        oat_label.innerText = `${oat}c`;
+        oat_label.innerText = `${oat}${metric ? "c" : "f"}`;
     } catch (e) { ignore_type_error(e); }
 });
 
@@ -710,6 +723,9 @@ html_created((el) => {
     );
     oat_label = el.querySelector(
         "#streamer_overlay_oat .streamer_overlay_itext"
+    );
+    oat_icon = el.querySelector(
+        "#streamer_overlay_oat > img"
     );
 
     label_list = el.querySelectorAll(".streamer_overlay_label");
