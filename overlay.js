@@ -11,7 +11,7 @@ let twitch_send = this.$api.twitch.send_message,
     twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
-const VERSION = "0.13.0";
+const VERSION = "0.13.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -504,17 +504,21 @@ state(() => {
 });
 
 info(() => {
-    if (this.store.overlay_enabled) {
+    if (!this.store.overlay_enabled) {
+        return "Overlay disabled";
+    } else {
         // Display countdown for SimBrief refresh if applicable
         if (this.store.simbrief_enabled) {
+            if (this.store.simbrief_username === "USERNAME") {
+                return "Please set SimBrief username";
+            }
+
             let now = Date.now();
             let time = 20 - Math.round((now - sb_refresh_timer) / 1000);
-
             return time > 0 ? `SimBrief available in ${time}s` : "Overlay enabled";
         }
         return "Overlay enabled";
     }
-    return "Overlay disabled";
 });
 
 style(() => {
