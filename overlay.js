@@ -625,7 +625,7 @@ loop_15hz(() => {
     relative_wind = -Math.abs((360 + ((compass - wind_direction))) % 360) + 180;
 
     try {
-        wind_label.innerText = `${wind_direction}@${wind_speed}${metric ? "kmh" : "kt"}`;
+        wind_label.innerText = `${wind_direction}@${wind_speed}${metric ? "km/h" : "kt"}`;
         wind_icon.style.transform = `rotate(${relative_wind}deg)`;
     } catch (e) { ignore_type_error(e); }
 });
