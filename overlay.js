@@ -28,7 +28,6 @@ let container = null,
     origin_label = null,
     destination_label = null,
     distance_label = null,
-    ete_label = null,
     rules_label = null,
     network_label = null,
     airspeed_label = null,
@@ -242,21 +241,6 @@ function calc_distance(lat_a, lon_a, lat_b, lon_b) {
     return (radius * step_two) / 1.852;
 }
 
-function calc_bearing(lat_a, lon_a, lat_b, lon_b) {
-    // Calculate the bearing between two lat/long pairs
-    lat_a = deg_to_rad(lat_a);
-    lon_a = deg_to_rad(lon_a);
-    lat_b = deg_to_rad(lat_b);
-    lon_b = deg_to_rad(lon_b);
-
-    let step_one = Math.sin(lon_b - lon_a) * Math.cos(lat_b);
-    let step_two =
-        Math.cos(lat_a) * Math.sin(lat_b) -
-        Math.sin(lat_a) * Math.cos(lat_b) * Math.cos(lon_b - lon_a);
-
-    return (rad_to_deg(Math.atan2(step_one, step_two)) + 360) % 360;
-}
-
 function pad_number(number, pad_amount, pad_char) {
     if (Math.sign(number) >= 0) {
         return number.toString().padStart(pad_amount, pad_char);
@@ -302,7 +286,6 @@ this.store = {
     destination: "----",
     distance_enabled: true,
     pad_distance: true,
-    ete_enabled: false,
     rules_enabled: false,
     rules: "VFR",
     network_enabled: false,
@@ -372,12 +355,6 @@ settings.distance_enabled.changed = (value) => {
     this.store.distance_enabled = value;
     ds_export(this.store);
     toggle_element("distance", value);
-};
-
-settings.ete_enabled.changed = (value) => {
-    this.store.ete_enabled = value;
-    ds_export(this.store);
-    toggle_element("ete", value);
 };
 
 settings.rules_enabled.changed = (value) => {
@@ -571,12 +548,7 @@ loop_1hz(() => {
     // Don't calculate anything if the user is in slew mode
     if (get("A:IS SLEW ACTIVE", "number")) { return; };
 
-    let groundspeed = 0;
-
-    groundspeed = get("A:GROUND VELOCITY", metric ? "kph" : "knots");
-
     if (metric && distance != "---") { distance = Math.round(distance * 1.852); }
-
 
     let display_distance = distance
     if (distance != "---" && this.store.pad_distance) {
@@ -609,21 +581,6 @@ loop_1hz(() => {
         Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees")), 3, "0"
     );
 
-    // Simple ETE calculation
-    let ete = 0;
-    let date = new Date(0, 0);
-
-    if (distance > 1 && groundspeed > 15 && (ap_lat != null && ap_lon != null)) {
-        let bearing = calc_bearing(ac_lat, ac_lon, ap_lat, ap_lon);
-        let theta = Math.abs((bearing - heading) - Math.atan2(
-                wind_speed * Math.sin(relative_wind - bearing),
-                groundspeed + (relative_wind * Math.cos(relative_wind - bearing))
-            )
-        );
-        ete = distance / (groundspeed * Math.cos(deg_to_rad(theta)));
-        date.setSeconds(ete === Infinity ? 0 : ete * 3600);
-    }
-
     let oat = Math.round(get("A:AMBIENT TEMPERATURE", "celsius"));
 
     try {
@@ -645,7 +602,6 @@ loop_1hz(() => {
         origin_label.innerText = `${this.store.origin}`;
         destination_label.innerText = `${this.store.destination}`;
         distance_label.innerText = `${display_distance}${metric ? "km" : "nm"}`;
-        ete_label.innerText = `${date.toTimeString().slice(0, 5)}`;
         rules_label.innerText = `${this.store.rules}`;
         network_label.innerText = `${this.store.network}`;
         airspeed_label.innerText = `${airspeed}${metric ? "km/h" : "kt"}`;
@@ -691,9 +647,6 @@ html_created((el) => {
     );
     distance_label = el.querySelector(
       "#streamer_overlay_distance .streamer_overlay_itext"
-    );
-    ete_label = el.querySelector(
-      "#streamer_overlay_ete .streamer_overlay_itext"
     );
     rules_label = el.querySelector(
       "#streamer_overlay_rules .streamer_overlay_itext"
