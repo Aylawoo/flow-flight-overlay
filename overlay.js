@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.13.1";
+const VERSION = "0.13.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -19,7 +19,7 @@ let container = null,
     var_list = null,
     type_label = null,
     registration_label = null,
-    airline_label = null,
+    iata_label = null,
     origin_label = null,
     destination_label = null,
     distance_label = null,
@@ -268,8 +268,8 @@ this.store = {
     type: "C172",
     registration_enabled: false,
     registration: "N172SP",
-    airline_enabled: false,
-    airline: "My Airline",
+    iata_enabled: false,
+    iata: "My Airline",
     origin_enabled: true,
     origin: "----",
     destination_enabled: true,
@@ -317,10 +317,10 @@ settings.registration_enabled.changed = (value) => {
     toggle_element("registration", value);
 };
 
-settings.airline_enabled.changed = (value) => {
-    this.store.airline_enabled = value;
+settings.iata_enabled.changed = (value) => {
+    this.store.iata_enabled = value;
     ds_export(this.store);
-    toggle_element("airline", value);
+    toggle_element("iata", value);
 };
 
 settings.origin_enabled.changed = (value) => {
@@ -484,7 +484,7 @@ scroll((event) => {
             this.store.registration = data.aircraft.reg;
             this.store.origin = data.origin.icao_code;
             this.store.destination = data.destination.icao_code;
-            this.store.airline = `${data.general.icao_airline} - ${data.atc.callsign}`;
+            this.store.iata = `${data.general.icao_airline} - ${data.atc.callsign}`;
             ds_export(this.store);
         });
 });
@@ -592,7 +592,7 @@ loop_1hz(() => {
     try {
         type_label.innerText = this.store.type;
         registration_label.innerText = this.store.registration;
-        airline_label.innerText = this.store.airline;
+        iata_label.innerText = this.store.iata;
         origin_label.innerText = this.store.origin;
         destination_label.innerText = this.store.destination;
         distance_label.innerText = `${display_distance}${metric ? "km" : "nm"}`;
@@ -630,8 +630,8 @@ html_created((el) => {
     registration_label = el.querySelector(
       "#streamer_overlay_registration .streamer_overlay_itext"
     );
-    airline_label = el.querySelector(
-      "#streamer_overlay_airline .streamer_overlay_itext"
+    iata_label = el.querySelector(
+      "#streamer_overlay_iata .streamer_overlay_itext"
     );
     origin_label = el.querySelector(
       "#streamer_overlay_origin .streamer_overlay_itext"
