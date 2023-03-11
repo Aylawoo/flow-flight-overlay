@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.13.2";
+const VERSION = "0.13.3";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -523,7 +523,7 @@ loop_1hz(() => {
     let ap_lat = null;
     let ap_lon = null;
 
-    if (this.store.destination != "----") {
+    if (this.store.distance_enabled && this.store.destination != "----") {
         if (target_airport == null) {
             get_airport("streamer-overlay-lookup", this.store.destination, (results) => {
                 target_airport = typeof results[0] != undefined ? results[0] : null;
