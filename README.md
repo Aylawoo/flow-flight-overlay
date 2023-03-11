@@ -15,7 +15,6 @@ Note: Display with all options enabled may not display correctly on screen resol
   - Origin airport
   - Destination airport
   - Distance from current position to selected destination airport
-  - ETE (Calculation WIP)
   - Flight rules
   - Multiplayer network
   - Current indicated airspeed
