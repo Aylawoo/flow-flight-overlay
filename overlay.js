@@ -1,14 +1,9 @@
 // ---- API function shorthands
 let get = this.$api.variables.get,
-    get_server = this.$api.community.get_server,
-    get_metar = this.$api.weather.find_metar_by_icao,
     get_airport = this.$api.airports.find_airport_by_icao;
 
 let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
-
-let twitch_send = this.$api.twitch.send_message,
-    twitch_connected = this.$api.twitch.is_connected;
 
 // ---- Script variables
 const VERSION = "0.13.1";
@@ -215,11 +210,6 @@ function load_enabled(store, enabled, disabled) {
 function deg_to_rad(number) {
     // Convert degrees to radians
     return number * (Math.PI / 180);
-}
-
-function rad_to_deg(number) {
-    // Convert radians to degrees
-    return number * (180 / Math.PI);
 }
 
 function calc_distance(lat_a, lon_a, lat_b, lon_b) {
