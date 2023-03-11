@@ -590,18 +590,18 @@ loop_1hz(() => {
     if (this.store.oat_fahrenheit) { oat = Math.round((oat * 1.8) + 32); }
 
     try {
-        type_label.innerText = `${this.store.type}`;
-        registration_label.innerText = `${this.store.registration}`;
-        airline_label.innerText = `${this.store.airline}`;
-        origin_label.innerText = `${this.store.origin}`;
-        destination_label.innerText = `${this.store.destination}`;
+        type_label.innerText = this.store.type;
+        registration_label.innerText = this.store.registration;
+        airline_label.innerText = this.store.airline;
+        origin_label.innerText = this.store.origin;
+        destination_label.innerText = this.store.destination;
         distance_label.innerText = `${display_distance}${metric ? "km" : "nm"}`;
-        rules_label.innerText = `${this.store.rules}`;
-        network_label.innerText = `${this.store.network}`;
+        rules_label.innerText = this.store.rules;
+        network_label.innerText = this.store.network;
         airspeed_label.innerText = `${airspeed}${metric ? "km/h" : "kt"}`;
         vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
         altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
-        heading_label.innerText = `${heading}`;
+        heading_label.innerText = heading;
         oat_label.innerText = `${oat}${this.store.oat_fahrenheit ? "f" : "c"}`;
     } catch (e) { ignore_type_error(e); }
 });
