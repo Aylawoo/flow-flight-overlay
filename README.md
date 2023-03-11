@@ -27,6 +27,7 @@ Note: Display with all options enabled may not display correctly on screen resol
     - Icon changes when below freezing or above 37c/98.6f
     - Toggle between Fahrenheit/Celsius separate to "USE METRIC" setting
   - Pad numbers with leading 0s to avoid overlay changing size
+  - Custom field with changeable icon using mdi-icons
 - Custom style
   - Imperial or metric units
   - Customizable UI scale

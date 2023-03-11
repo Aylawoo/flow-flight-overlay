@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.13.3";
+const VERSION = "0.13.4";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -33,7 +33,9 @@ let container = null,
     wind_label = null,
     wind_icon = null,
     oat_label = null,
-    oat_icon = null;
+    oat_icon = null,
+    custom_label = null,
+    custom_icon = null;
 
 let label_list = null,
     itext_list = null,
@@ -290,6 +292,9 @@ this.store = {
     wind_enabled: false,
     oat_enabled: false,
     oat_fahrenheit: false,
+    custom_enabled: false,
+    custom_icon: "note-text",
+    custom: "Change me!",
     font_size: 23,
     overlay_bottom: false,
     display_icons: true,
@@ -395,6 +400,18 @@ settings.oat_enabled.changed = (value) => {
     ds_export(this.store);
     toggle_element("oat", value);
 };
+
+settings.custom_enabled.changed = (value) => {
+    this.store.custom_enabled = value;
+    ds_export(this.store);
+    toggle_element("custom", value);
+};
+
+settings.custom_icon.changed = (value) => {
+    this.store.custom_icon = value;
+    ds_export(this.store);
+    custom_icon.src = `mdi/icons/${value}.svg`;
+}
 
 settings.font_size.changed = (value) => {
     this.store.font_size = clamp(value, 8, 128);
@@ -603,6 +620,7 @@ loop_1hz(() => {
         altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
         heading_label.innerText = heading;
         oat_label.innerText = `${oat}${this.store.oat_fahrenheit ? "f" : "c"}`;
+        custom_label.innerText = this.store.custom;
     } catch (e) { ignore_type_error(e); }
 });
 
@@ -675,6 +693,12 @@ html_created((el) => {
     oat_icon = el.querySelector(
         "#streamer_overlay_oat > img"
     );
+    custom_label = el.querySelector(
+        "#streamer_overlay_custom .streamer_overlay_itext"
+    );
+    custom_icon = el.querySelector(
+        "#streamer_overlay_custom > img"
+    );
 
     label_list = el.querySelectorAll(".streamer_overlay_label");
     itext_list = el.querySelectorAll(".streamer_overlay_itext");
@@ -686,4 +710,5 @@ html_created((el) => {
     set_styles(this.store);
     load_views(enabled_items, disabled_items);
     icon_toggle(this.store.display_icons);
+    custom_icon.src = `mdi/icons/${this.store.custom_icon}.svg`;
 });
