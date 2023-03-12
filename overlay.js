@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.13.8";
+const VERSION = "0.13.9";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -155,15 +155,15 @@ function load_views(enabled, disabled) {
     }
 }
 
-function define_option(storage, setting_name, input_type, ui_label, enabled, disabled) {
+function define_option(store, setting_name, input_type, ui_label, enabled, disabled) {
     // Define setting options for Flow
     return {
         type: input_type,
         label: ui_label,
-        value: storage[setting_name],
+        value: store[setting_name],
 
         changed: (value) => {
-            storage[setting_name] = value;
+            store[setting_name] = value;
 
             if (setting_name.includes("_enabled") && setting_name != "simbrief_enabled") {
                 let item_name = setting_name.split("_")[0];
@@ -171,8 +171,8 @@ function define_option(storage, setting_name, input_type, ui_label, enabled, dis
                 toggle_lists(item_name, value, enabled, disabled);
             }
 
-            set_styles(storage);
-            ds_export(storage);
+            set_styles(store);
+            ds_export(store);
         }
     };
 }
