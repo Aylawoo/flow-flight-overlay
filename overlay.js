@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.13.6";
+const VERSION = "0.13.7";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -127,6 +127,16 @@ function set_styles(store) {
     });
 }
 
+function toggle_lists(item, value, enabled, disabled) {
+    if (value) {
+        enabled.push(item);
+        disabled.splice(disabled.indexOf(item), 1);
+    } else {
+        disabled.push(item);
+        enabled.splice(enabled.indexOf(item), 1);
+    }
+}
+
 function load_views(enabled, disabled) {
     for (let item of disabled) {
         let elem = document.querySelector(`#streamer_overlay_${item}`);
@@ -155,16 +165,10 @@ function define_option(storage, setting_name, input_type, ui_label, enabled, dis
         changed: (value) => {
             storage[setting_name] = value;
 
-            if (setting_name.includes("_enabled") && !(setting_name == "simbrief_enabled")) {
+            if (setting_name.includes("_enabled") && setting_name != "simbrief_enabled") {
                 let item_name = setting_name.split("_")[0];
 
-                if (value) {
-                    enabled.push(item_name);
-                    disabled.splice(disabled.indexOf(item_name), 1);
-                } else {
-                    disabled.push(item_name);
-                    enabled.splice(enabled.indexOf(item_name), 1);
-                }
+                toggle_lists(item_name, value, enabled, disabled);
             }
 
             ds_export(storage);
@@ -312,30 +316,35 @@ settings.type_enabled.changed = (value) => {
     this.store.type_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_type", value);
+    toggle_lists("type", value, enabled_items, disabled_items);
 };
 
 settings.registration_enabled.changed = (value) => {
     this.store.registration_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_registration", value);
+    toggle_lists("registration", value, enabled_items, disabled_items);
 };
 
 settings.iata_enabled.changed = (value) => {
     this.store.iata_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_iata", value);
+    toggle_lists("iata", value, enabled_items, disabled_items);
 };
 
 settings.origin_enabled.changed = (value) => {
     this.store.origin_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_origin", value);
+    toggle_lists("origin", value, enabled_items, disabled_items);
 };
 
 settings.destination_enabled.changed = (value) => {
     this.store.destination_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_destination", value);
+    toggle_lists("destination", value, enabled_items, disabled_items);
 };
 
 settings.destination.changed = (value) => {
@@ -348,18 +357,21 @@ settings.distance_enabled.changed = (value) => {
     this.store.distance_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_distance", value);
+    toggle_lists("distance", value, enabled_items, disabled_items);
 };
 
 settings.rules_enabled.changed = (value) => {
     this.store.rules_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_rules", value);
+    toggle_lists("rules", value, enabled_items, disabled_items);
 };
 
 settings.network_enabled.changed = (value) => {
     this.store.network_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_network", value);
+    toggle_lists("network", value, enabled_items, disabled_items);
 };
 
 
@@ -367,36 +379,42 @@ settings.airspeed_enabled.changed = (value) => {
     this.store.airspeed_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_airspeed", value);
+    toggle_lists("airspeed", value, enabled_items, disabled_items);
 };
 
 settings.vertspeed_enabled.changed = (value) => {
     this.store.vertspeed_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_vertspeed", value);
+    toggle_lists("vertspeed", value, enabled_items, disabled_items);
 };
 
 settings.altitude_enabled.changed = (value) => {
     this.store.altitude_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_altitude", value);
+    toggle_lists("altitude", value, enabled_items, disabled_items);
 };
 
 settings.heading_enabled.changed = (value) => {
     this.store.heading_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_heading", value);
+    toggle_lists("heading", value, enabled_items, disabled_items);
 };
 
 settings.wind_enabled.changed = (value) => {
     this.store.wind_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_wind", value);
+    toggle_lists("wind", value, enabled_items, disabled_items);
 };
 
 settings.oat_enabled.changed = (value) => {
     this.store.oat_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_oat", value);
+    toggle_lists("oat", value, enabled_items, disabled_items);
 };
 
 settings.custom_enabled.changed = (value) => {
@@ -404,6 +422,7 @@ settings.custom_enabled.changed = (value) => {
     ds_export(this.store);
     toggle_element("#streamer_overlay_custom", value);
     toggle_element("#streamer_overlay_custom > .streamer_overlay_label", value);
+    toggle_lists("custom", value, enabled_items, disabled_items);
 };
 
 settings.custom_icon.changed = (value) => {
