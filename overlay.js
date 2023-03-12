@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.13.5";
+const VERSION = "0.13.6";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -240,7 +240,7 @@ function pad_number(number, pad_amount, pad_char) {
 }
 
 function toggle_element(elem, value) {
-    elem = document.querySelector(`#streamer_overlay_${elem}`);
+    elem = document.querySelector(elem);
     elem.style.display = value ? "inline-flex" : "none";
 }
 
@@ -311,31 +311,31 @@ let settings = load_enabled(this.store, enabled_items, disabled_items);
 settings.type_enabled.changed = (value) => {
     this.store.type_enabled = value;
     ds_export(this.store);
-    toggle_element("type", value);
+    toggle_element("#streamer_overlay_type", value);
 };
 
 settings.registration_enabled.changed = (value) => {
     this.store.registration_enabled = value;
     ds_export(this.store);
-    toggle_element("registration", value);
+    toggle_element("#streamer_overlay_registration", value);
 };
 
 settings.iata_enabled.changed = (value) => {
     this.store.iata_enabled = value;
     ds_export(this.store);
-    toggle_element("iata", value);
+    toggle_element("#streamer_overlay_iata", value);
 };
 
 settings.origin_enabled.changed = (value) => {
     this.store.origin_enabled = value;
     ds_export(this.store);
-    toggle_element("origin", value);
+    toggle_element("#streamer_overlay_origin", value);
 };
 
 settings.destination_enabled.changed = (value) => {
     this.store.destination_enabled = value;
     ds_export(this.store);
-    toggle_element("destination", value);
+    toggle_element("#streamer_overlay_destination", value);
 };
 
 settings.destination.changed = (value) => {
@@ -347,62 +347,62 @@ settings.destination.changed = (value) => {
 settings.distance_enabled.changed = (value) => {
     this.store.distance_enabled = value;
     ds_export(this.store);
-    toggle_element("distance", value);
+    toggle_element("#streamer_overlay_distance", value);
 };
 
 settings.rules_enabled.changed = (value) => {
     this.store.rules_enabled = value;
     ds_export(this.store);
-    toggle_element("rules", value);
+    toggle_element("#streamer_overlay_rules", value);
 };
 
 settings.network_enabled.changed = (value) => {
     this.store.network_enabled = value;
     ds_export(this.store);
-    toggle_element("network", value);
+    toggle_element("#streamer_overlay_network", value);
 };
 
 
 settings.airspeed_enabled.changed = (value) => {
     this.store.airspeed_enabled = value;
     ds_export(this.store);
-    toggle_element("airspeed", value);
+    toggle_element("#streamer_overlay_airspeed", value);
 };
 
 settings.vertspeed_enabled.changed = (value) => {
     this.store.vertspeed_enabled = value;
     ds_export(this.store);
-    toggle_element("vertspeed", value);
+    toggle_element("#streamer_overlay_vertspeed", value);
 };
 
 settings.altitude_enabled.changed = (value) => {
     this.store.altitude_enabled = value;
     ds_export(this.store);
-    toggle_element("altitude", value);
+    toggle_element("#streamer_overlay_altitude", value);
 };
 
 settings.heading_enabled.changed = (value) => {
     this.store.heading_enabled = value;
     ds_export(this.store);
-    toggle_element("heading", value);
+    toggle_element("#streamer_overlay_heading", value);
 };
 
 settings.wind_enabled.changed = (value) => {
     this.store.wind_enabled = value;
     ds_export(this.store);
-    toggle_element("wind", value);
+    toggle_element("#streamer_overlay_wind", value);
 };
 
 settings.oat_enabled.changed = (value) => {
     this.store.oat_enabled = value;
     ds_export(this.store);
-    toggle_element("oat", value);
+    toggle_element("#streamer_overlay_oat", value);
 };
 
 settings.custom_enabled.changed = (value) => {
     this.store.custom_enabled = value;
     ds_export(this.store);
-    toggle_element("custom", value);
+    toggle_element("#streamer_overlay_custom", value);
 };
 
 settings.custom_icon.changed = (value) => {
