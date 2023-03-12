@@ -6,14 +6,12 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.13.4";
+const VERSION = "0.13.5";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
 const BOX = "checkbox",
       TXT = "text";
-
-const non_visual = ["overlay_enabled", "simbrief_enabled"];
 
 let container = null,
     var_list = null,
@@ -157,7 +155,7 @@ function define_option(storage, setting_name, input_type, ui_label, enabled, dis
         changed: (value) => {
             storage[setting_name] = value;
 
-            if (setting_name.includes("_enabled") && !non_visual.includes(setting_name)) {
+            if (setting_name.includes("_enabled") && !(setting_name == "simbrief_enabled")) {
                 let item_name = setting_name.split("_")[0];
 
                 if (value) {
@@ -177,7 +175,7 @@ function define_option(storage, setting_name, input_type, ui_label, enabled, dis
 function load_enabled(store, enabled, disabled) {
     let settings = {};
     for (let item in store) {
-        if (item == "overlay_enabled") { continue; }
+        if (item == "overlay_toggle") { continue; }
 
         let enable_switch = typeof store[item] === "boolean";
         let name = item.split("_").join(" ").toUpperCase();
@@ -192,7 +190,7 @@ function load_enabled(store, enabled, disabled) {
         );
 
         // Skip non-display items and setting values
-        if (!enable_switch || non_visual.includes(item)) {
+        if (!enable_switch || item == "simbrief_enabled") {
             continue;
         }
 
@@ -262,7 +260,7 @@ this.store = {
     Each display item is a pair of <name> strings and <name>_enabled bools.
     This allows programmatically setting the `enabled_items` list easily.
     */
-    overlay_enabled: true,
+    overlay_toggle: true,
     metric_units: false,
     simbrief_enabled: false,
     simbrief_username: "USERNAME",
@@ -471,8 +469,8 @@ settings_define(settings);
 
 // ---- Events
 run((event) => {
-    this.store.overlay_enabled = !this.store.overlay_enabled;
-    container.style.visibility = this.store.overlay_enabled ? "visible" : "hidden";
+    this.store.overlay_toggle = !this.store.overlay_toggle;
+    container.style.visibility = this.store.overlay_toggle ? "visible" : "hidden";
 
     ds_export(this.store);
 });
@@ -507,11 +505,11 @@ scroll((event) => {
 });
 
 state(() => {
-    return this.store.overlay_enabled ? "mdi:airplane-check" : "mdi:airplane-off";
+    return this.store.overlay_toggle ? "mdi:airplane-check" : "mdi:airplane-off";
 });
 
 info(() => {
-    if (!this.store.overlay_enabled) {
+    if (!this.store.overlay_toggle) {
         return "Overlay disabled";
     } else {
         // Display countdown for SimBrief refresh if applicable
@@ -529,7 +527,7 @@ info(() => {
 });
 
 style(() => {
-    return this.store.overlay_enabled ? "active" : null;
+    return this.store.overlay_toggle ? "active" : null;
 });
 
 loop_1hz(() => {
