@@ -403,6 +403,7 @@ settings.custom_enabled.changed = (value) => {
     this.store.custom_enabled = value;
     ds_export(this.store);
     toggle_element("#streamer_overlay_custom", value);
+    toggle_element("#streamer_overlay_custom > .streamer_overlay_label", value);
 };
 
 settings.custom_icon.changed = (value) => {
