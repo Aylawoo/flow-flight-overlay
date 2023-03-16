@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.15.0";
+const VERSION = "0.15.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -485,7 +485,7 @@ loop_1hz(() => {
     let vertspeed = Math.round(get("A:VERTICAL SPEED", metric ? "m/s" : "ft/min"));
 
     try {
-        vs_threshold = metric ? 0.25 : 50;
+        vs_threshold = metric ? 0.5 : 100;
         if (vertspeed <= -vs_threshold) {
             vs_icon.src = "mdi/icons/arrow-down-circle.svg";
         } else if (vertspeed >= vs_threshold) {
