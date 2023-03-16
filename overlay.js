@@ -575,7 +575,7 @@ loop_1hz(() => {
         try {
             if (distance != "---") {
                 distance_pad.innerText = "0".repeat(pad_required(distance, 4));
-            }
+            } else { distance_pad.innerText = ""; }
             airspeed_pad.innerText = "0".repeat(pad_required(airspeed, 3));
             vertspeed_pad.innerText = "0".repeat(vs_pad);
             altitude_pad.innerText = "0".repeat(pad_required(altitude, 5));
