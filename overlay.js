@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.13.10";
+const VERSION = "0.13.11";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -456,7 +456,6 @@ loop_1hz(() => {
     if (this.store.pad_airspeed) { airspeed = pad_number(airspeed, 3, "0"); }
 
     let vertspeed = Math.round(get("A:VERTICAL SPEED", metric ? "m/s" : "ft/min"));
-    if (this.store.pad_vertspeed) { vertspeed = pad_number(vertspeed, 4, "0"); }
 
     try {
         vs_threshold = metric ? 0.25 : 50;
@@ -468,6 +467,9 @@ loop_1hz(() => {
             vs_icon.src = "mdi/icons/minus-circle.svg";
         }
     } catch (e) { ignore_type_error(e); }
+
+    if (this.store.display_icons) { vertspeed = Math.abs(vertspeed); }
+    if (this.store.pad_vertspeed) { vertspeed = pad_number(vertspeed, 4, "0"); }
 
     let altitude = Math.round(get("A:PLANE ALTITUDE", metric ? "meters" : "feet"));
     if (this.store.pad_altitude) { altitude = pad_number(altitude, 5, "0"); }
