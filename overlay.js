@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.14.0";
+const VERSION = "0.15.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -21,22 +21,28 @@ let container = null,
     origin_label = null,
     destination_label = null,
     distance_label = null,
+    distance_pad = null,
     rules_label = null,
     network_label = null,
     airspeed_label = null,
+    airspeed_pad = null,
     vertspeed_label = null,
+    vertspeed_pad = null,
     vs_icon = null,
     altitude_label = null,
+    altitude_pad = null,
     heading_label = null,
     wind_label = null,
     wind_icon = null,
     oat_label = null,
+    oat_pad = null,
     oat_icon = null,
     custom_label = null,
     custom_icon = null;
 
 let label_list = null,
     itext_list = null,
+    pad_list = null,
     icon_list = null;
 
 let enabled_items = [],
@@ -69,13 +75,16 @@ function clamp(number, min, max) {
 }
 
 function resize_ui(store) {
-    if (!itext_list || !icon_list || !label_list) { return; }
+    if (!label_list || !itext_list || !pad_list || !icon_list) { return; }
 
     label_list.forEach((label) => {
         label.style.fontSize = Math.round(store.font_size * 0.75) + "px";
     });
     itext_list.forEach((itext) => {
         itext.style.fontSize = store.font_size + "px";
+    });
+    pad_list.forEach((pad) => {
+        pad.style.fontSize = store.font_size + "px";
     });
     icon_list.forEach((icon) => {
         icon.style.width = store.font_size + "px";
@@ -93,28 +102,19 @@ function scroll_handler(store, event) {
 
 function set_styles(store) {
     // Set custom element colors
-    let vars_list = document.querySelector("#streamer_overlay_vars");
-    let items = document.querySelectorAll("#streamer_overlay_vars > span");
-    let icons = document.querySelectorAll(".streamer_overlay_mdi");
-    let labels = document.querySelectorAll(".streamer_overlay_label");
-    let itexts = document.querySelectorAll(".streamer_overlay_itext");
+    if (!label_list || !itext_list || !pad_list || !icon_list) { return; }
 
-    vars_list.style.backgroundColor = store.color_wrapper;
+    let items = document.querySelectorAll("#streamer_overlay_vars > span");
+
+    var_list.style.backgroundColor = store.color_wrapper;
 
     if (store.outline_text) {
-        vars_list.classList.add("streamer_overlay_outline");
+        var_list.classList.add("streamer_overlay_outline");
     } else {
-        vars_list.classList.remove("streamer_overlay_outline");
+        var_list.classList.remove("streamer_overlay_outline");
     }
 
-    items.forEach((item) => {
-        item.style.borderColor = store.color_outline;
-        item.style.backgroundColor = store.color_background;
-    });
-    icons.forEach((icon) => {
-        icon.style.filter = store.black_icons ? "invert(0%)" : "invert(100%)" ;
-    });
-    labels.forEach((label) => {
+    label_list.forEach((label) => {
         label.style.color = store.color_text;
         if (store.outline_text) {
             label.classList.add("streamer_overlay_outline");
@@ -122,8 +122,18 @@ function set_styles(store) {
             label.classList.remove("streamer_overlay_outline");
         }
     });
-    itexts.forEach((itext) => {
+    items.forEach((item) => {
+        item.style.borderColor = store.color_outline;
+        item.style.backgroundColor = store.color_background;
+    });
+    itext_list.forEach((itext) => {
         itext.style.color = store.color_text;
+    });
+    pad_list.forEach((pad) => {
+        pad.style.color = store.color_text;
+    });
+    icon_list.forEach((icon) => {
+        icon.style.filter = store.black_icons ? "invert(0%)" : "invert(100%)" ;
     });
 }
 
@@ -135,6 +145,12 @@ function toggle_lists(item, value, enabled, disabled) {
         disabled.push(item);
         enabled.splice(enabled.indexOf(item), 1);
     }
+}
+
+function toggle_pad_visibility(items, status) {
+    items.forEach((item) => {
+        item.style.visibility = status ? "visible" : "hidden";
+    });
 }
 
 function load_views(enabled, disabled) {
@@ -236,12 +252,23 @@ function calc_distance(lat_a, lon_a, lat_b, lon_b) {
     return (radius * step_two) / 1.852;
 }
 
-function pad_number(number, pad_amount, pad_char) {
+function pad_number(number, pad_amount) {
     if (Math.sign(number) >= 0) {
-        return number.toString().padStart(pad_amount, pad_char);
+        return number.toString().padStart(pad_amount, "0");
     } else {
-        return "-" + Math.abs(number).toString().padStart(pad_amount, pad_char);
+        return "-" + Math.abs(number).toString().padStart(pad_amount - 1, "0");
     }
+}
+
+function pad_required(number, pad_amount) {
+    number = number.toString().length;
+    return number > 0 ? pad_amount - number : 0;
+}
+
+function reset_padding(pad_items) {
+    pad_items.forEach((pad) => {
+        pad.innerText = "";
+    });
 }
 
 function toggle_element(elem, value) {
@@ -295,6 +322,7 @@ this.store = {
     custom_icon: "note-text",
     custom: "Change me!",
     pad_numbers: true,
+    pad_with_zeroes: false,
     font_size: 23,
     overlay_bottom: false,
     display_icons: true,
@@ -328,7 +356,13 @@ settings.custom_icon.changed = (value) => {
     this.store.custom_icon = value;
     ds_export(this.store);
     custom_icon.src = `mdi/icons/${value}.svg`;
-}
+};
+
+settings.pad_with_zeroes.changed = (value) => {
+    this.store.pad_with_zeroes = value;
+    ds_export(this.store);
+    toggle_pad_visibility(pad_list, value);
+};
 
 settings.font_size.changed = (value) => {
     this.store.font_size = clamp(value, 8, 128);
@@ -443,14 +477,10 @@ loop_1hz(() => {
     if (metric && distance != "---") { distance = Math.round(distance * 1.852); }
 
     let display_distance = distance
-    if (distance != "---" && this.store.pad_numbers) {
-        display_distance = pad_number(distance, 4, "0");
-    }
 
     // Update the rest of the labels
     let airspeed = Math.round(get("A:AIRSPEED INDICATED", metric ? "kph" : "knots"));
     if (airspeed < 5) { airspeed = 0; }
-    if (this.store.pad_numbers) { airspeed = pad_number(airspeed, 3, "0"); }
 
     let vertspeed = Math.round(get("A:VERTICAL SPEED", metric ? "m/s" : "ft/min"));
 
@@ -466,10 +496,8 @@ loop_1hz(() => {
     } catch (e) { ignore_type_error(e); }
 
     if (this.store.display_icons) { vertspeed = Math.abs(vertspeed); }
-    if (this.store.pad_numbers) { vertspeed = pad_number(vertspeed, 4, "0"); }
 
     let altitude = Math.round(get("A:PLANE ALTITUDE", metric ? "meters" : "feet"));
-    if (this.store.pad_numbers) { altitude = pad_number(altitude, 5, "0"); }
 
     let heading = pad_number(
         Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees")), 3, "0"
@@ -489,6 +517,25 @@ loop_1hz(() => {
 
     if (this.store.oat_fahrenheit) { oat = Math.round((oat * 1.8) + 32); }
 
+    if (this.store.pad_numbers) {
+        let vs_pad = pad_required(vertspeed, 4);
+        if (vertspeed < 0 || vs_pad < 0) { vs_pad = 0; }
+
+        try {
+            if (distance != "---") {
+                distance_pad.innerText = "0".repeat(pad_required(distance, 4));
+            }
+            airspeed_pad.innerText = "0".repeat(pad_required(airspeed, 3));
+            vertspeed_pad.innerText = "0".repeat(vs_pad);
+            altitude_pad.innerText = "0".repeat(pad_required(altitude, 5));
+            oat_pad.innerText = "0".repeat(pad_required(oat, 3));
+        } catch (e) { ignore_type_error(e); }
+    } else {
+        reset_padding(pad_list);
+    }
+
+    display_vs = vertspeed < 0 ? "-" + pad_number(Math.abs(vertspeed), 4) : vertspeed;
+
     try {
         type_label.innerText = this.store.type;
         registration_label.innerText = this.store.registration;
@@ -499,7 +546,7 @@ loop_1hz(() => {
         rules_label.innerText = this.store.rules;
         network_label.innerText = this.store.network;
         airspeed_label.innerText = `${airspeed}${metric ? "km/h" : "kt"}`;
-        vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
+        vertspeed_label.innerText = `${display_vs}${metric ? "m/s" : "fpm"}`;
         altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
         heading_label.innerText = heading;
         oat_label.innerText = `${oat}${this.store.oat_fahrenheit ? "f" : "c"}`;
@@ -526,43 +573,55 @@ html_created((el) => {
     container = el.querySelector("#streamer_overlay");
     var_list = el.querySelector("#streamer_overlay_vars");
     type_label = el.querySelector(
-      "#streamer_overlay_type > .streamer_overlay_itext"
+        "#streamer_overlay_type > .streamer_overlay_itext"
     );
     registration_label = el.querySelector(
-      "#streamer_overlay_registration .streamer_overlay_itext"
+        "#streamer_overlay_registration .streamer_overlay_itext"
     );
     iata_label = el.querySelector(
-      "#streamer_overlay_iata .streamer_overlay_itext"
+        "#streamer_overlay_iata .streamer_overlay_itext"
     );
     origin_label = el.querySelector(
-      "#streamer_overlay_origin .streamer_overlay_itext"
+        "#streamer_overlay_origin .streamer_overlay_itext"
     );
     destination_label = el.querySelector(
-      "#streamer_overlay_destination .streamer_overlay_itext"
+        "#streamer_overlay_destination .streamer_overlay_itext"
     );
     distance_label = el.querySelector(
-      "#streamer_overlay_distance .streamer_overlay_itext"
+        "#streamer_overlay_distance .streamer_overlay_itext"
+    );
+    distance_pad = el.querySelector(
+        "#streamer_overlay_distance .streamer_overlay_invisible"
     );
     rules_label = el.querySelector(
-      "#streamer_overlay_rules .streamer_overlay_itext"
+        "#streamer_overlay_rules .streamer_overlay_itext"
     );
     network_label = el.querySelector(
-      "#streamer_overlay_network .streamer_overlay_itext"
+        "#streamer_overlay_network .streamer_overlay_itext"
     );
     airspeed_label = el.querySelector(
-      "#streamer_overlay_airspeed .streamer_overlay_itext"
+        "#streamer_overlay_airspeed .streamer_overlay_itext"
+    );
+    airspeed_pad = el.querySelector(
+        "#streamer_overlay_airspeed .streamer_overlay_invisible"
     );
     vertspeed_label = el.querySelector(
-      "#streamer_overlay_vertspeed .streamer_overlay_itext"
+        "#streamer_overlay_vertspeed .streamer_overlay_itext"
+    );
+    vertspeed_pad = el.querySelector(
+        "#streamer_overlay_vertspeed .streamer_overlay_invisible"
     );
     vs_icon = el.querySelector(
         "#streamer_overlay_vertspeed > img"
     );
     altitude_label = el.querySelector(
-      "#streamer_overlay_altitude .streamer_overlay_itext"
+        "#streamer_overlay_altitude .streamer_overlay_itext"
+    );
+    altitude_pad = el.querySelector(
+        "#streamer_overlay_altitude .streamer_overlay_invisible"
     );
     heading_label = el.querySelector(
-      "#streamer_overlay_heading .streamer_overlay_itext"
+        "#streamer_overlay_heading .streamer_overlay_itext"
     );
     wind_label = el.querySelector(
         "#streamer_overlay_wind .streamer_overlay_itext"
@@ -572,6 +631,9 @@ html_created((el) => {
     );
     oat_label = el.querySelector(
         "#streamer_overlay_oat .streamer_overlay_itext"
+    );
+    oat_pad = el.querySelector(
+        "#streamer_overlay_oat .streamer_overlay_invisible"
     );
     oat_icon = el.querySelector(
         "#streamer_overlay_oat > img"
@@ -587,6 +649,7 @@ html_created((el) => {
 
     label_list = el.querySelectorAll(".streamer_overlay_label");
     itext_list = el.querySelectorAll(".streamer_overlay_itext");
+    pad_list = el.querySelectorAll(".streamer_overlay_invisible");
     icon_list = el.querySelectorAll(".streamer_overlay_mdi");
 
     el.onmousewheel = (event) => { scroll_handler(this.store, event); }
@@ -596,4 +659,6 @@ html_created((el) => {
     load_views(enabled_items, disabled_items);
     icon_toggle(this.store.display_icons);
     custom_icon.src = `mdi/icons/${this.store.custom_icon}.svg`;
+    reset_padding(pad_list);
+    toggle_pad_visibility(pad_list, this.store.pad_with_zeroes);
 });
