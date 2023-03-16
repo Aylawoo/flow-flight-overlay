@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.13.9";
+const VERSION = "0.13.10";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -583,6 +583,8 @@ html_created((el) => {
     custom_icon = el.querySelector(
         "#streamer_overlay_custom > img"
     );
+
+    container.style.visibility = this.store.overlay_toggle ? "visible" : "hidden";
 
     label_list = el.querySelectorAll(".streamer_overlay_label");
     itext_list = el.querySelectorAll(".streamer_overlay_itext");
