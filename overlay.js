@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.13.11";
+const VERSION = "0.14.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -280,17 +280,13 @@ this.store = {
     destination_enabled: true,
     destination: "----",
     distance_enabled: true,
-    pad_distance: true,
     rules_enabled: false,
     rules: "VFR",
     network_enabled: false,
     network: "Multiplayer",
     airspeed_enabled: true,
-    pad_airspeed: true,
     vertspeed_enabled: true,
-    pad_vertspeed: true,
     altitude_enabled: true,
-    pad_altitude: true,
     heading_enabled: true,
     wind_enabled: false,
     oat_enabled: false,
@@ -298,6 +294,7 @@ this.store = {
     custom_enabled: false,
     custom_icon: "note-text",
     custom: "Change me!",
+    pad_numbers: true,
     font_size: 23,
     overlay_bottom: false,
     display_icons: true,
@@ -446,14 +443,14 @@ loop_1hz(() => {
     if (metric && distance != "---") { distance = Math.round(distance * 1.852); }
 
     let display_distance = distance
-    if (distance != "---" && this.store.pad_distance) {
+    if (distance != "---" && this.store.pad_numbers) {
         display_distance = pad_number(distance, 4, "0");
     }
 
     // Update the rest of the labels
     let airspeed = Math.round(get("A:AIRSPEED INDICATED", metric ? "kph" : "knots"));
     if (airspeed < 5) { airspeed = 0; }
-    if (this.store.pad_airspeed) { airspeed = pad_number(airspeed, 3, "0"); }
+    if (this.store.pad_numbers) { airspeed = pad_number(airspeed, 3, "0"); }
 
     let vertspeed = Math.round(get("A:VERTICAL SPEED", metric ? "m/s" : "ft/min"));
 
@@ -469,10 +466,10 @@ loop_1hz(() => {
     } catch (e) { ignore_type_error(e); }
 
     if (this.store.display_icons) { vertspeed = Math.abs(vertspeed); }
-    if (this.store.pad_vertspeed) { vertspeed = pad_number(vertspeed, 4, "0"); }
+    if (this.store.pad_numbers) { vertspeed = pad_number(vertspeed, 4, "0"); }
 
     let altitude = Math.round(get("A:PLANE ALTITUDE", metric ? "meters" : "feet"));
-    if (this.store.pad_altitude) { altitude = pad_number(altitude, 5, "0"); }
+    if (this.store.pad_numbers) { altitude = pad_number(altitude, 5, "0"); }
 
     let heading = pad_number(
         Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees")), 3, "0"
