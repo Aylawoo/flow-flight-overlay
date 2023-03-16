@@ -193,6 +193,55 @@ function define_option(store, setting_name, input_type, ui_label, enabled, disab
     };
 }
 
+function set_name(setting) {
+    switch (setting) {
+        case "TYPE ENABLED":
+            return "AIRCRAFT TYPE ENABLED";
+        case "TYPE":
+            return "AIRCRAFT TYPE";
+        case "REGISTRATION":
+            return "AIRCRAFT REGISTRATION";
+        case "IATA ENABLED":
+            return "IATA (AIRLINE) ENABLED";
+        case "IATA":
+            return "IATA (AIRLINE)";
+        case "ORIGIN":
+            return "ORIGIN ICAO";
+        case "DESTINATION":
+            return "DESTINATION ICAO";
+        case "RULES ENABLED":
+            return "FLIGHT RULES ENABLED";
+        case "RULES":
+            return "FLIGHT RULES";
+        case "AIRSPEED ENABLED":
+            return "INDICATED AIRSPEED ENABLED";
+        case "VERTSPEED ENABLED":
+            return "VERTICAL SPEED ENABLED";
+        case "CUSTOM ENABLED":
+            return "CUSTOM FIELD ENABLED";
+        case "CUSTOM ICON":
+            return "CUSTOM MDI ICON";
+        case "CUSTOM":
+            return "CUSTOM TEXT";
+        case "PAD NUMBERS":
+            return "FIXED WIDTH NUMBERS";
+        case "PAD WITH ZEROES":
+            return "DISPLAY LEADING ZEROES";
+        case "OVERLAY BOTTOM":
+            return "OVERLAY ON SCREEN BOTTOM";
+        case "COLOR WRAPPER":
+            return "WRAPPER COLOR";
+        case "COLOR OUTLINE":
+            return "ITEM OUTLINE COLOR";
+        case "COLOR BACKGROUND":
+            return "ITEM BACKGROUND COLOR";
+        case "COLOR TEXT":
+            return "FONT COLOR";
+        default:
+            return setting;
+    }
+}
+
 function load_enabled(store, enabled, disabled) {
     let settings = {};
     for (let item in store) {
@@ -200,6 +249,8 @@ function load_enabled(store, enabled, disabled) {
 
         let enable_switch = typeof store[item] === "boolean";
         let name = item.split("_").join(" ").toUpperCase();
+
+        name = set_name(name);
 
         settings[item] = define_option(
             store,
