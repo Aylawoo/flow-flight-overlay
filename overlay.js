@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.15.2";
+const VERSION = "0.15.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -74,35 +74,35 @@ function clamp(number, min, max) {
     return Math.min(Math.max(number, min), max);
 }
 
-function resize_ui(store, labels, itexts, pads, icons) {
-    if (!labels || !itexts || !pads || !icons) { return; }
+function resize_ui(store) {
+    if (!label_list || !itext_list || !pad_list || !icon_list) { return; }
 
-    labels.forEach((label) => {
+    label_list.forEach((label) => {
         label.style.fontSize = Math.round(store.font_size * 0.75) + "px";
     });
-    itexts.forEach((itext) => {
+    itext_list.forEach((itext) => {
         itext.style.fontSize = store.font_size + "px";
     });
-    pads.forEach((pad) => {
+    pad_list.forEach((pad) => {
         pad.style.fontSize = store.font_size + "px";
     });
-    icons.forEach((icon) => {
+    icon_list.forEach((icon) => {
         icon.style.width = store.font_size + "px";
         icon.style.height = store.font_size + "px";
     });
 }
 
-function scroll_handler(store, event, labels, itexts, pads, icons) {
+function scroll_handler(store, event) {
     // handle wheel scroll to change UI size
     event.deltaY < 0 ? store.font_size += 1 : store.font_size -= 1;
     store.font_size = clamp(store.font_size, 8, 128);
     ds_export(store);
-    resize_ui(store, labels, itexts, pads, icons);
+    resize_ui(store);
 }
 
-function set_styles(store, labels, itexts, pads, icons) {
+function set_styles(store) {
     // Set custom element colors
-    if (!labels || !itexts || !pads || !icons) { return; }
+    if (!label_list || !itext_list || !pad_list || !icon_list) { return; }
 
     let items = document.querySelectorAll("#streamer_overlay_vars > span");
 
@@ -114,7 +114,7 @@ function set_styles(store, labels, itexts, pads, icons) {
         var_list.classList.remove("streamer_overlay_outline");
     }
 
-    labels.forEach((label) => {
+    label_list.forEach((label) => {
         label.style.color = store.color_text;
         if (store.outline_text) {
             label.classList.add("streamer_overlay_outline");
@@ -126,13 +126,13 @@ function set_styles(store, labels, itexts, pads, icons) {
         item.style.borderColor = store.color_outline;
         item.style.backgroundColor = store.color_background;
     });
-    itexts.forEach((itext) => {
+    itext_list.forEach((itext) => {
         itext.style.color = store.color_text;
     });
-    pads.forEach((pad) => {
+    pad_list.forEach((pad) => {
         pad.style.color = store.color_text;
     });
-    icons.forEach((icon) => {
+    icon_list.forEach((icon) => {
         icon.style.filter = store.black_icons ? "invert(0%)" : "invert(100%)" ;
     });
 }
@@ -171,31 +171,29 @@ function load_views(enabled, disabled) {
     }
 }
 
-function define_option(
-    store, opt_name, input_type, ui_label, enabled, disabled, labels, itexts, pads, icons
-) {
+function define_option(store, setting_name, input_type, ui_label, enabled, disabled) {
     // Define setting options for Flow
     return {
         type: input_type,
         label: ui_label,
-        value: store[opt_name],
+        value: store[setting_name],
 
         changed: (value) => {
-            store[opt_name] = value;
+            store[setting_name] = value;
 
-            if (opt_name.includes("_enabled") && opt_name != "simbrief_enabled") {
-                let item_name = opt_name.split("_")[0];
+            if (setting_name.includes("_enabled") && setting_name != "simbrief_enabled") {
+                let item_name = setting_name.split("_")[0];
                 toggle_element(`#streamer_overlay_${item_name}`, value);
                 toggle_lists(item_name, value, enabled, disabled);
             }
 
-            set_styles(store, labels, itexts, pads, icons);
+            set_styles(store);
             ds_export(store);
         }
     };
 }
 
-function load_enabled(store, enabled, disabled, labels, itexts, pads, icons) {
+function load_enabled(store, enabled, disabled) {
     let settings = {};
     for (let item in store) {
         if (item == "overlay_toggle") { continue; }
@@ -209,11 +207,7 @@ function load_enabled(store, enabled, disabled, labels, itexts, pads, icons) {
             enable_switch ? BOX : TXT,
             name,
             enabled,
-            disabled,
-            labels,
-            itexts,
-            pads,
-            icons
+            disabled
         );
 
         // Skip non-display items and setting values
@@ -282,7 +276,10 @@ function toggle_element(elem, value) {
     elem.style.display = value ? "inline-flex" : "none";
 }
 
-function icon_toggle(value, icons, labels) {
+function icon_toggle(value) {
+    let icons = document.querySelectorAll(".streamer_overlay_mdi");
+    let labels = document.querySelectorAll(".streamer_overlay_label");
+
     for (i = 0; i < icons.length; i++) {
         icons[i].style.display = value ? "inline-flex" : "none";
         labels[i].style.display = value ? "none" : "inline-flex";
@@ -339,9 +336,7 @@ this.store = {
 ds_import(this.store);
 
 // Take all config options and place them in a `settings` object
-let settings = load_enabled(
-    this.store, enabled_items, disabled_items, label_list, itext_list, pad_list, icon_list
-);
+let settings = load_enabled(this.store, enabled_items, disabled_items);
 
 settings.destination.changed = (value) => {
     this.store.destination = value;
@@ -372,7 +367,7 @@ settings.pad_with_zeroes.changed = (value) => {
 settings.font_size.changed = (value) => {
     this.store.font_size = clamp(value, 8, 128);
     ds_export(this.store);
-    resize_ui(this.store, label_list, itext_list, pad_list, icon_list);
+    resize_ui(this.store);
 };
 
 settings.overlay_bottom.changed = (value) => {
@@ -384,7 +379,7 @@ settings.overlay_bottom.changed = (value) => {
 settings.display_icons.changed = (value) => {
     this.store.display_icons = value;
     ds_export(this.store);
-    icon_toggle(value, icon_list, label_list);
+    icon_toggle(value);
 };
 
 settings_define(settings);
@@ -657,14 +652,12 @@ html_created((el) => {
     pad_list = el.querySelectorAll(".streamer_overlay_invisible");
     icon_list = el.querySelectorAll(".streamer_overlay_mdi");
 
-    el.onmousewheel = (event) => {
-        scroll_handler(this.store, event, label_list, itext_list, pad_list, icon_list);
-    }
+    el.onmousewheel = (event) => { scroll_handler(this.store, event); }
 
-    resize_ui(this.store, label_list, itext_list, pad_list, icon_list);
-    set_styles(this.store, label_list, itext_list, pad_list, icon_list);
+    resize_ui(this.store);
+    set_styles(this.store);
     load_views(enabled_items, disabled_items);
-    icon_toggle(this.store.display_icons, icon_list, label_list);
+    icon_toggle(this.store.display_icons);
     custom_icon.src = `mdi/icons/${this.store.custom_icon}.svg`;
     reset_padding(pad_list);
     toggle_pad_visibility(pad_list, this.store.pad_with_zeroes);
