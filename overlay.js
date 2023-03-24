@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.15.2";
+const VERSION = "0.15.3";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -33,6 +33,8 @@ let container = null,
     altitude_pad = null,
     heading_label = null,
     wind_label = null,
+    wind_label_2 = null,
+    wind_pad = null,
     wind_icon = null,
     oat_label = null,
     oat_pad = null,
@@ -623,13 +625,22 @@ loop_1hz(() => {
 loop_15hz(() => {
     metric = this.store.metric_units;
 
-    let wind_direction = Math.round(get("A:AMBIENT WIND DIRECTION", "degrees"));
+    let wind_direction = pad_number(
+        Math.round(get("A:AMBIENT WIND DIRECTION", "degrees")),
+        3
+    );
     wind_speed = Math.round(get("A:AMBIENT WIND VELOCITY", metric ? "kph" : "knots"));
     let compass = get("A:PLANE HEADING DEGREES GYRO", "degrees");
     relative_wind = -Math.abs((360 + ((compass - wind_direction))) % 360) + 180;
 
     try {
-        wind_label.innerText = `${wind_direction}@${wind_speed}${metric ? "km/h" : "kt"}`;
+        if (this.store.pad_numbers) {
+            wind_pad.innerText = "0".repeat(pad_required(wind_speed, 3));
+        } else {
+            reset_padding(pad_list);
+        }
+        wind_label.innerText = `${wind_direction}@`;
+        wind_label_2.innerText = `${wind_speed}${metric ? "km/h" : "kt"}`;
         wind_icon.style.transform = `rotate(${relative_wind}deg)`;
     } catch (e) { ignore_type_error(e); }
 });
@@ -690,7 +701,13 @@ html_created((el) => {
         "#streamer_overlay_heading .streamer_overlay_itext"
     );
     wind_label = el.querySelector(
-        "#streamer_overlay_wind .streamer_overlay_itext"
+        "#streamer_overlay_wind #streamer_overlay_wind1"
+    );
+    wind_label_2 = el.querySelector(
+        "#streamer_overlay_wind #streamer_overlay_wind2"
+    );
+    wind_pad = el.querySelector(
+        "#streamer_overlay_wind .streamer_overlay_invisible"
     );
     wind_icon = el.querySelector(
         "#streamer_overlay_wind > img"
