@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.15.1";
+const VERSION = "0.15.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -42,6 +42,7 @@ let container = null,
 
 let label_list = null,
     itext_list = null,
+    invisible_list = null,
     pad_list = null,
     icon_list = null;
 
@@ -75,13 +76,18 @@ function clamp(number, min, max) {
 }
 
 function resize_ui(store) {
-    if (!label_list || !itext_list || !pad_list || !icon_list) { return; }
+    if (!label_list || !itext_list || !pad_list || !icon_list || !invisible_list) {
+        return;
+    }
 
     label_list.forEach((label) => {
         label.style.fontSize = Math.round(store.font_size * 0.75) + "px";
     });
     itext_list.forEach((itext) => {
         itext.style.fontSize = store.font_size + "px";
+    });
+    invisible_list.forEach((invis) =>  {
+        invis.style.fontSize = store.font_size + "px";
     });
     pad_list.forEach((pad) => {
         pad.style.fontSize = store.font_size + "px";
@@ -102,7 +108,9 @@ function scroll_handler(store, event) {
 
 function set_styles(store) {
     // Set custom element colors
-    if (!label_list || !itext_list || !pad_list || !icon_list) { return; }
+    if (!label_list || !itext_list || !pad_list || !icon_list || !invisible_list) {
+        return;
+    }
 
     let items = document.querySelectorAll("#streamer_overlay_vars > span");
 
@@ -128,6 +136,9 @@ function set_styles(store) {
     });
     itext_list.forEach((itext) => {
         itext.style.color = store.color_text;
+    });
+    invisible_list.forEach((invis) => {
+        invis.style.color = store.color_text;
     });
     pad_list.forEach((pad) => {
         pad.style.color = store.color_text;
@@ -440,6 +451,10 @@ run((event) => {
     this.store.overlay_toggle = !this.store.overlay_toggle;
     container.style.visibility = this.store.overlay_toggle ? "visible" : "hidden";
 
+    toggle_pad_visibility(
+        invisible_list, (this.store.overlay_toggle && this.store.pad_with_zeroes)
+    );
+
     ds_export(this.store);
 });
 
@@ -700,6 +715,7 @@ html_created((el) => {
 
     label_list = el.querySelectorAll(".streamer_overlay_label");
     itext_list = el.querySelectorAll(".streamer_overlay_itext");
+    invisible_list = el.querySelectorAll(".streamer_overlay_invisible");
     pad_list = el.querySelectorAll(".streamer_overlay_invisible");
     icon_list = el.querySelectorAll(".streamer_overlay_mdi");
 
