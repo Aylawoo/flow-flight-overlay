@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.16.0";
+const VERSION = "0.16.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -879,6 +879,7 @@ html_created((el) => {
     );
 
     container.style.visibility = this.store.overlay_toggle ? "visible" : "hidden";
+    container.style.alignSelf = (this.store.overlay_bottom ? "flex-end" : "flex-start");
 
     label_list = el.querySelectorAll(".streamer_overlay_label");
     itext_list = el.querySelectorAll(".streamer_overlay_itext");
