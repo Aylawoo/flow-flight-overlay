@@ -6,12 +6,12 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.16.1";
+const VERSION = "0.16.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
 const BOX = "checkbox",
-      TXT = "text";
+    TXT = "text";
 
 let container = null,
     var_list = null,
@@ -70,7 +70,10 @@ let sb_refresh_timer = Date.now();
 // ---- Helper functions
 function ignore_type_error(e) {
     // Ignore harmless TypeError on hot reloads when data isn't available fast enough
-    if (e instanceof TypeError) {} else { throw e; }
+    if (e instanceof TypeError) {
+    } else {
+        throw e;
+    }
 }
 
 function clamp(number, min, max) {
@@ -78,7 +81,13 @@ function clamp(number, min, max) {
 }
 
 function resize_ui(store) {
-    if (!label_list || !itext_list || !pad_list || !icon_list || !invisible_list) {
+    if (
+        !label_list ||
+        !itext_list ||
+        !pad_list ||
+        !icon_list ||
+        !invisible_list
+    ) {
         return;
     }
 
@@ -88,7 +97,7 @@ function resize_ui(store) {
     itext_list.forEach((itext) => {
         itext.style.fontSize = store.font_size + "px";
     });
-    invisible_list.forEach((invis) =>  {
+    invisible_list.forEach((invis) => {
         invis.style.fontSize = store.font_size + "px";
     });
     pad_list.forEach((pad) => {
@@ -102,7 +111,7 @@ function resize_ui(store) {
 
 function scroll_handler(store, event) {
     // handle wheel scroll to change UI size
-    event.deltaY < 0 ? store.font_size += 1 : store.font_size -= 1;
+    event.deltaY < 0 ? (store.font_size += 1) : (store.font_size -= 1);
     store.font_size = clamp(store.font_size, 8, 128);
     ds_export(store);
     resize_ui(store);
@@ -110,7 +119,13 @@ function scroll_handler(store, event) {
 
 function set_styles(store) {
     // Set custom element colors
-    if (!label_list || !itext_list || !pad_list || !icon_list || !invisible_list) {
+    if (
+        !label_list ||
+        !itext_list ||
+        !pad_list ||
+        !icon_list ||
+        !invisible_list
+    ) {
         return;
     }
 
@@ -146,7 +161,7 @@ function set_styles(store) {
         pad.style.color = store.color_text;
     });
     icon_list.forEach((icon) => {
-        icon.style.filter = store.black_icons ? "invert(0%)" : "invert(100%)" ;
+        icon.style.filter = store.black_icons ? "invert(0%)" : "invert(100%)";
     });
 }
 
@@ -172,7 +187,9 @@ function load_views(enabled, disabled) {
 
         try {
             elem.style.display = "none";
-        } catch (e) { ignore_type_error(e); }
+        } catch (e) {
+            ignore_type_error(e);
+        }
     }
 
     for (let item of enabled) {
@@ -180,11 +197,21 @@ function load_views(enabled, disabled) {
 
         try {
             elem.style.display = "inline-flex";
-        } catch (e) { ignore_type_error(e); }
+        } catch (e) {
+            ignore_type_error(e);
+        }
     }
 }
 
-function define_option(store, setting_name, ui_desc, input_type, ui_label, enabled, disabled) {
+function define_option(
+    store,
+    setting_name,
+    ui_desc,
+    input_type,
+    ui_label,
+    enabled,
+    disabled
+) {
     // Define setting options for Flow
     return {
         type: input_type,
@@ -195,7 +222,10 @@ function define_option(store, setting_name, ui_desc, input_type, ui_label, enabl
         changed: (value) => {
             store[setting_name] = value;
 
-            if (setting_name.includes("_enabled") && setting_name != "simbrief_enabled") {
+            if (
+                setting_name.includes("_enabled") &&
+                setting_name != "simbrief_enabled"
+            ) {
                 let item_name = setting_name.split("_")[0];
                 toggle_element(`#streamer_overlay_${item_name}`, value);
                 toggle_lists(item_name, value, enabled, disabled);
@@ -203,202 +233,121 @@ function define_option(store, setting_name, ui_desc, input_type, ui_label, enabl
 
             set_styles(store);
             ds_export(store);
-        }
+        },
     };
 }
 
 function set_info(setting) {
     switch (setting) {
         case "METRIC UNITS":
-            return [
-                setting,
-                "Use metric units (km/h, m/s, km)"
-            ];
+            return [setting, "Use metric units (km/h, m/s, km)"];
         case "SIMBRIEF ENABLED":
             return [
                 setting,
-                "Enable SimBrief integration (Mouse scroll on widget in wheel)"
+                "Enable SimBrief integration (Mouse scroll on widget in wheel)",
             ];
         case "TYPE ENABLED":
-            return [
-                "AIRCRAFT TYPE ENABLED",
-                "Display your aircraft type"
-            ];
+            return ["AIRCRAFT TYPE ENABLED", "Display your aircraft type"];
         case "TYPE":
-            return [
-                "AIRCRAFT TYPE",
-                ""
-            ];
+            return ["AIRCRAFT TYPE", ""];
         case "REGISTRATION ENABLED":
-            return [
-                setting,
-                "Display your aircraft's registration"
-            ];
+            return [setting, "Display your aircraft's registration"];
         case "REGISTRATION":
-            return [
-                "AIRCRAFT REGISTRATION",
-                ""
-            ];
+            return ["AIRCRAFT REGISTRATION", ""];
         case "IATA ENABLED":
             return [
                 "IATA (AIRLINE) ENABLED",
-                "Display your airline's IATA code or name"
+                "Display your airline's IATA code or name",
             ];
         case "IATA":
-            return [
-                "IATA (AIRLINE)",
-                ""
-            ];
+            return ["IATA (AIRLINE)", ""];
         case "ORIGIN ENABLED":
             return [
                 "DEPARTURE ENABLED",
-                "Display departure location ICAO or name"
+                "Display departure location ICAO or name",
             ];
         case "ORIGIN":
-            return [
-                "DEPARTURE",
-                ""
-            ];
+            return ["DEPARTURE", ""];
         case "DESTINATION ENABLED":
-            return [
-                "DESTINATION ENABLED",
-                "Display destination ICAO or name"
-            ];
+            return ["DESTINATION ENABLED", "Display destination ICAO or name"];
         case "DESTINATION":
-            return [
-                setting,
-                ""
-            ];
+            return [setting, ""];
         case "DISTANCE ENABLED":
             return [
                 setting,
-                "Display the distance remaining to your DESTINATION if set to an ICAO"
+                "Display the distance remaining to your DESTINATION if set to an ICAO",
             ];
         case "RULES ENABLED":
-            return [
-                "FLIGHT RULES ENABLED",
-                "Enable display of flight rules"
-            ];
+            return ["FLIGHT RULES ENABLED", "Enable display of flight rules"];
         case "RULES":
-            return [
-                "FLIGHT RULES",
-                "VFR, SVFR, IFR"
-            ];
+            return ["FLIGHT RULES", "VFR, SVFR, IFR"];
         case "NETWORK ENABLED":
-            return [
-                setting,
-                "Display current multiplayer network"
-            ];
+            return [setting, "Display current multiplayer network"];
         case "NETWORK":
-            return [
-                setting,
-                "Multiplayer, VATSIM, etc."
-            ];
+            return [setting, "Multiplayer, VATSIM, etc."];
         case "AIRSPEED ENABLED":
-            return [
-                "IAS ENABLED",
-                "Display current indicated airspeed"
-            ];
+            return ["IAS ENABLED", "Display current indicated airspeed"];
         case "VERTSPEED ENABLED":
-            return [
-                "VERTICAL SPEED ENABLED",
-                "Display current vertical speed"
-            ];
+            return ["VERTICAL SPEED ENABLED", "Display current vertical speed"];
         case "ALTITUDE ENABLED":
-            return [
-                setting,
-                "Display current aircraft altitude"
-            ];
+            return [setting, "Display current aircraft altitude"];
         case "HEADING ENABLED":
-            return [
-                setting,
-                "Display current aircraft heading"
-            ];
+            return [setting, "Display current aircraft heading"];
         case "WIND ENABLED":
-            return [
-                setting,
-                "Display current wind direction and speed"
-            ];
+            return [setting, "Display current wind direction and speed"];
         case "OAT ENABLED":
-            return [
-                setting,
-                "Display current outside air temperature"
-            ];
+            return [setting, "Display current outside air temperature"];
         case "OAT FAHRENHEIT":
-            return [
-                "OAT IN FAHRENHEIT",
-                "Use Fahrenheit for OAT"
-            ];
+            return ["OAT IN FAHRENHEIT", "Use Fahrenheit for OAT"];
         case "CUSTOM ENABLED":
             return [
                 "CUSTOM TEXTBOX ENABLED",
-                "Display a customizable text box"
+                "Display a customizable text box",
             ];
         case "CUSTOM ICON":
             return [
                 "CUSTOM BOX ICON NAME",
-                "MDI icon name for custom text box"
+                "MDI icon name for custom text box",
             ];
         case "CUSTOM":
-            return [
-                "CUSTOM TEXT",
-                "Content of custom text box"
-            ];
+            return ["CUSTOM TEXT", "Content of custom text box"];
         case "PAD NUMBERS":
             return [
                 setting,
-                "Maintain fixed width for data fields such as IAS"
+                "Maintain fixed width for data fields such as IAS",
             ];
         case "PAD WITH ZEROES":
             return [
                 setting,
-                "Display leading zeroes if PAD NUMBERS is enabled"
+                "Display leading zeroes if PAD NUMBERS is enabled",
             ];
         case "FONT SIZE":
             return [
                 "FONT (UI) SCALE",
-                "Size of overlay font (in pixels); UI scale"
+                "Size of overlay font (in pixels); UI scale",
             ];
         case "OVERLAY BOTTOM":
             return [
                 "OVERLAY ON BOTTOM",
-                "Display the overlay on the bottom of the screen"
+                "Display the overlay on the bottom of the screen",
             ];
         case "DISPLAY ICONS":
             return [
                 "USE ICONS",
-                "Display icons instead of text labels for overlay items"
+                "Display icons instead of text labels for overlay items",
             ];
         case "BLACK ICONS":
-            return [
-                "DARK MODE ICONS",
-                "Display icons in dark mode"
-            ];
+            return ["DARK MODE ICONS", "Display icons in dark mode"];
         case "OUTLINE TEXT":
-            return [
-                setting,
-                "Display outline around overlay text"
-            ];
+            return [setting, "Display outline around overlay text"];
         case "COLOR WRAPPER":
-            return [
-                "CONTAINER COLOR",
-                "Overlay container background color"
-            ];
+            return ["CONTAINER COLOR", "Overlay container background color"];
         case "COLOR OUTLINE":
-            return [
-                "ITEM OUTLINE COLOR",
-                "Overlay item outline color"
-            ];
+            return ["ITEM OUTLINE COLOR", "Overlay item outline color"];
         case "COLOR BACKGROUND":
-            return [
-                "ITEM BACKGROUND COLOR",
-                "Overlay item background color"
-            ];
+            return ["ITEM BACKGROUND COLOR", "Overlay item background color"];
         case "COLOR TEXT":
-            return [
-                "FONT COLOR",
-                "Overlay text color"
-            ];
+            return ["FONT COLOR", "Overlay text color"];
         default:
             return [setting, ""];
     }
@@ -407,7 +356,9 @@ function set_info(setting) {
 function load_enabled(store, enabled, disabled) {
     let settings = {};
     for (let item in store) {
-        if (item == "overlay_toggle") { continue; }
+        if (item == "overlay_toggle") {
+            continue;
+        }
 
         let enable_switch = typeof store[item] === "boolean";
         let setting_name = item.split("_").join(" ").toUpperCase();
@@ -458,8 +409,10 @@ function calc_distance(lat_a, lon_a, lat_b, lon_b) {
 
     let step_one =
         Math.sin(total_lat / 2) * Math.sin(total_lat / 2) +
-        Math.cos(deg_to_rad(lat_a)) * Math.cos(deg_to_rad(lat_b)) *
-        Math.sin(total_lon / 2) * Math.sin(total_lon / 2);
+        Math.cos(deg_to_rad(lat_a)) *
+            Math.cos(deg_to_rad(lat_b)) *
+            Math.sin(total_lon / 2) *
+            Math.sin(total_lon / 2);
 
     let step_two = 2 * Math.atan2(Math.sqrt(step_one), Math.sqrt(1 - step_one));
 
@@ -470,7 +423,12 @@ function pad_number(number, pad_amount) {
     if (Math.sign(number) >= 0) {
         return number.toString().padStart(pad_amount, "0");
     } else {
-        return "-" + Math.abs(number).toString().padStart(pad_amount - 1, "0");
+        return (
+            "-" +
+            Math.abs(number)
+                .toString()
+                .padStart(pad_amount - 1, "0")
+        );
     }
 }
 
@@ -545,7 +503,7 @@ this.store = {
     color_wrapper: "#00000090",
     color_outline: "#A0A0A0FF",
     color_background: "#00000090",
-    color_text: "#FFFFFFFF"
+    color_text: "#FFFFFFFF",
 };
 ds_import(this.store);
 
@@ -587,7 +545,9 @@ settings.font_size.changed = (value) => {
 settings.overlay_bottom.changed = (value) => {
     this.store.overlay_bottom = value;
     ds_export(this.store);
-    container.style.alignSelf = (this.store.overlay_bottom ? "flex-end" : "flex-start");
+    container.style.alignSelf = this.store.overlay_bottom
+        ? "flex-end"
+        : "flex-start";
 };
 
 settings.display_icons.changed = (value) => {
@@ -601,10 +561,13 @@ settings_define(settings);
 // ---- Events
 run((event) => {
     this.store.overlay_toggle = !this.store.overlay_toggle;
-    container.style.visibility = this.store.overlay_toggle ? "visible" : "hidden";
+    container.style.visibility = this.store.overlay_toggle
+        ? "visible"
+        : "hidden";
 
     toggle_pad_visibility(
-        invisible_list, (this.store.overlay_toggle && this.store.pad_with_zeroes)
+        invisible_list,
+        this.store.overlay_toggle && this.store.pad_with_zeroes
     );
 
     ds_export(this.store);
@@ -612,7 +575,10 @@ run((event) => {
 
 scroll((event) => {
     // Click wheel to update SimBrief, instead of toggle overlay
-    if (!this.store.simbrief_enabled || this.store.simbrief_username === "USERNAME") {
+    if (
+        !this.store.simbrief_enabled ||
+        this.store.simbrief_username === "USERNAME"
+    ) {
         return false;
     }
 
@@ -628,8 +594,8 @@ scroll((event) => {
     sb_refresh_timer = now;
 
     fetch(`${SIMBRIEF_URL}${this.store.simbrief_username}&json=1`)
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
             this.store.type = data.aircraft.icaocode;
             this.store.registration = data.aircraft.reg;
             this.store.origin = data.origin.icao_code;
@@ -640,7 +606,9 @@ scroll((event) => {
 });
 
 state(() => {
-    return this.store.overlay_toggle ? "mdi:airplane-check" : "mdi:airplane-off";
+    return this.store.overlay_toggle
+        ? "mdi:airplane-check"
+        : "mdi:airplane-off";
 });
 
 info(() => {
@@ -655,7 +623,9 @@ info(() => {
 
             let now = Date.now();
             let time = 20 - Math.round((now - sb_refresh_timer) / 1000);
-            return time > 0 ? `SimBrief available in ${time}s` : "Overlay enabled";
+            return time > 0
+                ? `SimBrief available in ${time}s`
+                : "Overlay enabled";
         }
         return "Overlay enabled";
     }
@@ -675,32 +645,49 @@ loop_1hz(() => {
 
     if (this.store.distance_enabled && this.store.destination != "----") {
         if (target_airport == null) {
-            get_airport("streamer-overlay-lookup", this.store.destination, (results) => {
-                target_airport = typeof results[0] != undefined ? results[0] : null;
-            });
+            get_airport(
+                "streamer-overlay-lookup",
+                this.store.destination,
+                (results) => {
+                    target_airport =
+                        typeof results[0] != undefined ? results[0] : null;
+                }
+            );
         }
 
         if (target_airport != null) {
             ap_lat = target_airport.lat;
             ap_lon = target_airport.lon;
-            distance = Math.round(calc_distance(ac_lat, ac_lon, ap_lat, ap_lon));
+            distance = Math.round(
+                calc_distance(ac_lat, ac_lon, ap_lat, ap_lon)
+            );
         } else {
             distance = "---";
         }
     }
 
     // Don't calculate anything if the user is in slew mode
-    if (get("A:IS SLEW ACTIVE", "number")) { return; };
+    if (get("A:IS SLEW ACTIVE", "number")) {
+        return;
+    }
 
-    if (metric && distance != "---") { distance = Math.round(distance * 1.852); }
+    if (metric && distance != "---") {
+        distance = Math.round(distance * 1.852);
+    }
 
-    let display_distance = distance
+    let display_distance = distance;
 
     // Update the rest of the labels
-    let airspeed = Math.round(get("A:AIRSPEED INDICATED", metric ? "kph" : "knots"));
-    if (airspeed < 5) { airspeed = 0; }
+    let airspeed = Math.round(
+        get("A:AIRSPEED INDICATED", metric ? "kph" : "knots")
+    );
+    if (airspeed < 5) {
+        airspeed = 0;
+    }
 
-    let vertspeed = Math.round(get("A:VERTICAL SPEED", metric ? "m/s" : "ft/min"));
+    let vertspeed = Math.round(
+        get("A:VERTICAL SPEED", metric ? "m/s" : "ft/min")
+    );
 
     try {
         vs_threshold = metric ? 0.5 : 100;
@@ -711,14 +698,22 @@ loop_1hz(() => {
         } else {
             vs_icon.src = "mdi/icons/minus-circle.svg";
         }
-    } catch (e) { ignore_type_error(e); }
+    } catch (e) {
+        ignore_type_error(e);
+    }
 
-    if (this.store.display_icons) { vertspeed = Math.abs(vertspeed); }
+    if (this.store.display_icons) {
+        vertspeed = Math.abs(vertspeed);
+    }
 
-    let altitude = Math.round(get("A:PLANE ALTITUDE", metric ? "meters" : "feet"));
+    let altitude = Math.round(
+        get("A:PLANE ALTITUDE", metric ? "meters" : "feet")
+    );
 
     let heading = pad_number(
-        Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees")), 3, "0"
+        Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees")),
+        3,
+        "0"
     );
 
     let oat = Math.round(get("A:AMBIENT TEMPERATURE", "celsius"));
@@ -731,28 +726,39 @@ loop_1hz(() => {
         } else {
             oat_icon.src = "mdi/icons/thermometer-lines.svg";
         }
-    } catch (e) { ignore_type_error(e); }
+    } catch (e) {
+        ignore_type_error(e);
+    }
 
-    if (this.store.oat_fahrenheit) { oat = Math.round((oat * 1.8) + 32); }
+    if (this.store.oat_fahrenheit) {
+        oat = Math.round(oat * 1.8 + 32);
+    }
 
     if (this.store.pad_numbers) {
         let vs_pad = pad_required(vertspeed, 4);
-        if (vertspeed < 0 || vs_pad < 0) { vs_pad = 0; }
+        if (vertspeed < 0 || vs_pad < 0) {
+            vs_pad = 0;
+        }
 
         try {
             if (distance != "---") {
                 distance_pad.innerText = "0".repeat(pad_required(distance, 4));
-            } else { distance_pad.innerText = ""; }
+            } else {
+                distance_pad.innerText = "";
+            }
             airspeed_pad.innerText = "0".repeat(pad_required(airspeed, 3));
             vertspeed_pad.innerText = "0".repeat(vs_pad);
             altitude_pad.innerText = "0".repeat(pad_required(altitude, 5));
             oat_pad.innerText = "0".repeat(pad_required(oat, 3));
-        } catch (e) { ignore_type_error(e); }
+        } catch (e) {
+            ignore_type_error(e);
+        }
     } else {
         reset_padding(pad_list);
     }
 
-    display_vs = vertspeed < 0 ? "-" + pad_number(Math.abs(vertspeed), 4) : vertspeed;
+    display_vs =
+        vertspeed < 0 ? "-" + pad_number(Math.abs(vertspeed), 4) : vertspeed;
 
     try {
         type_label.innerText = this.store.type;
@@ -769,7 +775,9 @@ loop_1hz(() => {
         heading_label.innerText = heading;
         oat_label.innerText = `${oat}${this.store.oat_fahrenheit ? "f" : "c"}`;
         custom_label.innerText = this.store.custom;
-    } catch (e) { ignore_type_error(e); }
+    } catch (e) {
+        ignore_type_error(e);
+    }
 });
 
 loop_15hz(() => {
@@ -779,9 +787,11 @@ loop_15hz(() => {
         Math.round(get("A:AMBIENT WIND DIRECTION", "degrees")),
         3
     );
-    wind_speed = Math.round(get("A:AMBIENT WIND VELOCITY", metric ? "kph" : "knots"));
+    wind_speed = Math.round(
+        get("A:AMBIENT WIND VELOCITY", metric ? "kph" : "knots")
+    );
     let compass = get("A:PLANE HEADING DEGREES GYRO", "degrees");
-    relative_wind = -Math.abs((360 + ((compass - wind_direction))) % 360) + 180;
+    relative_wind = -Math.abs((360 + (compass - wind_direction)) % 360) + 180;
 
     try {
         if (this.store.pad_numbers) {
@@ -792,7 +802,9 @@ loop_15hz(() => {
         wind_label.innerText = `${wind_direction}@`;
         wind_label_2.innerText = `${wind_speed}${metric ? "km/h" : "kt"}`;
         wind_icon.style.transform = `rotate(${relative_wind}deg)`;
-    } catch (e) { ignore_type_error(e); }
+    } catch (e) {
+        ignore_type_error(e);
+    }
 });
 
 html_created((el) => {
@@ -838,9 +850,7 @@ html_created((el) => {
     vertspeed_pad = el.querySelector(
         "#streamer_overlay_vertspeed .streamer_overlay_invisible"
     );
-    vs_icon = el.querySelector(
-        "#streamer_overlay_vertspeed > img"
-    );
+    vs_icon = el.querySelector("#streamer_overlay_vertspeed > img");
     altitude_label = el.querySelector(
         "#streamer_overlay_altitude .streamer_overlay_itext"
     );
@@ -859,27 +869,25 @@ html_created((el) => {
     wind_pad = el.querySelector(
         "#streamer_overlay_wind .streamer_overlay_invisible"
     );
-    wind_icon = el.querySelector(
-        "#streamer_overlay_wind > img"
-    );
+    wind_icon = el.querySelector("#streamer_overlay_wind > img");
     oat_label = el.querySelector(
         "#streamer_overlay_oat .streamer_overlay_itext"
     );
     oat_pad = el.querySelector(
         "#streamer_overlay_oat .streamer_overlay_invisible"
     );
-    oat_icon = el.querySelector(
-        "#streamer_overlay_oat > img"
-    );
+    oat_icon = el.querySelector("#streamer_overlay_oat > img");
     custom_label = el.querySelector(
         "#streamer_overlay_custom .streamer_overlay_itext"
     );
-    custom_icon = el.querySelector(
-        "#streamer_overlay_custom > img"
-    );
+    custom_icon = el.querySelector("#streamer_overlay_custom > img");
 
-    container.style.visibility = this.store.overlay_toggle ? "visible" : "hidden";
-    container.style.alignSelf = (this.store.overlay_bottom ? "flex-end" : "flex-start");
+    container.style.visibility = this.store.overlay_toggle
+        ? "visible"
+        : "hidden";
+    container.style.alignSelf = this.store.overlay_bottom
+        ? "flex-end"
+        : "flex-start";
 
     label_list = el.querySelectorAll(".streamer_overlay_label");
     itext_list = el.querySelectorAll(".streamer_overlay_itext");
@@ -887,7 +895,9 @@ html_created((el) => {
     pad_list = el.querySelectorAll(".streamer_overlay_invisible");
     icon_list = el.querySelectorAll(".streamer_overlay_mdi");
 
-    el.onmousewheel = (event) => { scroll_handler(this.store, event); }
+    el.onmousewheel = (event) => {
+        scroll_handler(this.store, event);
+    };
 
     resize_ui(this.store);
     set_styles(this.store);
