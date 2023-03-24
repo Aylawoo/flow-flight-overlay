@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.15.3";
+const VERSION = "0.16.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -184,12 +184,13 @@ function load_views(enabled, disabled) {
     }
 }
 
-function define_option(store, setting_name, input_type, ui_label, enabled, disabled) {
+function define_option(store, setting_name, ui_desc, input_type, ui_label, enabled, disabled) {
     // Define setting options for Flow
     return {
         type: input_type,
         label: ui_label,
         value: store[setting_name],
+        description: ui_desc,
 
         changed: (value) => {
             store[setting_name] = value;
@@ -206,52 +207,200 @@ function define_option(store, setting_name, input_type, ui_label, enabled, disab
     };
 }
 
-function set_name(setting) {
+function set_info(setting) {
     switch (setting) {
+        case "METRIC UNITS":
+            return [
+                setting,
+                "Use metric units (km/h, m/s, km)"
+            ];
+        case "SIMBRIEF ENABLED":
+            return [
+                setting,
+                "Enable SimBrief integration (Mouse scroll on widget in wheel)"
+            ];
         case "TYPE ENABLED":
-            return "AIRCRAFT TYPE ENABLED";
+            return [
+                "AIRCRAFT TYPE ENABLED",
+                "Display your aircraft type"
+            ];
         case "TYPE":
-            return "AIRCRAFT TYPE";
+            return [
+                "AIRCRAFT TYPE",
+                ""
+            ];
+        case "REGISTRATION ENABLED":
+            return [
+                setting,
+                "Display your aircraft's registration"
+            ];
         case "REGISTRATION":
-            return "AIRCRAFT REGISTRATION";
+            return [
+                "AIRCRAFT REGISTRATION",
+                ""
+            ];
         case "IATA ENABLED":
-            return "IATA (AIRLINE) ENABLED";
+            return [
+                "IATA (AIRLINE) ENABLED",
+                "Display your airline's IATA code or name"
+            ];
         case "IATA":
-            return "IATA (AIRLINE)";
+            return [
+                "IATA (AIRLINE)",
+                ""
+            ];
+        case "ORIGIN ENABLED":
+            return [
+                "DEPARTURE ENABLED",
+                "Display departure location ICAO or name"
+            ];
         case "ORIGIN":
-            return "ORIGIN ICAO";
+            return [
+                "DEPARTURE",
+                ""
+            ];
+        case "DESTINATION ENABLED":
+            return [
+                "DESTINATION ENABLED",
+                "Display destination ICAO or name"
+            ];
         case "DESTINATION":
-            return "DESTINATION ICAO";
+            return [
+                setting,
+                ""
+            ];
+        case "DISTANCE ENABLED":
+            return [
+                setting,
+                "Display the distance remaining to your DESTINATION if set to an ICAO"
+            ];
         case "RULES ENABLED":
-            return "FLIGHT RULES ENABLED";
+            return [
+                "FLIGHT RULES ENABLED",
+                "Enable display of flight rules"
+            ];
         case "RULES":
-            return "FLIGHT RULES";
+            return [
+                "FLIGHT RULES",
+                "VFR, SVFR, IFR"
+            ];
+        case "NETWORK ENABLED":
+            return [
+                setting,
+                "Display current multiplayer network"
+            ];
+        case "NETWORK":
+            return [
+                setting,
+                "Multiplayer, VATSIM, etc."
+            ];
         case "AIRSPEED ENABLED":
-            return "INDICATED AIRSPEED ENABLED";
+            return [
+                "IAS ENABLED",
+                "Display current indicated airspeed"
+            ];
         case "VERTSPEED ENABLED":
-            return "VERTICAL SPEED ENABLED";
+            return [
+                "VERTICAL SPEED ENABLED",
+                "Display current vertical speed"
+            ];
+        case "ALTITUDE ENABLED":
+            return [
+                setting,
+                "Display current aircraft altitude"
+            ];
+        case "HEADING ENABLED":
+            return [
+                setting,
+                "Display current aircraft heading"
+            ];
+        case "WIND ENABLED":
+            return [
+                setting,
+                "Display current wind direction and speed"
+            ];
+        case "OAT ENABLED":
+            return [
+                setting,
+                "Display current outside air temperature"
+            ];
+        case "OAT FAHRENHEIT":
+            return [
+                "OAT IN FAHRENHEIT",
+                "Use Fahrenheit for OAT"
+            ];
         case "CUSTOM ENABLED":
-            return "CUSTOM FIELD ENABLED";
+            return [
+                "CUSTOM TEXTBOX ENABLED",
+                "Display a customizable text box"
+            ];
         case "CUSTOM ICON":
-            return "CUSTOM MDI ICON";
+            return [
+                "CUSTOM BOX ICON NAME",
+                "MDI icon name for custom text box"
+            ];
         case "CUSTOM":
-            return "CUSTOM TEXT";
+            return [
+                "CUSTOM TEXT",
+                "Content of custom text box"
+            ];
         case "PAD NUMBERS":
-            return "FIXED WIDTH NUMBERS";
+            return [
+                setting,
+                "Maintain fixed width for data fields such as IAS"
+            ];
         case "PAD WITH ZEROES":
-            return "DISPLAY LEADING ZEROES";
+            return [
+                setting,
+                "Display leading zeroes if PAD NUMBERS is enabled"
+            ];
+        case "FONT SIZE":
+            return [
+                "FONT (UI) SCALE",
+                "Size of overlay font (in pixels); UI scale"
+            ];
         case "OVERLAY BOTTOM":
-            return "OVERLAY ON SCREEN BOTTOM";
+            return [
+                "OVERLAY ON BOTTOM",
+                "Display the overlay on the bottom of the screen"
+            ];
+        case "DISPLAY ICONS":
+            return [
+                "USE ICONS",
+                "Display icons instead of text labels for overlay items"
+            ];
+        case "BLACK ICONS":
+            return [
+                "DARK MODE ICONS",
+                "Display icons in dark mode"
+            ];
+        case "OUTLINE TEXT":
+            return [
+                setting,
+                "Display outline around overlay text"
+            ];
         case "COLOR WRAPPER":
-            return "WRAPPER COLOR";
+            return [
+                "CONTAINER COLOR",
+                "Overlay container background color"
+            ];
         case "COLOR OUTLINE":
-            return "ITEM OUTLINE COLOR";
+            return [
+                "ITEM OUTLINE COLOR",
+                "Overlay item outline color"
+            ];
         case "COLOR BACKGROUND":
-            return "ITEM BACKGROUND COLOR";
+            return [
+                "ITEM BACKGROUND COLOR",
+                "Overlay item background color"
+            ];
         case "COLOR TEXT":
-            return "FONT COLOR";
+            return [
+                "FONT COLOR",
+                "Overlay text color"
+            ];
         default:
-            return setting;
+            return [setting, ""];
     }
 }
 
@@ -261,13 +410,14 @@ function load_enabled(store, enabled, disabled) {
         if (item == "overlay_toggle") { continue; }
 
         let enable_switch = typeof store[item] === "boolean";
-        let name = item.split("_").join(" ").toUpperCase();
+        let setting_name = item.split("_").join(" ").toUpperCase();
 
-        name = set_name(name);
+        let [name, desc] = set_info(setting_name);
 
         settings[item] = define_option(
             store,
             item,
+            desc,
             enable_switch ? BOX : TXT,
             name,
             enabled,
