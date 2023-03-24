@@ -81,13 +81,7 @@ function clamp(number, min, max) {
 }
 
 function resize_ui(store) {
-    if (
-        !label_list ||
-        !itext_list ||
-        !pad_list ||
-        !icon_list ||
-        !invisible_list
-    ) {
+    if (!label_list || !itext_list || !pad_list || !icon_list || !invisible_list) {
         return;
     }
 
@@ -119,13 +113,7 @@ function scroll_handler(store, event) {
 
 function set_styles(store) {
     // Set custom element colors
-    if (
-        !label_list ||
-        !itext_list ||
-        !pad_list ||
-        !icon_list ||
-        !invisible_list
-    ) {
+    if (!label_list || !itext_list || !pad_list || !icon_list || !invisible_list) {
         return;
     }
 
@@ -222,10 +210,7 @@ function define_option(
         changed: (value) => {
             store[setting_name] = value;
 
-            if (
-                setting_name.includes("_enabled") &&
-                setting_name != "simbrief_enabled"
-            ) {
+            if (setting_name.includes("_enabled") && setting_name != "simbrief_enabled") {
                 let item_name = setting_name.split("_")[0];
                 toggle_element(`#streamer_overlay_${item_name}`, value);
                 toggle_lists(item_name, value, enabled, disabled);
@@ -255,17 +240,11 @@ function set_info(setting) {
         case "REGISTRATION":
             return ["AIRCRAFT REGISTRATION", ""];
         case "IATA ENABLED":
-            return [
-                "IATA (AIRLINE) ENABLED",
-                "Display your airline's IATA code or name",
-            ];
+            return ["IATA (AIRLINE) ENABLED", "Display your airline's IATA code or name"];
         case "IATA":
             return ["IATA (AIRLINE)", ""];
         case "ORIGIN ENABLED":
-            return [
-                "DEPARTURE ENABLED",
-                "Display departure location ICAO or name",
-            ];
+            return ["DEPARTURE ENABLED", "Display departure location ICAO or name"];
         case "ORIGIN":
             return ["DEPARTURE", ""];
         case "DESTINATION ENABLED":
@@ -300,32 +279,17 @@ function set_info(setting) {
         case "OAT FAHRENHEIT":
             return ["OAT IN FAHRENHEIT", "Use Fahrenheit for OAT"];
         case "CUSTOM ENABLED":
-            return [
-                "CUSTOM TEXTBOX ENABLED",
-                "Display a customizable text box",
-            ];
+            return ["CUSTOM TEXTBOX ENABLED", "Display a customizable text box"];
         case "CUSTOM ICON":
-            return [
-                "CUSTOM BOX ICON NAME",
-                "MDI icon name for custom text box",
-            ];
+            return ["CUSTOM BOX ICON NAME", "MDI icon name for custom text box"];
         case "CUSTOM":
             return ["CUSTOM TEXT", "Content of custom text box"];
         case "PAD NUMBERS":
-            return [
-                setting,
-                "Maintain fixed width for data fields such as IAS",
-            ];
+            return [setting, "Maintain fixed width for data fields such as IAS"];
         case "PAD WITH ZEROES":
-            return [
-                setting,
-                "Display leading zeroes if PAD NUMBERS is enabled",
-            ];
+            return [setting, "Display leading zeroes if PAD NUMBERS is enabled"];
         case "FONT SIZE":
-            return [
-                "FONT (UI) SCALE",
-                "Size of overlay font (in pixels); UI scale",
-            ];
+            return ["FONT (UI) SCALE", "Size of overlay font (in pixels); UI scale"];
         case "OVERLAY BOTTOM":
             return [
                 "OVERLAY ON BOTTOM",
@@ -545,9 +509,7 @@ settings.font_size.changed = (value) => {
 settings.overlay_bottom.changed = (value) => {
     this.store.overlay_bottom = value;
     ds_export(this.store);
-    container.style.alignSelf = this.store.overlay_bottom
-        ? "flex-end"
-        : "flex-start";
+    container.style.alignSelf = this.store.overlay_bottom ? "flex-end" : "flex-start";
 };
 
 settings.display_icons.changed = (value) => {
@@ -561,9 +523,7 @@ settings_define(settings);
 // ---- Events
 run((event) => {
     this.store.overlay_toggle = !this.store.overlay_toggle;
-    container.style.visibility = this.store.overlay_toggle
-        ? "visible"
-        : "hidden";
+    container.style.visibility = this.store.overlay_toggle ? "visible" : "hidden";
 
     toggle_pad_visibility(
         invisible_list,
@@ -575,10 +535,7 @@ run((event) => {
 
 scroll((event) => {
     // Click wheel to update SimBrief, instead of toggle overlay
-    if (
-        !this.store.simbrief_enabled ||
-        this.store.simbrief_username === "USERNAME"
-    ) {
+    if (!this.store.simbrief_enabled || this.store.simbrief_username === "USERNAME") {
         return false;
     }
 
@@ -606,9 +563,7 @@ scroll((event) => {
 });
 
 state(() => {
-    return this.store.overlay_toggle
-        ? "mdi:airplane-check"
-        : "mdi:airplane-off";
+    return this.store.overlay_toggle ? "mdi:airplane-check" : "mdi:airplane-off";
 });
 
 info(() => {
@@ -623,9 +578,7 @@ info(() => {
 
             let now = Date.now();
             let time = 20 - Math.round((now - sb_refresh_timer) / 1000);
-            return time > 0
-                ? `SimBrief available in ${time}s`
-                : "Overlay enabled";
+            return time > 0 ? `SimBrief available in ${time}s` : "Overlay enabled";
         }
         return "Overlay enabled";
     }
@@ -645,22 +598,15 @@ loop_1hz(() => {
 
     if (this.store.distance_enabled && this.store.destination != "----") {
         if (target_airport == null) {
-            get_airport(
-                "streamer-overlay-lookup",
-                this.store.destination,
-                (results) => {
-                    target_airport =
-                        typeof results[0] != undefined ? results[0] : null;
-                }
-            );
+            get_airport("streamer-overlay-lookup", this.store.destination, (results) => {
+                target_airport = typeof results[0] != undefined ? results[0] : null;
+            });
         }
 
         if (target_airport != null) {
             ap_lat = target_airport.lat;
             ap_lon = target_airport.lon;
-            distance = Math.round(
-                calc_distance(ac_lat, ac_lon, ap_lat, ap_lon)
-            );
+            distance = Math.round(calc_distance(ac_lat, ac_lon, ap_lat, ap_lon));
         } else {
             distance = "---";
         }
@@ -678,16 +624,12 @@ loop_1hz(() => {
     let display_distance = distance;
 
     // Update the rest of the labels
-    let airspeed = Math.round(
-        get("A:AIRSPEED INDICATED", metric ? "kph" : "knots")
-    );
+    let airspeed = Math.round(get("A:AIRSPEED INDICATED", metric ? "kph" : "knots"));
     if (airspeed < 5) {
         airspeed = 0;
     }
 
-    let vertspeed = Math.round(
-        get("A:VERTICAL SPEED", metric ? "m/s" : "ft/min")
-    );
+    let vertspeed = Math.round(get("A:VERTICAL SPEED", metric ? "m/s" : "ft/min"));
 
     try {
         vs_threshold = metric ? 0.5 : 100;
@@ -706,9 +648,7 @@ loop_1hz(() => {
         vertspeed = Math.abs(vertspeed);
     }
 
-    let altitude = Math.round(
-        get("A:PLANE ALTITUDE", metric ? "meters" : "feet")
-    );
+    let altitude = Math.round(get("A:PLANE ALTITUDE", metric ? "meters" : "feet"));
 
     let heading = pad_number(
         Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees")),
@@ -757,8 +697,7 @@ loop_1hz(() => {
         reset_padding(pad_list);
     }
 
-    display_vs =
-        vertspeed < 0 ? "-" + pad_number(Math.abs(vertspeed), 4) : vertspeed;
+    display_vs = vertspeed < 0 ? "-" + pad_number(Math.abs(vertspeed), 4) : vertspeed;
 
     try {
         type_label.innerText = this.store.type;
@@ -787,9 +726,7 @@ loop_15hz(() => {
         Math.round(get("A:AMBIENT WIND DIRECTION", "degrees")),
         3
     );
-    wind_speed = Math.round(
-        get("A:AMBIENT WIND VELOCITY", metric ? "kph" : "knots")
-    );
+    wind_speed = Math.round(get("A:AMBIENT WIND VELOCITY", metric ? "kph" : "knots"));
     let compass = get("A:PLANE HEADING DEGREES GYRO", "degrees");
     relative_wind = -Math.abs((360 + (compass - wind_direction)) % 360) + 180;
 
@@ -811,18 +748,12 @@ html_created((el) => {
     // Get referneces to the overlay elements
     container = el.querySelector("#streamer_overlay");
     var_list = el.querySelector("#streamer_overlay_vars");
-    type_label = el.querySelector(
-        "#streamer_overlay_type > .streamer_overlay_itext"
-    );
+    type_label = el.querySelector("#streamer_overlay_type > .streamer_overlay_itext");
     registration_label = el.querySelector(
         "#streamer_overlay_registration .streamer_overlay_itext"
     );
-    iata_label = el.querySelector(
-        "#streamer_overlay_iata .streamer_overlay_itext"
-    );
-    origin_label = el.querySelector(
-        "#streamer_overlay_origin .streamer_overlay_itext"
-    );
+    iata_label = el.querySelector("#streamer_overlay_iata .streamer_overlay_itext");
+    origin_label = el.querySelector("#streamer_overlay_origin .streamer_overlay_itext");
     destination_label = el.querySelector(
         "#streamer_overlay_destination .streamer_overlay_itext"
     );
@@ -832,12 +763,8 @@ html_created((el) => {
     distance_pad = el.querySelector(
         "#streamer_overlay_distance .streamer_overlay_invisible"
     );
-    rules_label = el.querySelector(
-        "#streamer_overlay_rules .streamer_overlay_itext"
-    );
-    network_label = el.querySelector(
-        "#streamer_overlay_network .streamer_overlay_itext"
-    );
+    rules_label = el.querySelector("#streamer_overlay_rules .streamer_overlay_itext");
+    network_label = el.querySelector("#streamer_overlay_network .streamer_overlay_itext");
     airspeed_label = el.querySelector(
         "#streamer_overlay_airspeed .streamer_overlay_itext"
     );
@@ -857,37 +784,19 @@ html_created((el) => {
     altitude_pad = el.querySelector(
         "#streamer_overlay_altitude .streamer_overlay_invisible"
     );
-    heading_label = el.querySelector(
-        "#streamer_overlay_heading .streamer_overlay_itext"
-    );
-    wind_label = el.querySelector(
-        "#streamer_overlay_wind #streamer_overlay_wind1"
-    );
-    wind_label_2 = el.querySelector(
-        "#streamer_overlay_wind #streamer_overlay_wind2"
-    );
-    wind_pad = el.querySelector(
-        "#streamer_overlay_wind .streamer_overlay_invisible"
-    );
+    heading_label = el.querySelector("#streamer_overlay_heading .streamer_overlay_itext");
+    wind_label = el.querySelector("#streamer_overlay_wind #streamer_overlay_wind1");
+    wind_label_2 = el.querySelector("#streamer_overlay_wind #streamer_overlay_wind2");
+    wind_pad = el.querySelector("#streamer_overlay_wind .streamer_overlay_invisible");
     wind_icon = el.querySelector("#streamer_overlay_wind > img");
-    oat_label = el.querySelector(
-        "#streamer_overlay_oat .streamer_overlay_itext"
-    );
-    oat_pad = el.querySelector(
-        "#streamer_overlay_oat .streamer_overlay_invisible"
-    );
+    oat_label = el.querySelector("#streamer_overlay_oat .streamer_overlay_itext");
+    oat_pad = el.querySelector("#streamer_overlay_oat .streamer_overlay_invisible");
     oat_icon = el.querySelector("#streamer_overlay_oat > img");
-    custom_label = el.querySelector(
-        "#streamer_overlay_custom .streamer_overlay_itext"
-    );
+    custom_label = el.querySelector("#streamer_overlay_custom .streamer_overlay_itext");
     custom_icon = el.querySelector("#streamer_overlay_custom > img");
 
-    container.style.visibility = this.store.overlay_toggle
-        ? "visible"
-        : "hidden";
-    container.style.alignSelf = this.store.overlay_bottom
-        ? "flex-end"
-        : "flex-start";
+    container.style.visibility = this.store.overlay_toggle ? "visible" : "hidden";
+    container.style.alignSelf = this.store.overlay_bottom ? "flex-end" : "flex-start";
 
     label_list = el.querySelectorAll(".streamer_overlay_label");
     itext_list = el.querySelectorAll(".streamer_overlay_itext");
