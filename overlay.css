@@ -44,7 +44,7 @@
 	height: 1.4em;
 
 	filter: invert(100%);
-	transition: 350ms linear all;
+	transition: 350ms transform linear, 250ms filter linear;
 }
 
 .streamer_overlay_itext {
