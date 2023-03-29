@@ -2,7 +2,7 @@
 	display: inline-flex;
 	visibility: visible;
 	position: relative;
-	margin: 8px auto;
+	margin: 0.5em auto;
  	align-self: flex-start;
 
 	font-family: sans-serif;
@@ -12,8 +12,8 @@
 
 #streamer_overlay_vars {
 	display: inline-flex;
-	padding: 8px;
-	padding-top: 8px;
+	padding: 0.5em;
+	padding-top: 0.5em;
 
 	justify-content: space-between;
 
@@ -23,9 +23,9 @@
 
 .streamer_overlay_item {
 	display: none;
-	margin-left: 4px;
-	margin-right: 4px;
-	padding: 4px;
+	margin-left: 0.25em;
+	margin-right: 0.25em;
+	padding: 0.25em;
 
 	justify-content: center;
 
@@ -38,17 +38,17 @@
 .streamer_overlay_mdi {
 	display: inline-flex;
 	align-self: center;
-	margin-right: 4px;
-	padding: 0px;
-	width: 23px;
-	height: 23px;
+	margin-right: 0.25em;
+	padding: 0em;
+	width: 1.4em;
+	height: 1.4em;
 
 	filter: invert(100%);
 	transition: 350ms linear all;
 }
 
 .streamer_overlay_itext {
-	margin: 0px;
+	margin: 0em;
 	margin-top: -0.1em;
 
 	align-self: center;
@@ -65,8 +65,8 @@
 
 	align-self: center;
 
-	margin-left: 2px;
-	margin-right: 2px;
+	margin-left: 0.125em;
+	margin-right: 0.125em;
 
 	font-size: 17.2px;
 	font-weight: bold;
@@ -74,7 +74,7 @@
 
 .streamer_overlay_invisible {
 	visibility: hidden;
-	margin: 0px;
+	margin: 0em;
 	margin-top: -0.1em;
 
 	align-self: center;
