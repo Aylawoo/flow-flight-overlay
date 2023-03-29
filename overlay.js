@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.16.2";
+const VERSION = "0.16.3";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -722,10 +722,7 @@ loop_1hz(() => {
 loop_15hz(() => {
     metric = this.store.metric_units;
 
-    let wind_direction = pad_number(
-        Math.round(get("A:AMBIENT WIND DIRECTION", "degrees")),
-        3
-    );
+    let wind_direction = Math.round(get("A:AMBIENT WIND DIRECTION", "degrees"));
     wind_speed = Math.round(get("A:AMBIENT WIND VELOCITY", metric ? "kph" : "knots"));
     let compass = get("A:PLANE HEADING DEGREES GYRO", "degrees");
     relative_wind = -Math.abs((360 + (compass - wind_direction)) % 360) + 180;
@@ -736,7 +733,7 @@ loop_15hz(() => {
         } else {
             reset_padding(pad_list);
         }
-        wind_label.innerText = `${wind_direction}@`;
+        wind_label.innerText = `${pad_number(wind_direction, 3)}@`;
         wind_label_2.innerText = `${wind_speed}${metric ? "km/h" : "kt"}`;
         wind_icon.style.transform = `rotate(${relative_wind}deg)`;
     } catch (e) {
