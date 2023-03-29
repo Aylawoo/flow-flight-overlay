@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.16.3";
+const VERSION = "0.16.4";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -165,7 +165,7 @@ function toggle_lists(item, value, enabled, disabled) {
 
 function toggle_pad_visibility(items, status) {
     items.forEach((item) => {
-        item.style.visibility = status ? "visible" : "hidden";
+        item.style.opacity = status ? 1 : 0;
     });
 }
 
