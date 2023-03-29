@@ -19,6 +19,7 @@
 
 	background-color: #00000090;
 	border-radius: 8px;
+	transition: 250ms background linear;
 }
 
 .streamer_overlay_item {
@@ -33,6 +34,7 @@
 	border: 2px solid #A0A0A0FF;
 	box-shadow: 0px 0px 10px #00000080;
 	border-radius: 8px;
+	transition: 250ms background linear, 250ms border linear;
 }
 
 .streamer_overlay_mdi {
@@ -57,6 +59,7 @@
 
 	font-size: 23px;
 	font-weight: bold;
+	transition: 250ms color linear;
 }
 
 .streamer_overlay_label {
