@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.16.4";
+const VERSION = "0.16.5";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -15,6 +15,8 @@ const BOX = "checkbox",
 
 let container = null,
     var_list = null,
+    logo_container = null,
+    logo_icon = null,
     type_label = null,
     registration_label = null,
     iata_label = null,
@@ -81,7 +83,14 @@ function clamp(number, min, max) {
 }
 
 function resize_ui(store) {
-    if (!label_list || !itext_list || !pad_list || !icon_list || !invisible_list) {
+    if (
+        !label_list ||
+        !itext_list ||
+        !pad_list ||
+        !icon_list ||
+        !invisible_list ||
+        !logo_icon
+    ) {
         return;
     }
 
@@ -101,6 +110,8 @@ function resize_ui(store) {
         icon.style.width = store.font_size + "px";
         icon.style.height = store.font_size + "px";
     });
+
+    logo_icon.style.width = store.font_size * 2 + "px";
 }
 
 function scroll_handler(store, event) {
@@ -117,7 +128,9 @@ function set_styles(store) {
         return;
     }
 
-    let items = document.querySelectorAll("#streamer_overlay_vars > span");
+    let items = document.querySelectorAll(
+        "#streamer_overlay_vars > .streamer_overlay_item"
+    );
 
     var_list.style.backgroundColor = store.color_wrapper;
 
@@ -302,6 +315,8 @@ function set_info(setting) {
             ];
         case "BLACK ICONS":
             return ["DARK MODE ICONS", "Display icons in dark mode"];
+        case "LOGO ENABLED":
+            return ["FLOW LOGO ENABLED", "Display Flow branding in overlay"];
         case "OUTLINE TEXT":
             return [setting, "Display outline around overlay text"];
         case "COLOR WRAPPER":
@@ -463,6 +478,7 @@ this.store = {
     overlay_bottom: false,
     display_icons: true,
     black_icons: false,
+    logo_enabled: true,
     outline_text: true,
     color_wrapper: "#00000090",
     color_outline: "#A0A0A0FF",
@@ -516,6 +532,12 @@ settings.display_icons.changed = (value) => {
     this.store.display_icons = value;
     ds_export(this.store);
     icon_toggle(value);
+};
+
+settings.logo_enabled.changed = (value) => {
+    this.store.logo_enabled = value;
+    ds_export(this.store);
+    toggle_element("#streamer_logo_container", value);
 };
 
 settings_define(settings);
@@ -746,6 +768,8 @@ html_created((el) => {
     container = el.querySelector("#streamer_overlay");
     var_list = el.querySelector("#streamer_overlay_vars");
     type_label = el.querySelector("#streamer_overlay_type > .streamer_overlay_itext");
+    logo_container = el.querySelector("#streamer_logo_container");
+    logo_icon = el.querySelector(".streamer_overlay_logo");
     registration_label = el.querySelector(
         "#streamer_overlay_registration .streamer_overlay_itext"
     );

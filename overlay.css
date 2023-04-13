@@ -49,6 +49,23 @@
 	transition: 350ms transform linear, 250ms filter linear;
 }
 
+#streamer_logo_container {
+	display: inline-flex;
+	background: #00000000;
+}
+
+.streamer_overlay_logo {
+	align-self: center;
+
+	margin: -1em;
+	margin-left: 2px;
+	margin-right: 2px;
+	padding: 0px;
+	width: 46px;
+
+	shape-rendering: crispEdges;
+}
+
 .streamer_overlay_itext {
 	margin: 0em;
 	margin-top: -0.1em;
