@@ -1,111 +1,119 @@
 #streamer_overlay {
-	display: inline-flex;
-	visibility: visible;
-	position: relative;
-	margin: 0.5em auto;
- 	align-self: flex-start;
+    display: inline-flex;
+    visibility: visible;
+    position: relative;
 
-	font-family: sans-serif;
-	text-align: center;
-	pointer-events: all;
+    align-self: flex-start;
+
+    margin: 0.5em auto;
+
+    font-family: sans-serif;
+    text-align: center;
+    pointer-events: all;
 }
 
 #streamer_overlay_vars {
-	display: inline-flex;
-	padding: 0.5em;
-	padding-top: 0.5em;
+    display: inline-flex;
 
-	justify-content: space-between;
+    justify-content: space-between;
 
-	background-color: #00000090;
-	border-radius: 8px;
-	transition: 250ms background linear;
+    padding: 0.5em;
+    padding-top: 0.5em;
+
+    background-color: #00000090;
+    border-radius: 8px;
+    transition: 250ms background linear;
 }
 
 .streamer_overlay_item {
-	display: none;
-	margin-left: 0.25em;
-	margin-right: 0.25em;
-	padding: 0.25em;
+    display: none;
 
-	justify-content: center;
+    justify-content: center;
 
-	background-color: #00000090;
-	border: 2px solid #A0A0A0FF;
-	box-shadow: 0px 0px 10px #00000080;
-	border-radius: 8px;
-	transition: 250ms background linear, 250ms border linear;
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+    padding: 0.25em;
+
+    background-color: #00000090;
+    border: 2px solid #a0a0a0ff;
+    box-shadow: 0px 0px 10px #00000080;
+    border-radius: 8px;
+    transition: 250ms background linear, 250ms border linear;
 }
 
 .streamer_overlay_mdi {
-	display: inline-flex;
-	align-self: center;
-	margin-right: 0.25em;
-	padding: 0em;
-	width: 1.4em;
-	height: 1.4em;
+    display: inline-flex;
 
-	filter: invert(100%);
-	transition: 350ms transform linear, 250ms filter linear;
+    align-self: center;
+
+    margin-right: 0.25em;
+    padding: 0em;
+
+    width: 1.4em;
+    height: 1.4em;
+
+    filter: invert(100%);
+    transition: 350ms transform linear, 250ms filter linear;
 }
 
 #streamer_logo_container {
-	display: inline-flex;
-	background: #00000000;
+    display: inline-flex;
+
+    background: #00000000;
 }
 
 .streamer_overlay_logo {
-	align-self: center;
+    align-self: center;
 
-	margin: -1em;
-	margin-left: 2px;
-	margin-right: 2px;
-	padding: 0px;
-	width: 46px;
+    margin: -1em;
+    margin-left: 2px;
+    margin-right: 2px;
+    padding: 0px;
 
-	shape-rendering: crispEdges;
+    width: 46px;
+
+    shape-rendering: crispEdges;
 }
 
 .streamer_overlay_itext {
-	margin: 0em;
-	margin-top: -0.1em;
+    align-self: center;
 
-	align-self: center;
+    margin: 0em;
+    margin-top: -0.1em;
 
-	color: #FFFFFFFF;
+    color: #ffffffff;
 
-	font-size: 23px;
-	font-weight: bold;
-	transition: 250ms color linear;
+    font-size: 23px;
+    font-weight: bold;
+    transition: 250ms color linear;
 }
 
 .streamer_overlay_label {
-	display: none;
-	margin: auto;
+    display: none;
 
-	align-self: center;
+    align-self: center;
 
-	margin-left: 0.125em;
-	margin-right: 0.125em;
+    margin: auto;
+    margin-left: 0.125em;
+    margin-right: 0.125em;
 
-	font-size: 17.2px;
-	font-weight: bold;
+    font-size: 17.2px;
+    font-weight: bold;
 }
 
 .streamer_overlay_invisible {
-	opacity: 0;
-	margin: 0em;
-	margin-top: -0.1em;
+    opacity: 0;
 
-	align-self: center;
+    margin: 0em;
+    margin-top: -0.1em;
 
-	font-size: 23px;
-	transition: 250ms opacity linear;
+    align-self: center;
+
+    font-size: 23px;
+    transition: 250ms opacity linear;
 }
 
 .streamer_overlay_outline {
-	text-shadow: -1px 1px 2px #000000AA,
-				 1px 1px 2px #000000AA,
-				 1px -1px 0 #000000AA,
-				 -1px -1px 0 #000000AA;
+    text-shadow: -1px 1px 2px #000000aa, 1px 1px 2px #000000aa, 1px -1px 0 #000000aa,
+        -1px -1px 0 #000000aa;
 }
