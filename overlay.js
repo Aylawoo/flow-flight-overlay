@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.16.5";
+const VERSION = "0.17.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -437,6 +437,33 @@ function icon_toggle(value) {
     }
 }
 
+function load_simbrief(store) {
+    if (!store.simbrief_enabled) { return false; }
+
+    fetch(`${SIMBRIEF_URL}${store.simbrief_username}&json=1`)
+        .then((response) => response.json())
+        .then((data) => {
+            store.type = data.aircraft.icaocode;
+            store.registration = data.aircraft.reg;
+            store.origin = data.origin.icao_code;
+            store.destination = data.destination.icao_code;
+            store.iata = `${data.general.icao_airline} - ${data.atc.callsign}`;
+            ds_export(store);
+        });
+}
+
+function otto_set(store, item, value) {
+    store[item] = value;
+    ds_export(store);
+}
+
+function otto_set_enabled(store, item, value) {
+    store[item + "_enabled"] = value;
+    ds_export(store);
+    toggle_lists(item, value, enabled_items, disabled_items);
+    load_views(enabled_items, disabled_items);
+}
+
 // ---- Configuration
 this.store = {
     /*
@@ -572,16 +599,7 @@ scroll((event) => {
     // We're going to send a request to SimBrief, reset the timer
     sb_refresh_timer = now;
 
-    fetch(`${SIMBRIEF_URL}${this.store.simbrief_username}&json=1`)
-        .then((response) => response.json())
-        .then((data) => {
-            this.store.type = data.aircraft.icaocode;
-            this.store.registration = data.aircraft.reg;
-            this.store.origin = data.origin.icao_code;
-            this.store.destination = data.destination.icao_code;
-            this.store.iata = `${data.general.icao_airline} - ${data.atc.callsign}`;
-            ds_export(this.store);
-        });
+    load_simbrief(this.store);
 });
 
 state(() => {
@@ -608,6 +626,675 @@ info(() => {
 
 style(() => {
     return this.store.overlay_toggle ? "active" : null;
+});
+
+search(["overlay", "ol"], (query, callback) => {
+    if (!query) { return };
+
+    let params = query.toUpperCase().split(" ");
+
+    let results = [];
+
+    // TODO: localization strings
+    switch (params[1]) {
+        case "UNIT":
+        case "UNITS":
+        case "IMPERIAL":
+        case "METRIC":
+            results.push({
+                uid: "overlay_otto_0",
+                label: "Use metric units (km/h, m/s, km)",
+                execute: () => {
+                    otto_set(this.store, "metric_units", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_1",
+                label: "Use imperial units (kt, fpm, nm)",
+                execute: () => {
+                    otto_set(this.store, "metric_units", false);
+                }
+            });
+            break;
+        case "SB":
+        case "SIMBRIEF":
+            if (params.length >= 3) {
+                results.push({
+                    uid: "overlay_otto_2",
+                    label: `New SimBrief username: ${params.slice(2).join(" ")}`,
+                    subtext: "Activate to save",
+                    execute: () => {
+                        otto_set(
+                            this.store,
+                            "simbrief_username",
+                            params.slice(2).join(" ")
+                        );
+                        return true;
+                    }
+                });
+            }
+            results.push({
+                uid: "overlay_otto_3",
+                label: "SimBrief on",
+                subtext: `SimBrief username: ${this.store.simbrief_username}`,
+                execute: () => {
+                    otto_set(this.store, "simbrief_enabled", true);
+                    return true;
+                }
+            });
+            results.push({
+                uid: "overlay_otto_4",
+                label: "SimBrief off",
+                execute: () => {
+                    otto_set(this.store, "simbrief_enabled", false);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_5",
+                label: "Refresh SimBrief data",
+                subtext: "SimBrief must be on to have effect",
+                execute: () => {
+                    load_simbrief(this.store);
+                }
+            })
+            break;
+        case "TYPE":
+        case "AIRCRAFT":
+        case "CRAFT":
+        case "PLANE":
+            if (params.length >= 3) {
+                results.push({
+                    uid: "overlay_otto_6",
+                    label: `New aircraft type: ${params.slice(2).join(" ")}`,
+                    subtext: "Activate to save",
+                    execute: () => {
+                        otto_set(this.store, "type", params.slice(2).join(" "));
+                    }
+                });
+            }
+            results.push({
+                uid: "overlay_otto_7",
+                label: "Aircraft type on",
+                subtext: `Current type: ${this.store.type}`,
+                execute: () => {
+                    otto_set_enabled(this.store, "type", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_8",
+                label: "Aircraft type off",
+                execute: () => {
+                    otto_set_enabled(this.store, "type", false);
+                }
+            });
+            break;
+        case "REGISTRATION":
+        case "REG":
+        case "TAIL":
+        case "#":
+            if (params.length >= 3) {
+                results.push({
+                    uid: "overlay_otto_9",
+                    label: `New registration: ${params.slice(2).join(" ")}`,
+                    subtext: "Activate to save",
+                    execute: () => {
+                        otto_set(this.store, "registration", params.slice(2).join(" "));
+                    }
+                });
+            }
+            results.push({
+                uid: "overlay_otto_10",
+                label: "Aircraft registration on",
+                subtext: `Current regstration: ${this.store.registration}`,
+                execute: () => {
+                    otto_set_enabled(this.store, "registration", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_11",
+                label: "Aircraft registration off",
+                execute: () => {
+                    otto_set_enabled(this.store, "registration", false);
+                }
+            });
+            break;
+        case "IATA":
+        case "AIRLINE":
+        case "COMPANY":
+        case "VA":
+            if (params.length >= 3) {
+                results.push({
+                    uid: "overlay_otto_12",
+                    label: `New IATA (Airline): ${params.slice(2).join(" ")}`,
+                    subtext: "Activate to save",
+                    execute: () => {
+                        otto_set(this.store, "iata", params.slice(2).join(" "));
+                    }
+                });
+            }
+            results.push({
+                uid: "overlay_otto_13",
+                label: "IATA (Airline) on",
+                subtext: `Current IATA (Airline): ${this.store.iata}`,
+                execute: () => {
+                    otto_set_enabled(this.store, "iata", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_14",
+                label: "IATA (Airline) off",
+                execute: () => {
+                    otto_set_enabled(this.store, "iata", false);
+                }
+            });
+            break;
+        case "ORIGIN":
+        case "OG":
+        case "DEPARTURE":
+        case "DEPART":
+            if (params.length >= 3) {
+                results.push({
+                    uid: "overlay_otto_15",
+                    label: `New origin: ${params.slice(2).join(" ")}`,
+                    subtext: "Activate to save",
+                    execute: () => {
+                        otto_set(this.store, "origin", params.slice(2).join(" "));
+                    }
+                });
+            }
+            results.push({
+                uid: "overlay_otto_16",
+                label: "Origin on",
+                subtext: `Current origin: ${this.store.origin}`,
+                execute: () => {
+                    otto_set_enabled(this.store, "origin", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_17",
+                label: "Origin off",
+                execute: () => {
+                    otto_set_enabled(this.store, "origin", false);
+                }
+            });
+            break;
+        case "DESTINATION":
+        case "DEST":
+        case "ARRIVAL":
+        case "AR":
+            if (params.length >= 3) {
+                results.push({
+                    uid: "overlay_otto_18",
+                    label: `New destination: ${params.slice(2).join(" ")}`,
+                    subtext: "Activate to save",
+                    execute: () => {
+                        otto_set(this.store, "destination", params.slice(2).join(" "));
+                    }
+                });
+            }
+            results.push({
+                uid: "overlay_otto_19",
+                label: "Destination on",
+                subtext: `Current destination: ${this.store.destination}`,
+                execute: () => {
+                    otto_set_enabled(this.store, "destination", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_20",
+                label: "Destination off",
+                execute: () => {
+                    otto_set_enabled(this.store, "destination", false);
+                }
+            });
+            break;
+        case "DISTANCE":
+        case "DIST":
+        case "DTG":
+            results.push({
+                uid: "overlay_otto_21",
+                label: "Distance on",
+                execute: () => {
+                    otto_set_enabled(this.store, "distance", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_22",
+                label: "Distance off",
+                execute: () => {
+                    otto_set_enabled(this.store, "distance", false);
+                }
+            });
+            break;
+        case "RULES":
+        case "VFR":
+        case "IFR":
+        case "SVFR":
+            if (params.length >= 3) {
+                results.push({
+                    uid: "overlay_otto_23",
+                    label: `New ruels: ${params.slice(2).join(" ")}`,
+                    subtext: "Activate to save",
+                    execute: () => {
+                        otto_set(this.store, "rules", params.slice(2).join(" "));
+                    }
+                });
+            }
+            results.push({
+                uid: "overlay_otto_24",
+                label: "Rules on",
+                subtext: `Current rules: ${this.store.rules}`,
+                execute: () => {
+                    otto_set_enabled(this.store, "rules", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_25",
+                label: "Rules off",
+                execute: () => {
+                    otto_set_enabled(this.store, "rules", false);
+                }
+            });
+            break;
+        case "NETWORK":
+        case "NET":
+        case "NW":
+            if (params.length >= 3) {
+                results.push({
+                    uid: "overlay_otto_26",
+                    label: `New network: ${params.slice(2).join(" ")}`,
+                    subtext: "Activate to save",
+                    execute: () => {
+                        otto_set(this.store, "network", params.slice(2).join(" "));
+                    }
+                });
+            }
+            results.push({
+                uid: "overlay_otto_27",
+                label: "Network on",
+                subtext: `Current network: ${this.store.network}`,
+                execute: () => {
+                    otto_set_enabled(this.store, "network", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_28",
+                label: "Network off",
+                execute: () => {
+                    otto_set_enabled(this.store, "network", false);
+                }
+            });
+            break;
+        case "AIRSPEED":
+        case "SPEED":
+        case "SPD":
+            results.push({
+                uid: "overlay_otto_29",
+                label: "Airspeed on",
+                execute: () => {
+                    otto_set_enabled(this.store, "airspeed", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_30",
+                label: "Airspeed off",
+                execute: () => {
+                    otto_set_enabled(this.store, "airspeed", false);
+                }
+            });
+            break;
+        case "VERTSPEED":
+        case "VSPEED":
+        case "VS":
+            results.push({
+                uid: "overlay_otto_31",
+                label: "Vertical speed on",
+                execute: () => {
+                    otto_set_enabled(this.store, "vertspeed", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_32",
+                label: "Vertspeed off",
+                execute: () => {
+                    otto_set_enabled(this.store, "vertspeed", false);
+                }
+            });
+            break;
+        case "ALTITUDE":
+        case "ALT":
+            results.push({
+                uid: "overlay_otto_33",
+                label: "Altitude on",
+                execute: () => {
+                    otto_set_enabled(this.store, "altitude", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_34",
+                label: "Altitude off",
+                execute: () => {
+                    otto_set_enabled(this.store, "altitude", false);
+                }
+            });
+            break;
+        case "HEADING":
+        case "HDG":
+            results.push({
+                uid: "overlay_otto_35",
+                label: "Heading on",
+                execute: () => {
+                    otto_set_enabled(this.store, "heading", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_36",
+                label: "Heading off",
+                execute: () => {
+                    otto_set_enabled(this.store, "heading", false);
+                }
+            });
+            break;
+        case "WIND":
+        case "WND":
+            results.push({
+                uid: "overlay_otto_37",
+                label: "Wind on",
+                execute: () => {
+                    otto_set_enabled(this.store, "wind", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_38",
+                label: "Wind off",
+                execute: () => {
+                    otto_set_enabled(this.store, "wind", false);
+                }
+            });
+            break;
+        case "TEMPERATURE":
+        case "TEMP":
+        case "OAT":
+            results.push({
+                uid: "overlay_otto_39",
+                label: "OAT on",
+                execute: () => {
+                    otto_set_enabled(this.store, "oat", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_40",
+                label: "OAT off",
+                execute: () => {
+                    otto_set_enabled(this.store, "oat", false);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_41",
+                label: "Fahrenheit on",
+                execute: () => {
+                    this.store.oat_fahrenheit = true;
+                    ds_export(this.store);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_42",
+                label: "Fahrenheit off",
+                execute: () => {
+                    this.store.oat_fahrenheit = false;
+                    ds_export(this.store);
+                }
+            });
+            break;
+        case "CUSTOM":
+        case "CS":
+            if (params.length >= 3) {
+                results.push({
+                    uid: "overlay_otto_43",
+                    label: `Custom text: ${params.slice(2).join(" ")}`,
+                    subtext: "Activate to save",
+                    execute: () => {
+                        otto_set(this.store, "custom", params.slice(2).join(" "));
+                    }
+                });
+            }
+            results.push({
+                uid: "overlay_otto_44",
+                label: "Custom field on",
+                execute: () => {
+                    otto_set_enabled(this.store, "custom", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_45",
+                label: "Custom field off",
+                execute: () => {
+                    otto_set_enabled(this.store, "custom", false);
+                }
+            });
+            break;
+        case "CSICON":
+        case "CICON":
+        case "CSI":
+        case "CI":
+            results.push({
+                uid: "overlay_otto_46",
+                label: `Custom icon: ${params.slice(2).join(" ")}`,
+                subtext: "Activate to save",
+                execute: () => {
+                    otto_set(this.store, "custom_icon", params.slice(2).join(" "));
+                    custom_icon.src = `mdi/icons/${this.store.custom_icon}.svg`;
+                }
+            });
+            break;
+        case "PADDING":
+        case "PAD":
+            results.push({
+                uid: "overlay_otto_47",
+                label: "Pad number spacing on",
+                execute: () => {
+                    otto_set(this.store, "pad_numbers", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_48",
+                label: "Pad number spacing off",
+                execute: () => {
+                    otto_set(this.store, "pad_numbers", false);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_49",
+                label: "Pad with leading zeroes",
+                execute: () => {
+                    otto_set(this.store, "pad_with_zeroes", true);
+                    toggle_pad_visibility(pad_list, this.store.pad_with_zeroes);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_50",
+                label: "Pad with leading spaces",
+                execute: () => {
+                    otto_set(this.store, "pad_with_zeroes", false);
+                    toggle_pad_visibility(pad_list, this.store.pad_with_zeroes);
+                }
+            })
+            break;
+        case "FONT":
+        case "SIZE":
+        case "SCALE":
+        case "UI":
+            results.push({
+                uid: "overlay_otto_51",
+                label: "Increase font size by 1",
+                subtext: `Current font size: ${this.store.font_size}`,
+                execute: () => {
+                    otto_set(this.store, "font_size", this.store.font_size + 1);
+                    resize_ui(this.store);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_52",
+                label: "Decrease font size by 1",
+                execute: () => {
+                    otto_set(this.store, "font_size", this.store.font_size - 1);
+                    resize_ui(this.store);
+                }
+            });
+            break;
+        case "POSITION":
+        case "POS":
+            results.push({
+                uid: "overlay_otto_53",
+                label: "Overlay on top of screen",
+                execute: () => {
+                    otto_set(this.store, "overlay_bottom", false);
+                    container.style.alignSelf = this.store.overlay_bottom ? "flex-end" : "flex-start";
+                }
+            });
+            results.push({
+                uid: "overlay_otto_54",
+                label: "Overlay on bottom of screen",
+                execute: () => {
+                    otto_set(this.store, "overlay_bottom", true);
+                    container.style.alignSelf = this.store.overlay_bottom ? "flex-end" : "flex-start";
+                }
+            });
+            break;
+        case "ICONS":
+        case "ICON":
+        case "ICO":
+        case "LABELS":
+            results.push({
+                uid: "overlay_otto_55",
+                label: "Icons on",
+                execute: () => {
+                    otto_set(this.store, "display_icons", true);
+                    icon_toggle(this.store.display_icons);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_56",
+                label: "Icons off",
+                execute: () => {
+                    otto_set(this.store, "display_icons", false);
+                    icon_toggle(this.store.display_icons);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_57",
+                label: "Use dark mode icons",
+                execute: () => {
+                    otto_set(this.store, "black_icons", true);
+                    set_styles(this.store);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_58",
+                label: "Use light mode icons",
+                execute: () => {
+                    otto_set(this.store, "black_icons", false);
+                    set_styles(this.store);
+                }
+            });
+            break;
+        case "FLOW":
+        case "LOGO":
+        case "BRAND":
+            results.push({
+                uid: "overlay_otto_59",
+                label: "Flow logo on",
+                execute: () => {
+                    otto_set(this.store, "logo_enabled", true);
+                    toggle_element("#streamer_logo_container", true);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_60",
+                label: "Flow logo off",
+                execute: () => {
+                    otto_set(this.store, "logo_enabled", false);
+                    toggle_element("#streamer_logo_container", false);
+                }
+            });
+            break;
+        case "TEXTOL":
+        case "TEXT":
+        case "TXT":
+            results.push({
+                uid: "overlay_otto_61",
+                label: "Text outline on",
+                execute: () => {
+                    otto_set(this.store, "outline_text", true);
+                    set_styles(this.store);
+                }
+            });
+            results.push({
+                uid: "overlay_otto_62",
+                label: "Text outline off",
+                execute: () => {
+                    otto_set(this.store, "outline_text", false);
+                    set_styles(this.store);
+                }
+            });
+            break;
+        case "WRAPPER":
+        case "WRAP":
+        case "WC":
+            results.push({
+                uid: "overlay_otto_63",
+                label: `New wrapper color: ${params.slice(2).join(" ")}`,
+                subtext: "Activate to save",
+                execute: () => {
+                    otto_set(this.store, "color_wrapper", params.slice(2).join(" "));
+                    set_styles(this.store);
+                }
+            });
+            break;
+        case "OUTLINE":
+        case "OLC":
+        case "OL":
+            results.push({
+                uid: "overlay_otto_64",
+                label: `New outline color: ${params.slice(2).join(" ")}`,
+                subtext: "Activate to save",
+                execute: () => {
+                    otto_set(this.store, "color_outline", params.slice(2).join(" "));
+                    set_styles(this.store);
+                }
+            });
+            break;
+        case "BACKGROUND":
+        case "BGC":
+        case "BG":
+            results.push({
+                uid: "overlay_otto_65",
+                label: `New background color: ${params.slice(2).join(" ")}`,
+                subtext: "Activate to save",
+                execute: () => {
+                    otto_set(this.store, "color_background", params.slice(2).join(" "));
+                    set_styles(this.store);
+                }
+            });
+            break;
+        case "FOREGROUND":
+        case "FGC":
+        case "FG":
+            results.push({
+                uid: "overlay_otto_66",
+                label: `New foreground color: ${params.slice(2).join(" ")}`,
+                subtext: "Activate to save",
+                execute: () => {
+                    otto_set(this.store, "color_text", params.slice(2).join(" "));
+                    set_styles(this.store);
+                }
+            });
+            break;
+        default:
+            break;
+    }
+
+    callback(results);
 });
 
 loop_1hz(() => {
