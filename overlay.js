@@ -412,8 +412,8 @@ function pad_number(number, pad_amount) {
 }
 
 function pad_required(number, pad_amount) {
-    number = number.toString().length;
-    return number > 0 ? pad_amount - number : 0;
+    let required = number.toString().length;
+    return required > 0 ? pad_amount - required : 0;
 }
 
 function reset_padding(pad_items) {
@@ -423,8 +423,8 @@ function reset_padding(pad_items) {
 }
 
 function toggle_element(elem, value) {
-    elem = document.querySelector(elem);
-    elem.style.display = value ? "inline-flex" : "none";
+    element = document.querySelector(elem);
+    element.style.display = value ? "inline-flex" : "none";
 }
 
 function icon_toggle(value) {
