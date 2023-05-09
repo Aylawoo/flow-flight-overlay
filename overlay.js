@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.18.1";
+const VERSION = "0.18.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -867,6 +867,7 @@ search(["overlay", "ol"], (query, callback) => {
                             "destination",
                             otto_split(params)
                         );
+                        target_airport = null;
                     },
                 });
             }
