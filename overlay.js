@@ -464,6 +464,10 @@ function otto_set_enabled(store, item, value) {
     load_views(enabled_items, disabled_items);
 }
 
+function otto_split(params) {
+    return params.slice(2).join(" ");
+}
+
 // ---- Configuration
 this.store = {
     /*
@@ -661,13 +665,13 @@ search(["overlay", "ol"], (query, callback) => {
             if (params.length >= 3) {
                 results.push({
                     uid: "overlay_otto_2",
-                    label: `New SimBrief username: ${params.slice(2).join(" ")}`,
+                    label: `New SimBrief username: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
                         otto_set(
                             this.store,
                             "simbrief_username",
-                            params.slice(2).join(" ")
+                            otto_split(params)
                         );
                         return true;
                     }
@@ -705,10 +709,10 @@ search(["overlay", "ol"], (query, callback) => {
             if (params.length >= 3) {
                 results.push({
                     uid: "overlay_otto_6",
-                    label: `New aircraft type: ${params.slice(2).join(" ")}`,
+                    label: `New aircraft type: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "type", params.slice(2).join(" "));
+                        otto_set(this.store, "type", otto_split(params));
                     }
                 });
             }
@@ -735,10 +739,10 @@ search(["overlay", "ol"], (query, callback) => {
             if (params.length >= 3) {
                 results.push({
                     uid: "overlay_otto_9",
-                    label: `New registration: ${params.slice(2).join(" ")}`,
+                    label: `New registration: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "registration", params.slice(2).join(" "));
+                        otto_set(this.store, "registration", otto_split(params));
                     }
                 });
             }
@@ -765,10 +769,10 @@ search(["overlay", "ol"], (query, callback) => {
             if (params.length >= 3) {
                 results.push({
                     uid: "overlay_otto_12",
-                    label: `New IATA (Airline): ${params.slice(2).join(" ")}`,
+                    label: `New IATA (Airline): ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "iata", params.slice(2).join(" "));
+                        otto_set(this.store, "iata", otto_split(params));
                     }
                 });
             }
@@ -795,10 +799,10 @@ search(["overlay", "ol"], (query, callback) => {
             if (params.length >= 3) {
                 results.push({
                     uid: "overlay_otto_15",
-                    label: `New origin: ${params.slice(2).join(" ")}`,
+                    label: `New origin: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "origin", params.slice(2).join(" "));
+                        otto_set(this.store, "origin", otto_split(params));
                     }
                 });
             }
@@ -825,10 +829,10 @@ search(["overlay", "ol"], (query, callback) => {
             if (params.length >= 3) {
                 results.push({
                     uid: "overlay_otto_18",
-                    label: `New destination: ${params.slice(2).join(" ")}`,
+                    label: `New destination: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "destination", params.slice(2).join(" "));
+                        otto_set(this.store, "destination", otto_split(params));
                     }
                 });
             }
@@ -873,10 +877,10 @@ search(["overlay", "ol"], (query, callback) => {
             if (params.length >= 3) {
                 results.push({
                     uid: "overlay_otto_23",
-                    label: `New ruels: ${params.slice(2).join(" ")}`,
+                    label: `New ruels: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "rules", params.slice(2).join(" "));
+                        otto_set(this.store, "rules", otto_split(params));
                     }
                 });
             }
@@ -902,10 +906,10 @@ search(["overlay", "ol"], (query, callback) => {
             if (params.length >= 3) {
                 results.push({
                     uid: "overlay_otto_26",
-                    label: `New network: ${params.slice(2).join(" ")}`,
+                    label: `New network: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "network", params.slice(2).join(" "));
+                        otto_set(this.store, "network", otto_split(params));
                     }
                 });
             }
@@ -1051,10 +1055,10 @@ search(["overlay", "ol"], (query, callback) => {
             if (params.length >= 3) {
                 results.push({
                     uid: "overlay_otto_43",
-                    label: `Custom text: ${params.slice(2).join(" ")}`,
+                    label: `Custom text: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "custom", params.slice(2).join(" "));
+                        otto_set(this.store, "custom", otto_split(params));
                     }
                 });
             }
@@ -1079,10 +1083,10 @@ search(["overlay", "ol"], (query, callback) => {
         case "CI":
             results.push({
                 uid: "overlay_otto_46",
-                label: `Custom icon: ${params.slice(2).join(" ")}`,
+                label: `Custom icon: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
-                    otto_set(this.store, "custom_icon", params.slice(2).join(" "));
+                    otto_set(this.store, "custom_icon", otto_split(params));
                     custom_icon.src = `mdi/icons/${this.store.custom_icon}.svg`;
                 }
             });
@@ -1243,10 +1247,10 @@ search(["overlay", "ol"], (query, callback) => {
         case "WC":
             results.push({
                 uid: "overlay_otto_63",
-                label: `New wrapper color: ${params.slice(2).join(" ")}`,
+                label: `New wrapper color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
-                    otto_set(this.store, "color_wrapper", params.slice(2).join(" "));
+                    otto_set(this.store, "color_wrapper", otto_split(params));
                     set_styles(this.store);
                 }
             });
@@ -1256,10 +1260,10 @@ search(["overlay", "ol"], (query, callback) => {
         case "OL":
             results.push({
                 uid: "overlay_otto_64",
-                label: `New outline color: ${params.slice(2).join(" ")}`,
+                label: `New outline color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
-                    otto_set(this.store, "color_outline", params.slice(2).join(" "));
+                    otto_set(this.store, "color_outline", otto_split(params));
                     set_styles(this.store);
                 }
             });
@@ -1269,10 +1273,10 @@ search(["overlay", "ol"], (query, callback) => {
         case "BG":
             results.push({
                 uid: "overlay_otto_65",
-                label: `New background color: ${params.slice(2).join(" ")}`,
+                label: `New background color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
-                    otto_set(this.store, "color_background", params.slice(2).join(" "));
+                    otto_set(this.store, "color_background", otto_split(params));
                     set_styles(this.store);
                 }
             });
@@ -1282,10 +1286,10 @@ search(["overlay", "ol"], (query, callback) => {
         case "FG":
             results.push({
                 uid: "overlay_otto_66",
-                label: `New foreground color: ${params.slice(2).join(" ")}`,
+                label: `New foreground color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
-                    otto_set(this.store, "color_text", params.slice(2).join(" "));
+                    otto_set(this.store, "color_text", otto_split(params));
                     set_styles(this.store);
                 }
             });
