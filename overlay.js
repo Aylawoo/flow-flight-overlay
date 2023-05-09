@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.17.2";
+const VERSION = "0.17.3";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -468,110 +468,117 @@ function otto_split(params) {
     return params.slice(2).join(" ");
 }
 
-// ---- Configuration
-this.store = {
-    /*
-    Each display item is a pair of <name> strings and <name>_enabled bools.
-    This allows programmatically setting the `enabled_items` list easily.
-    */
-    overlay_toggle: true,
-    metric_units: false,
-    simbrief_enabled: false,
-    simbrief_username: "USERNAME",
-    type_enabled: false,
-    type: "C172",
-    registration_enabled: false,
-    registration: "N172SP",
-    iata_enabled: false,
-    iata: "My Airline",
-    origin_enabled: true,
-    origin: "----",
-    destination_enabled: true,
-    destination: "----",
-    distance_enabled: true,
-    rules_enabled: false,
-    rules: "VFR",
-    network_enabled: false,
-    network: "Multiplayer",
-    airspeed_enabled: true,
-    vertspeed_enabled: true,
-    altitude_enabled: true,
-    heading_enabled: true,
-    wind_enabled: false,
-    oat_enabled: false,
-    oat_fahrenheit: false,
-    custom_enabled: false,
-    custom_icon: "note-text",
-    custom: "Change me!",
-    pad_numbers: true,
-    pad_with_zeroes: false,
-    font_size: 23,
-    overlay_bottom: false,
-    display_icons: true,
-    black_icons: false,
-    logo_enabled: true,
-    outline_text: true,
-    color_wrapper: "#00000090",
-    color_outline: "#A0A0A0FF",
-    color_background: "#00000090",
-    color_text: "#FFFFFFFF",
-};
-ds_import(this.store);
+function init_store() {
+    return {
+        /*
+        Each display item is a pair of <name> strings and <name>_enabled bools.
+        This allows programmatically setting the `enabled_items` list easily.
+        */
+        overlay_toggle: true,
+        metric_units: false,
+        simbrief_enabled: false,
+        simbrief_username: "USERNAME",
+        type_enabled: false,
+        type: "C172",
+        registration_enabled: false,
+        registration: "N172SP",
+        iata_enabled: false,
+        iata: "My Airline",
+        origin_enabled: true,
+        origin: "----",
+        destination_enabled: true,
+        destination: "----",
+        distance_enabled: true,
+        rules_enabled: false,
+        rules: "VFR",
+        network_enabled: false,
+        network: "Multiplayer",
+        airspeed_enabled: true,
+        vertspeed_enabled: true,
+        altitude_enabled: true,
+        heading_enabled: true,
+        wind_enabled: false,
+        oat_enabled: false,
+        oat_fahrenheit: false,
+        custom_enabled: false,
+        custom_icon: "note-text",
+        custom: "Change me!",
+        pad_numbers: true,
+        pad_with_zeroes: false,
+        font_size: 23,
+        overlay_bottom: false,
+        display_icons: true,
+        black_icons: false,
+        logo_enabled: true,
+        outline_text: true,
+        color_wrapper: "#00000090",
+        color_outline: "#A0A0A0FF",
+        color_background: "#00000090",
+        color_text: "#FFFFFFFF",
+    };
+}
 
+function init_settings(settings) {
+    settings.destination.changed = (value) => {
+        this.store.destination = value;
+        ds_export(this.store);
+        target_airport = null;
+    };
+
+    settings.custom_enabled.changed = (value) => {
+        this.store.custom_enabled = value;
+        ds_export(this.store);
+        toggle_element("#streamer_overlay_custom", value);
+        toggle_element("#streamer_overlay_custom > .streamer_overlay_label", value);
+        toggle_lists("custom", value, enabled_items, disabled_items);
+    };
+
+    settings.custom_icon.changed = (value) => {
+        this.store.custom_icon = value;
+        ds_export(this.store);
+        custom_icon.src = `mdi/icons/${value}.svg`;
+    };
+
+    settings.pad_with_zeroes.changed = (value) => {
+        this.store.pad_with_zeroes = value;
+        ds_export(this.store);
+        toggle_pad_visibility(pad_list, value);
+    };
+
+    settings.font_size.changed = (value) => {
+        this.store.font_size = clamp(value, 8, 128);
+        ds_export(this.store);
+        resize_ui(this.store);
+    };
+
+    settings.overlay_bottom.changed = (value) => {
+        this.store.overlay_bottom = value;
+        ds_export(this.store);
+        container.style.alignSelf = this.store.overlay_bottom ? "flex-end" : "flex-start";
+    };
+
+    settings.display_icons.changed = (value) => {
+        this.store.display_icons = value;
+        ds_export(this.store);
+        icon_toggle(value);
+    };
+
+    settings.logo_enabled.changed = (value) => {
+        this.store.logo_enabled = value;
+        ds_export(this.store);
+        toggle_element("#streamer_logo_container", value);
+    };
+
+    settings_define(settings);
+}
+
+// ---- Configuration
+this.store = init_store();
+ds_import(this.store);
 // Take all config options and place them in a `settings` object
 let settings = load_enabled(this.store, enabled_items, disabled_items);
-
-settings.destination.changed = (value) => {
-    this.store.destination = value;
-    ds_export(this.store);
-    target_airport = null;
-};
-
-settings.custom_enabled.changed = (value) => {
-    this.store.custom_enabled = value;
-    ds_export(this.store);
-    toggle_element("#streamer_overlay_custom", value);
-    toggle_element("#streamer_overlay_custom > .streamer_overlay_label", value);
-    toggle_lists("custom", value, enabled_items, disabled_items);
-};
-
-settings.custom_icon.changed = (value) => {
-    this.store.custom_icon = value;
-    ds_export(this.store);
-    custom_icon.src = `mdi/icons/${value}.svg`;
-};
-
-settings.pad_with_zeroes.changed = (value) => {
-    this.store.pad_with_zeroes = value;
-    ds_export(this.store);
-    toggle_pad_visibility(pad_list, value);
-};
-
-settings.font_size.changed = (value) => {
-    this.store.font_size = clamp(value, 8, 128);
-    ds_export(this.store);
-    resize_ui(this.store);
-};
-
-settings.overlay_bottom.changed = (value) => {
-    this.store.overlay_bottom = value;
-    ds_export(this.store);
-    container.style.alignSelf = this.store.overlay_bottom ? "flex-end" : "flex-start";
-};
-
-settings.display_icons.changed = (value) => {
-    this.store.display_icons = value;
-    ds_export(this.store);
-    icon_toggle(value);
-};
-
-settings.logo_enabled.changed = (value) => {
-    this.store.logo_enabled = value;
-    ds_export(this.store);
-    toggle_element("#streamer_logo_container", value);
-};
-
-settings_define(settings);
+// Finish settings initialization
+init_settings(settings);
 
 // ---- Events
 run((event) => {
