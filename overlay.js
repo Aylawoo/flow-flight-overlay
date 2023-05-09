@@ -741,7 +741,7 @@ run((event) => {
 // -- Flow wheel mouse scroll behavior
 scroll((event) => {
     // Click wheel to update SimBrief
-    if (!this.store.simbrief_enabled || this.store.simbrief_username === "USERNAME") {
+    if (!this.store.simbrief_enabled || this.store.simbrief_username === "Default") {
         return false;
     }
 
@@ -770,7 +770,7 @@ info(() => {
         return "Overlay disabled";
     } else {
         if (this.store.simbrief_enabled) {
-            if (this.store.simbrief_username === "USERNAME") {
+            if (this.store.simbrief_username === "Default") {
                 return "Please set SimBrief username";
             }
 
