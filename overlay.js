@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.17.1";
+const VERSION = "0.17.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -635,12 +635,12 @@ style(() => {
 search(["overlay", "ol"], (query, callback) => {
     if (!query) { return };
 
-    let params = query.toUpperCase().split(" ");
+    let params = query.split(" ");
 
     let results = [];
 
     // TODO: localization strings
-    switch (params[1]) {
+    switch (params[1].toUpperCase()) {
         case "UNIT":
         case "UNITS":
         case "IMPERIAL":
