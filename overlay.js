@@ -581,13 +581,12 @@ function init_settings(store, settings) {
     };
 }
 
-// ---- Configuration
+// ---- Load configuration
 this.store = init_store();
 ds_import(this.store);
-// Take all config options and place them in a `settings` object
+
 this.settings = load_enabled(this.store, this.enabled_items, this.disabled_items);
 init_settings(this.store, this.settings);
-// Finish settings initialization
 settings_define(this.settings);
 
 // ---- Events
