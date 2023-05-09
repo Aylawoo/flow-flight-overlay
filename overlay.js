@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.18.3";
+const VERSION = "0.18.4";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -30,6 +30,7 @@ let container = null,
     airspeed_pad = null,
     vertspeed_label = null,
     vertspeed_pad = null,
+    vertspeed_alt = null,
     vs_icon = null,
     altitude_label = null,
     altitude_pad = null,
@@ -1420,18 +1421,19 @@ loop_1hz(() => {
         vs_threshold = metric ? 0.5 : 100;
         if (vertspeed <= -vs_threshold) {
             vs_icon.src = "mdi/icons/arrow-down-circle.svg";
+            vertspeed_alt.innerText = "V/S:-";
         } else if (vertspeed >= vs_threshold) {
             vs_icon.src = "mdi/icons/arrow-up-circle.svg";
+            vertspeed_alt.innerText = "V/S:+";
         } else {
             vs_icon.src = "mdi/icons/minus-circle.svg";
+            vertspeed_alt.innerText = "V/S:=";
         }
     } catch (e) {
         ignore_type_error(e);
     }
 
-    if (this.store.display_icons) {
-        vertspeed = Math.abs(vertspeed);
-    }
+    vertspeed = Math.abs(vertspeed);
 
     let altitude = Math.round(get("A:PLANE ALTITUDE", metric ? "meters" : "feet"));
 
@@ -1461,9 +1463,6 @@ loop_1hz(() => {
 
     if (this.store.pad_numbers) {
         let vs_pad = pad_required(vertspeed, 4);
-        if (vertspeed < 0 || vs_pad < 0) {
-            vs_pad = 0;
-        }
 
         try {
             if (distance != "---") {
@@ -1482,8 +1481,6 @@ loop_1hz(() => {
         reset_padding(pad_list);
     }
 
-    display_vs = vertspeed < 0 ? "-" + pad_number(Math.abs(vertspeed), 4) : vertspeed;
-
     try {
         type_label.innerText = this.store.type;
         registration_label.innerText = this.store.registration;
@@ -1494,7 +1491,7 @@ loop_1hz(() => {
         rules_label.innerText = this.store.rules;
         network_label.innerText = this.store.network;
         airspeed_label.innerText = `${airspeed}${metric ? "km/h" : "kt"}`;
-        vertspeed_label.innerText = `${display_vs}${metric ? "m/s" : "fpm"}`;
+        vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
         altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
         heading_label.innerText = heading;
         oat_label.innerText = `${oat}${this.store.oat_fahrenheit ? "f" : "c"}`;
@@ -1560,6 +1557,9 @@ html_created((el) => {
     );
     vertspeed_pad = el.querySelector(
         "#streamer_overlay_vertspeed .streamer_overlay_invisible"
+    );
+    vertspeed_alt = el.querySelector(
+        "#streamer_overlay_vertspeed .streamer_overlay_label"
     );
     vs_icon = el.querySelector("#streamer_overlay_vertspeed > img");
     altitude_label = el.querySelector(
