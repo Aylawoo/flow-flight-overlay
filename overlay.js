@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.19.0";
+const VERSION = "0.19.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -1007,7 +1007,7 @@ search(["overlay", "ol"], (query, callback) => {
             if (params.length >= 3) {
                 results.push({
                     uid: "overlay_otto_15",
-                    label: `New origin: ${otto_split(params)}`,
+                    label: `New departure: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
                         otto_set(this.store, this.settings, "origin", otto_split(params));
@@ -1016,8 +1016,8 @@ search(["overlay", "ol"], (query, callback) => {
             }
             results.push({
                 uid: "overlay_otto_16",
-                label: "Origin on",
-                subtext: `Current origin: ${this.store.origin}`,
+                label: "Departure on",
+                subtext: `Current departure: ${this.store.origin}`,
                 execute: () => {
                     otto_set_enabled(
                         this.store,
@@ -1031,7 +1031,7 @@ search(["overlay", "ol"], (query, callback) => {
             });
             results.push({
                 uid: "overlay_otto_17",
-                label: "Origin off",
+                label: "Departure off",
                 execute: () => {
                     otto_set_enabled(
                         this.store,
