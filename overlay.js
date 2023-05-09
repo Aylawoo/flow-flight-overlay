@@ -54,7 +54,7 @@ let label_list = null,
 this.enabled_items = [];
 this.disabled_items = [];
 
-// Global flight variables
+// -- Global flight variables
 let metric = false;
 let target_airport = null;
 let ap_lat = null;
@@ -74,8 +74,12 @@ this.settings = {};
 
 // ---- Helper functions
 // -- Base
+/**
+ * Ignore harmless TypeError on hot reloads when data isn't available fast enough
+ * and re-throw any other error.
+ * @param {Error} e passed Error
+ */
 function ignore_type_error(e) {
-    // Ignore harmless TypeError on hot reloads when data isn't available fast enough
     if (e instanceof TypeError) {
     } else {
         throw e;
@@ -83,17 +87,35 @@ function ignore_type_error(e) {
 }
 
 // -- Math
+/**
+ * Clamp a number.
+ * @param {number} number Input number
+ * @param {number} min Minimum value
+ * @param {number} max Maximum value
+ * @returns {number} Clamped number
+ */
 function clamp(number, min, max) {
     return Math.min(Math.max(number, min), max);
 }
 
+/**
+ * Convert degrees to radians.
+ * @param {number} number Value in degrees
+ * @returns {number} Value in radians
+ */
 function deg_to_rad(number) {
-    // Convert degrees to radians
     return number * (Math.PI / 180);
 }
 
+/**
+ * Calculate distance from two lat/long pairs in nautical miles.
+ * @param {number} lat_a First position latitude
+ * @param {number} lon_a First position longitutde
+ * @param {number} lat_b Second position latitude
+ * @param {number} lon_b Second position longitude
+ * @returns {number}
+ */
 function calc_distance(lat_a, lon_a, lat_b, lon_b) {
-    // Calculate distance from two lat/long pairs in Nautical Miles
     let radius = 6371;
 
     let total_lat = lat_b - lat_a;
@@ -114,6 +136,17 @@ function calc_distance(lat_a, lon_a, lat_b, lon_b) {
 }
 
 // -- Settings
+/**
+ * Define setting options for Flow.
+ * @param {Object} store Local datastore object
+ * @param {string} setting_name Datastore name of the setting being defined
+ * @param {string} ui_desc Description string for the Flow widget editor
+ * @param {string} input_type Either "checkbox" or "text" for Flow widget editor
+ * @param {string} ui_label Setting name for the Flow widget editor
+ * @param {Array} enabled Local enabled_items Array
+ * @param {Array} disabled Local disabled_items Array
+ * @returns {Object} A Flow `settings` hashmap for use with `settings_define`
+ */
 function define_option(
     store,
     setting_name,
@@ -123,7 +156,6 @@ function define_option(
     enabled,
     disabled
 ) {
-    // Define setting options for Flow
     return {
         type: input_type,
         label: ui_label,
@@ -145,6 +177,11 @@ function define_option(
     };
 }
 
+/**
+ * Export local datastore and update settings for the Flow widget editor.
+ * @param {Object} store Local datastore
+ * @param {Object} settings Local settings hashmap
+ */
 function export_settings(store, settings) {
     ds_export(store);
     for (let item in settings) {
@@ -153,6 +190,13 @@ function export_settings(store, settings) {
     settings_define(settings);
 }
 
+/**
+ * Swap an item between enabled_items and disabled_items lists.
+ * @param {string} item Item to be enabled/disabled
+ * @param {boolean} value Whether item is enabled (true) or disabled (false)
+ * @param {Array} enabled Local enabled_items Array
+ * @param {Array} disabled Local disabled_items Array
+ */
 function toggle_lists(item, value, enabled, disabled) {
     if (value) {
         enabled.push(item);
@@ -163,6 +207,12 @@ function toggle_lists(item, value, enabled, disabled) {
     }
 }
 
+/**
+ * Return an array of UI name and description for a given `setting` based on a predefined
+ * list of pairs. Falling back to the given `setting` name and no description.
+ * @param {string} setting The setting to return info for
+ * @returns {Array} String array of [name, description]
+ */
 function set_info(setting) {
     switch (setting) {
         case "METRIC UNITS":
@@ -260,6 +310,14 @@ function set_info(setting) {
     }
 }
 
+/**
+ * Populate local enabled_items and disabled_items Arrays based on given `store`
+ * datastore object, and return an initial `settings_define` compatible Object.
+ * @param {Object} store Local datastore
+ * @param {Array} enabled Local enabled_items Array
+ * @param {Array} disabled Local disabled_items Array
+ * @returns {Object} Object compatible with Flow `settings_define`
+ */
 function load_enabled(store, enabled, disabled) {
     let settings = {};
     for (let item in store) {
@@ -287,7 +345,6 @@ function load_enabled(store, enabled, disabled) {
             continue;
         }
 
-        // Add values to the enabled/disabled lists
         let item_name = item.split("_")[0];
 
         if (store[item] == true) {
@@ -300,6 +357,11 @@ function load_enabled(store, enabled, disabled) {
     return settings;
 }
 
+/**
+ * Load the most recent flight plan from a user's SimBrief account.
+ * @param {Object} store Local datastore
+ * @param {Object} settings Local settings hashmap
+ */
 function load_simbrief(store, settings) {
     if (!store.simbrief_enabled) {
         return false;
@@ -317,11 +379,27 @@ function load_simbrief(store, settings) {
         });
 }
 
+/**
+ * Set a basic setting from Otto search.
+ * @param {Object} store Local datastore
+ * @param {Object} settings Local settings hashmap
+ * @param {string} item Local datastore setting name
+ * @param {any} value Value to set `item` to within `store` and `settings`
+ */
 function otto_set(store, settings, item, value) {
     store[item] = value;
     export_settings(store, settings);
 }
 
+/**
+ * Set a complex setting from Otto search, then refresh the UI to reflect changes.
+ * @param {Object} store Local datastore
+ * @param {Object} settings Local settings hashmap
+ * @param {Array} enabled Local enabled_items Array
+ * @param {Array} disabled Local disabled_items Array
+ * @param {string} item Local datastore setting name
+ * @param {any} value Value to set `item` to within `store` and `settings`
+ */
 function otto_set_enabled(store, settings, enabled, disabled, item, value) {
     store[item + "_enabled"] = value;
     export_settings(store, settings);
@@ -329,11 +407,21 @@ function otto_set_enabled(store, settings, enabled, disabled, item, value) {
     load_views(enabled, disabled);
 }
 
+/**
+ * Split and re-join Otto query parameters.
+ * @param {Array} params Otto query parameters
+ * @returns {string} Joined string of user input without prefix and setting name
+ */
 function otto_split(params) {
     return params.slice(2).join(" ");
 }
 
 // -- Visual
+/**
+ * Load and set display style of each item within local `enabled_items` and `disabled_items`.
+ * @param {Array} enabled Local enabled_items Array
+ * @param {Array} disabled Local disabled_items Array
+ */
 function load_views(enabled, disabled) {
     for (let item of disabled) {
         let elem = document.querySelector(`#streamer_overlay_${item}`);
@@ -356,6 +444,10 @@ function load_views(enabled, disabled) {
     }
 }
 
+/**
+ * Resize UI elements to reflect chosen settings.
+ * @param {Object} store Local datastore
+ */
 function resize_ui(store) {
     if (
         !label_list ||
@@ -388,16 +480,25 @@ function resize_ui(store) {
     logo_icon.style.width = store.font_size * 2 + "px";
 }
 
+/**
+ * Handle mousewheel scroll to change UI scale.
+ * @param {Object} store Local datastore
+ * @param {Object} settings Local settings hashmap
+ * @param {Object} event Scroll event
+ */
 function scroll_handler(store, settings, event) {
-    // handle wheel scroll to change UI size
     event.deltaY < 0 ? (store.font_size += 1) : (store.font_size -= 1);
     store.font_size = clamp(store.font_size, 8, 128);
     export_settings(store, settings);
     resize_ui(store);
 }
 
+/**
+ * Set selected element styles for the entire UI.
+ * @param {Object} store Local datastore
+ * @returns {any}
+ */
 function set_styles(store) {
-    // Set custom element colors
     if (!label_list || !itext_list || !pad_list || !icon_list || !invisible_list) {
         return;
     }
@@ -442,36 +543,63 @@ function set_styles(store) {
     });
 }
 
+/**
+ * Toggle visibility of leading zeroes for number padding.
+ * @param {Array} items List of padding elements
+ * @param {boolean} status Whether or not to display number padding
+ */
 function toggle_pad_visibility(items, status) {
     items.forEach((item) => {
         item.style.opacity = status ? 1 : 0;
     });
 }
 
+/**
+ * Toggle display visibility of given HTML element.
+ * @param {Object} elem HTML element to toggle visibility of
+ * @param {boolean} value Whether or not to display given element
+ */
 function toggle_element(elem, value) {
     element = document.querySelector(elem);
     element.style.display = value ? "inline-flex" : "none";
 }
 
 // -- Number padding
-function pad_number(number, pad_amount) {
+/**
+ * Pad a number with leading zeroes to be a specified final character count while
+ * maintaining number sign.
+ * @param {number} number Number to apply padding to
+ * @param {number} target_length Desired final number length
+ * @returns {string} Number with padding applied as a string
+ */
+function pad_number(number, target_length) {
     if (Math.sign(number) >= 0) {
-        return number.toString().padStart(pad_amount, "0");
+        return number.toString().padStart(target_length, "0");
     } else {
         return (
             "-" +
             Math.abs(number)
                 .toString()
-                .padStart(pad_amount - 1, "0")
+                .padStart(target_length - 1, "0")
         );
     }
 }
 
-function pad_required(number, pad_amount) {
+/**
+ * Calcuate required number of padding characters for a number to reach `target_length`.
+ * @param {number} number Number requiring padding
+ * @param {number} target_length Desired final number length
+ * @returns {number} Required number of padding characters to reach `target_length`
+ */
+function pad_required(number, target_length) {
     let required = number.toString().length;
-    return required > 0 ? pad_amount - required : 0;
+    return required > 0 ? target_length - required : 0;
 }
 
+/**
+ * Remove padding from a given Array of padding strings.
+ * @param {Array} pad_items List of padding strings
+ */
 function reset_padding(pad_items) {
     pad_items.forEach((pad) => {
         pad.innerText = "";
@@ -479,12 +607,14 @@ function reset_padding(pad_items) {
 }
 
 // -- Settings init
+/**
+ * Initialize the local datastore, each display item is a pair of <name> strings and
+ * <name>_enabled bools, this allows programmatically setting the `this.enabled_items`
+ * list easily.
+ * @returns {Object} Initial local datastore object
+ */
 function init_store() {
     return {
-        /*
-        Each display item is a pair of <name> strings and <name>_enabled bools.
-        This allows programmatically setting the `this.enabled_items` list easily.
-        */
         overlay_toggle: true,
         metric_units: false,
         simbrief_enabled: false,
@@ -529,6 +659,11 @@ function init_store() {
     };
 }
 
+/**
+ * Initialize the custom properties of the provided `settings` hashmap.
+ * @param {Object} store Local datastore
+ * @param {Object} settings Local settings hashmap
+ */
 function init_settings(store, settings) {
     settings.destination.changed = (value) => {
         store.destination = value;
