@@ -72,6 +72,7 @@ let sb_refresh_timer = Date.now();
 this.settings = {};
 
 // ---- Helper functions
+// -- Base
 function ignore_type_error(e) {
     // Ignore harmless TypeError on hot reloads when data isn't available fast enough
     if (e instanceof TypeError) {
@@ -80,140 +81,38 @@ function ignore_type_error(e) {
     }
 }
 
+// -- Math
 function clamp(number, min, max) {
     return Math.min(Math.max(number, min), max);
 }
 
-function resize_ui(store) {
-    if (
-        !label_list ||
-        !itext_list ||
-        !pad_list ||
-        !icon_list ||
-        !invisible_list ||
-        !logo_icon
-    ) {
-        return;
-    }
-
-    label_list.forEach((label) => {
-        label.style.fontSize = Math.round(store.font_size * 0.75) + "px";
-    });
-    itext_list.forEach((itext) => {
-        itext.style.fontSize = store.font_size + "px";
-    });
-    invisible_list.forEach((invis) => {
-        invis.style.fontSize = store.font_size + "px";
-    });
-    pad_list.forEach((pad) => {
-        pad.style.fontSize = store.font_size + "px";
-    });
-    icon_list.forEach((icon) => {
-        icon.style.width = store.font_size + "px";
-        icon.style.height = store.font_size + "px";
-    });
-
-    logo_icon.style.width = store.font_size * 2 + "px";
+function deg_to_rad(number) {
+    // Convert degrees to radians
+    return number * (Math.PI / 180);
 }
 
-function export_settings(store, settings) {
-    ds_export(store);
-    for (let item in settings) {
-        settings[item].value = store[item];
-    }
-    settings_define(settings);
+function calc_distance(lat_a, lon_a, lat_b, lon_b) {
+    // Calculate distance from two lat/long pairs in Nautical Miles
+    let radius = 6371;
+
+    let total_lat = lat_b - lat_a;
+    let total_lon = lon_b - lon_a;
+    total_lat = deg_to_rad(total_lat);
+    total_lon = deg_to_rad(total_lon);
+
+    let step_one =
+        Math.sin(total_lat / 2) * Math.sin(total_lat / 2) +
+        Math.cos(deg_to_rad(lat_a)) *
+            Math.cos(deg_to_rad(lat_b)) *
+            Math.sin(total_lon / 2) *
+            Math.sin(total_lon / 2);
+
+    let step_two = 2 * Math.atan2(Math.sqrt(step_one), Math.sqrt(1 - step_one));
+
+    return (radius * step_two) / 1.852;
 }
 
-function scroll_handler(store, settings, event) {
-    // handle wheel scroll to change UI size
-    event.deltaY < 0 ? (store.font_size += 1) : (store.font_size -= 1);
-    store.font_size = clamp(store.font_size, 8, 128);
-    export_settings(store, settings);
-    resize_ui(store);
-}
-
-function set_styles(store) {
-    // Set custom element colors
-    if (!label_list || !itext_list || !pad_list || !icon_list || !invisible_list) {
-        return;
-    }
-
-    let items = document.querySelectorAll(
-        "#streamer_overlay_vars > .streamer_overlay_item"
-    );
-
-    var_list.style.backgroundColor = store.color_wrapper;
-
-    if (store.outline_text) {
-        var_list.classList.add("streamer_overlay_outline");
-    } else {
-        var_list.classList.remove("streamer_overlay_outline");
-    }
-
-    label_list.forEach((label) => {
-        label.style.color = store.color_text;
-        if (store.outline_text) {
-            label.classList.add("streamer_overlay_outline");
-        } else {
-            label.classList.remove("streamer_overlay_outline");
-        }
-    });
-    items.forEach((item) => {
-        item.style.borderColor = store.color_outline;
-        item.style.backgroundColor = store.color_background;
-    });
-    itext_list.forEach((itext) => {
-        itext.style.color = store.color_text;
-    });
-    invisible_list.forEach((invis) => {
-        invis.style.color = store.color_text;
-    });
-    pad_list.forEach((pad) => {
-        pad.style.color = store.color_text;
-    });
-    icon_list.forEach((icon) => {
-        icon.style.filter = store.black_icons ? "invert(0%)" : "invert(100%)";
-    });
-}
-
-function toggle_lists(item, value, enabled, disabled) {
-    if (value) {
-        enabled.push(item);
-        disabled.splice(disabled.indexOf(item), 1);
-    } else {
-        disabled.push(item);
-        enabled.splice(enabled.indexOf(item), 1);
-    }
-}
-
-function toggle_pad_visibility(items, status) {
-    items.forEach((item) => {
-        item.style.opacity = status ? 1 : 0;
-    });
-}
-
-function load_views(enabled, disabled) {
-    for (let item of disabled) {
-        let elem = document.querySelector(`#streamer_overlay_${item}`);
-
-        try {
-            elem.style.display = "none";
-        } catch (e) {
-            ignore_type_error(e);
-        }
-    }
-
-    for (let item of enabled) {
-        let elem = document.querySelector(`#streamer_overlay_${item}`);
-
-        try {
-            elem.style.display = "inline-flex";
-        } catch (e) {
-            ignore_type_error(e);
-        }
-    }
-}
-
+// -- Settings
 function define_option(
     store,
     setting_name,
@@ -243,6 +142,24 @@ function define_option(
             ds_export(store);
         },
     };
+}
+
+function export_settings(store, settings) {
+    ds_export(store);
+    for (let item in settings) {
+        settings[item].value = store[item];
+    }
+    settings_define(settings);
+}
+
+function toggle_lists(item, value, enabled, disabled) {
+    if (value) {
+        enabled.push(item);
+        disabled.splice(disabled.indexOf(item), 1);
+    } else {
+        disabled.push(item);
+        enabled.splice(enabled.indexOf(item), 1);
+    }
 }
 
 function set_info(setting) {
@@ -382,71 +299,6 @@ function load_enabled(store, enabled, disabled) {
     return settings;
 }
 
-function deg_to_rad(number) {
-    // Convert degrees to radians
-    return number * (Math.PI / 180);
-}
-
-function calc_distance(lat_a, lon_a, lat_b, lon_b) {
-    // Calculate distance from two lat/long pairs in Nautical Miles
-    let radius = 6371;
-
-    let total_lat = lat_b - lat_a;
-    let total_lon = lon_b - lon_a;
-    total_lat = deg_to_rad(total_lat);
-    total_lon = deg_to_rad(total_lon);
-
-    let step_one =
-        Math.sin(total_lat / 2) * Math.sin(total_lat / 2) +
-        Math.cos(deg_to_rad(lat_a)) *
-            Math.cos(deg_to_rad(lat_b)) *
-            Math.sin(total_lon / 2) *
-            Math.sin(total_lon / 2);
-
-    let step_two = 2 * Math.atan2(Math.sqrt(step_one), Math.sqrt(1 - step_one));
-
-    return (radius * step_two) / 1.852;
-}
-
-function pad_number(number, pad_amount) {
-    if (Math.sign(number) >= 0) {
-        return number.toString().padStart(pad_amount, "0");
-    } else {
-        return (
-            "-" +
-            Math.abs(number)
-                .toString()
-                .padStart(pad_amount - 1, "0")
-        );
-    }
-}
-
-function pad_required(number, pad_amount) {
-    let required = number.toString().length;
-    return required > 0 ? pad_amount - required : 0;
-}
-
-function reset_padding(pad_items) {
-    pad_items.forEach((pad) => {
-        pad.innerText = "";
-    });
-}
-
-function toggle_element(elem, value) {
-    element = document.querySelector(elem);
-    element.style.display = value ? "inline-flex" : "none";
-}
-
-function icon_toggle(value) {
-    let icons = document.querySelectorAll(".streamer_overlay_mdi");
-    let labels = document.querySelectorAll(".streamer_overlay_label");
-
-    for (i = 0; i < icons.length; i++) {
-        icons[i].style.display = value ? "inline-flex" : "none";
-        labels[i].style.display = value ? "none" : "inline-flex";
-    }
-}
-
 function load_simbrief(store, settings) {
     if (!store.simbrief_enabled) {
         return false;
@@ -480,6 +332,161 @@ function otto_split(params) {
     return params.slice(2).join(" ");
 }
 
+// -- Visual
+function load_views(enabled, disabled) {
+    for (let item of disabled) {
+        let elem = document.querySelector(`#streamer_overlay_${item}`);
+
+        try {
+            elem.style.display = "none";
+        } catch (e) {
+            ignore_type_error(e);
+        }
+    }
+
+    for (let item of enabled) {
+        let elem = document.querySelector(`#streamer_overlay_${item}`);
+
+        try {
+            elem.style.display = "inline-flex";
+        } catch (e) {
+            ignore_type_error(e);
+        }
+    }
+}
+
+function resize_ui(store) {
+    if (
+        !label_list ||
+        !itext_list ||
+        !pad_list ||
+        !icon_list ||
+        !invisible_list ||
+        !logo_icon
+    ) {
+        return;
+    }
+
+    label_list.forEach((label) => {
+        label.style.fontSize = Math.round(store.font_size * 0.75) + "px";
+    });
+    itext_list.forEach((itext) => {
+        itext.style.fontSize = store.font_size + "px";
+    });
+    invisible_list.forEach((invis) => {
+        invis.style.fontSize = store.font_size + "px";
+    });
+    pad_list.forEach((pad) => {
+        pad.style.fontSize = store.font_size + "px";
+    });
+    icon_list.forEach((icon) => {
+        icon.style.width = store.font_size + "px";
+        icon.style.height = store.font_size + "px";
+    });
+
+    logo_icon.style.width = store.font_size * 2 + "px";
+}
+
+function scroll_handler(store, settings, event) {
+    // handle wheel scroll to change UI size
+    event.deltaY < 0 ? (store.font_size += 1) : (store.font_size -= 1);
+    store.font_size = clamp(store.font_size, 8, 128);
+    export_settings(store, settings);
+    resize_ui(store);
+}
+
+function set_styles(store) {
+    // Set custom element colors
+    if (!label_list || !itext_list || !pad_list || !icon_list || !invisible_list) {
+        return;
+    }
+
+    let items = document.querySelectorAll(
+        "#streamer_overlay_vars > .streamer_overlay_item"
+    );
+
+    var_list.style.backgroundColor = store.color_wrapper;
+
+    if (store.outline_text) {
+        var_list.classList.add("streamer_overlay_outline");
+    } else {
+        var_list.classList.remove("streamer_overlay_outline");
+    }
+
+    label_list.forEach((label) => {
+        label.style.color = store.color_text;
+        if (store.outline_text) {
+            label.classList.add("streamer_overlay_outline");
+        } else {
+            label.classList.remove("streamer_overlay_outline");
+        }
+    });
+    items.forEach((item) => {
+        item.style.borderColor = store.color_outline;
+        item.style.backgroundColor = store.color_background;
+    });
+    itext_list.forEach((itext) => {
+        itext.style.color = store.color_text;
+    });
+    invisible_list.forEach((invis) => {
+        invis.style.color = store.color_text;
+    });
+    pad_list.forEach((pad) => {
+        pad.style.color = store.color_text;
+    });
+    icon_list.forEach((icon) => {
+        icon.style.filter = store.black_icons ? "invert(0%)" : "invert(100%)";
+    });
+}
+
+function toggle_pad_visibility(items, status) {
+    items.forEach((item) => {
+        item.style.opacity = status ? 1 : 0;
+    });
+}
+
+function toggle_element(elem, value) {
+    element = document.querySelector(elem);
+    element.style.display = value ? "inline-flex" : "none";
+}
+
+function icon_toggle(value) {
+    let icons = document.querySelectorAll(".streamer_overlay_mdi");
+    let labels = document.querySelectorAll(".streamer_overlay_label");
+
+    for (i = 0; i < icons.length; i++) {
+        icons[i].style.display = value ? "inline-flex" : "none";
+        labels[i].style.display = value ? "none" : "inline-flex";
+    }
+}
+
+// -- Number padding
+function pad_number(number, pad_amount) {
+    if (Math.sign(number) >= 0) {
+        return number.toString().padStart(pad_amount, "0");
+    } else {
+        return (
+            "-" +
+            Math.abs(number)
+                .toString()
+                .padStart(pad_amount - 1, "0")
+        );
+    }
+}
+
+function pad_required(number, pad_amount) {
+    let required = number.toString().length;
+    return required > 0 ? pad_amount - required : 0;
+}
+
+function reset_padding(pad_items) {
+    pad_items.forEach((pad) => {
+        pad.innerText = "";
+    });
+}
+
+
+// -- Settings init
 function init_store() {
     return {
         /*
