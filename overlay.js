@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.17.3";
+const VERSION = "0.18.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -50,8 +50,8 @@ let label_list = null,
     pad_list = null,
     icon_list = null;
 
-let enabled_items = [],
-    disabled_items = [];
+this.enabled_items = [];
+this.disabled_items = [];
 
 // Global flight variables
 let metric = false;
@@ -68,6 +68,8 @@ let wind_speed = 0;
     on the first load of the script.
 */
 let sb_refresh_timer = Date.now();
+
+this.settings = {};
 
 // ---- Helper functions
 function ignore_type_error(e) {
@@ -114,11 +116,19 @@ function resize_ui(store) {
     logo_icon.style.width = store.font_size * 2 + "px";
 }
 
-function scroll_handler(store, event) {
+function export_settings(store, settings) {
+    ds_export(store);
+    for (let item in settings) {
+        settings[item].value = store[item];
+    }
+    settings_define(settings);
+}
+
+function scroll_handler(store, settings, event) {
     // handle wheel scroll to change UI size
     event.deltaY < 0 ? (store.font_size += 1) : (store.font_size -= 1);
     store.font_size = clamp(store.font_size, 8, 128);
-    ds_export(store);
+    export_settings(store, settings);
     resize_ui(store);
 }
 
@@ -437,7 +447,7 @@ function icon_toggle(value) {
     }
 }
 
-function load_simbrief(store) {
+function load_simbrief(store, settings) {
     if (!store.simbrief_enabled) { return false; }
 
     fetch(`${SIMBRIEF_URL}${store.simbrief_username}&json=1`)
@@ -448,20 +458,20 @@ function load_simbrief(store) {
             store.origin = data.origin.icao_code;
             store.destination = data.destination.icao_code;
             store.iata = `${data.general.icao_airline} - ${data.atc.callsign}`;
-            ds_export(store);
+            export_settings(store, settings);
         });
 }
 
-function otto_set(store, item, value) {
+function otto_set(store, settings, item, value) {
     store[item] = value;
-    ds_export(store);
+    export_settings(store, settings);
 }
 
-function otto_set_enabled(store, item, value) {
+function otto_set_enabled(store, settings, item, value) {
     store[item + "_enabled"] = value;
-    ds_export(store);
-    toggle_lists(item, value, enabled_items, disabled_items);
-    load_views(enabled_items, disabled_items);
+    export_settings(store, settings);
+    toggle_lists(item, value, this.enabled_items, this.disabled_items);
+    load_views(this.enabled_items, this.disabled_items);
 }
 
 function otto_split(params) {
@@ -472,7 +482,7 @@ function init_store() {
     return {
         /*
         Each display item is a pair of <name> strings and <name>_enabled bools.
-        This allows programmatically setting the `enabled_items` list easily.
+        This allows programmatically setting the `this.enabled_items` list easily.
         */
         overlay_toggle: true,
         metric_units: false,
@@ -518,67 +528,66 @@ function init_store() {
     };
 }
 
-function init_settings(settings) {
+function init_settings(store, settings) {
     settings.destination.changed = (value) => {
-        this.store.destination = value;
-        ds_export(this.store);
+        store.destination = value;
+        export_settings(store, settings);
         target_airport = null;
     };
 
     settings.custom_enabled.changed = (value) => {
-        this.store.custom_enabled = value;
-        ds_export(this.store);
+        store.custom_enabled = value;
+        export_settings(store, settings);
         toggle_element("#streamer_overlay_custom", value);
         toggle_element("#streamer_overlay_custom > .streamer_overlay_label", value);
-        toggle_lists("custom", value, enabled_items, disabled_items);
+        toggle_lists("custom", value, this.enabled_items, this.disabled_items);
     };
 
     settings.custom_icon.changed = (value) => {
-        this.store.custom_icon = value;
-        ds_export(this.store);
+        store.custom_icon = value;
+        export_settings(store, settings);
         custom_icon.src = `mdi/icons/${value}.svg`;
     };
 
     settings.pad_with_zeroes.changed = (value) => {
-        this.store.pad_with_zeroes = value;
-        ds_export(this.store);
+        store.pad_with_zeroes = value;
+        export_settings(store, settings);
         toggle_pad_visibility(pad_list, value);
     };
 
     settings.font_size.changed = (value) => {
-        this.store.font_size = clamp(value, 8, 128);
-        ds_export(this.store);
-        resize_ui(this.store);
+        store.font_size = clamp(value, 8, 128);
+        export_settings(store, settings);
+        resize_ui(store);
     };
 
     settings.overlay_bottom.changed = (value) => {
-        this.store.overlay_bottom = value;
-        ds_export(this.store);
-        container.style.alignSelf = this.store.overlay_bottom ? "flex-end" : "flex-start";
+        store.overlay_bottom = value;
+        export_settings(store, settings);
+        container.style.alignSelf = store.overlay_bottom ? "flex-end" : "flex-start";
     };
 
     settings.display_icons.changed = (value) => {
-        this.store.display_icons = value;
-        ds_export(this.store);
+        tstore.display_icons = value;
+        export_settings(store, settings);
         icon_toggle(value);
     };
 
     settings.logo_enabled.changed = (value) => {
-        this.store.logo_enabled = value;
-        ds_export(this.store);
+        store.logo_enabled = value;
+        export_settings(store, settings);
         toggle_element("#streamer_logo_container", value);
     };
-
-    settings_define(settings);
 }
 
 // ---- Configuration
 this.store = init_store();
 ds_import(this.store);
 // Take all config options and place them in a `settings` object
-let settings = load_enabled(this.store, enabled_items, disabled_items);
+this.settings = load_enabled(this.store, this.enabled_items, this.disabled_items);
+init_settings(this.store, this.settings);
 // Finish settings initialization
-init_settings(settings);
+settings_define(this.settings);
 
 // ---- Events
 run((event) => {
@@ -590,7 +599,7 @@ run((event) => {
         this.store.overlay_toggle && this.store.pad_with_zeroes
     );
 
-    ds_export(this.store);
+    export_settings(this.store, this.settings);
 });
 
 scroll((event) => {
@@ -610,7 +619,7 @@ scroll((event) => {
     // We're going to send a request to SimBrief, reset the timer
     sb_refresh_timer = now;
 
-    load_simbrief(this.store);
+    load_simbrief(this.store, this.settings);
 });
 
 state(() => {
@@ -657,14 +666,14 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_0",
                 label: "Use metric units (km/h, m/s, km)",
                 execute: () => {
-                    otto_set(this.store, "metric_units", true);
+                    otto_set(this.store, this.settings, "metric_units", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_1",
                 label: "Use imperial units (kt, fpm, nm)",
                 execute: () => {
-                    otto_set(this.store, "metric_units", false);
+                    otto_set(this.store, this.settings, "metric_units", false);
                 }
             });
             break;
@@ -678,6 +687,7 @@ search(["overlay", "ol"], (query, callback) => {
                     execute: () => {
                         otto_set(
                             this.store,
+                            this.settings,
                             "simbrief_username",
                             otto_split(params)
                         );
@@ -690,7 +700,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "SimBrief on",
                 subtext: `SimBrief username: ${this.store.simbrief_username}`,
                 execute: () => {
-                    otto_set(this.store, "simbrief_enabled", true);
+                    otto_set(this.store, this.settings, "simbrief_enabled", true);
                     return true;
                 }
             });
@@ -698,7 +708,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_4",
                 label: "SimBrief off",
                 execute: () => {
-                    otto_set(this.store, "simbrief_enabled", false);
+                    otto_set(this.store, this.settings, "simbrief_enabled", false);
                 }
             });
             results.push({
@@ -706,7 +716,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Refresh SimBrief data",
                 subtext: "SimBrief must be on to have effect",
                 execute: () => {
-                    load_simbrief(this.store);
+                    load_simbrief(this.store, this.settings);
                 }
             })
             break;
@@ -720,7 +730,7 @@ search(["overlay", "ol"], (query, callback) => {
                     label: `New aircraft type: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "type", otto_split(params));
+                        otto_set(this.store, this.settings,"type", otto_split(params));
                     }
                 });
             }
@@ -729,14 +739,14 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Aircraft type on",
                 subtext: `Current type: ${this.store.type}`,
                 execute: () => {
-                    otto_set_enabled(this.store, "type", true);
+                    otto_set_enabled(this.store, this.settings, "type", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_8",
                 label: "Aircraft type off",
                 execute: () => {
-                    otto_set_enabled(this.store, "type", false);
+                    otto_set_enabled(this.store, this.settings, "type", false);
                 }
             });
             break;
@@ -750,7 +760,7 @@ search(["overlay", "ol"], (query, callback) => {
                     label: `New registration: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "registration", otto_split(params));
+                        otto_set(this.store, this.settings, "registration", otto_split(params));
                     }
                 });
             }
@@ -759,14 +769,14 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Aircraft registration on",
                 subtext: `Current regstration: ${this.store.registration}`,
                 execute: () => {
-                    otto_set_enabled(this.store, "registration", true);
+                    otto_set_enabled(this.store, this.settings, "registration", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_11",
                 label: "Aircraft registration off",
                 execute: () => {
-                    otto_set_enabled(this.store, "registration", false);
+                    otto_set_enabled(this.store, this.settings, "registration", false);
                 }
             });
             break;
@@ -780,7 +790,7 @@ search(["overlay", "ol"], (query, callback) => {
                     label: `New IATA (Airline): ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "iata", otto_split(params));
+                        otto_set(this.store, this.settings, "iata", otto_split(params));
                     }
                 });
             }
@@ -789,14 +799,14 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "IATA (Airline) on",
                 subtext: `Current IATA (Airline): ${this.store.iata}`,
                 execute: () => {
-                    otto_set_enabled(this.store, "iata", true);
+                    otto_set_enabled(this.store, this.settings, "iata", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_14",
                 label: "IATA (Airline) off",
                 execute: () => {
-                    otto_set_enabled(this.store, "iata", false);
+                    otto_set_enabled(this.store, this.settings, "iata", false);
                 }
             });
             break;
@@ -810,7 +820,7 @@ search(["overlay", "ol"], (query, callback) => {
                     label: `New origin: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "origin", otto_split(params));
+                        otto_set(this.store, this.settings, "origin", otto_split(params));
                     }
                 });
             }
@@ -819,14 +829,14 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Origin on",
                 subtext: `Current origin: ${this.store.origin}`,
                 execute: () => {
-                    otto_set_enabled(this.store, "origin", true);
+                    otto_set_enabled(this.store, this.settings, "origin", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_17",
                 label: "Origin off",
                 execute: () => {
-                    otto_set_enabled(this.store, "origin", false);
+                    otto_set_enabled(this.store, this.settings, "origin", false);
                 }
             });
             break;
@@ -840,7 +850,7 @@ search(["overlay", "ol"], (query, callback) => {
                     label: `New destination: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "destination", otto_split(params));
+                        otto_set(this.store, this.settings, "destination", otto_split(params));
                     }
                 });
             }
@@ -849,14 +859,14 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Destination on",
                 subtext: `Current destination: ${this.store.destination}`,
                 execute: () => {
-                    otto_set_enabled(this.store, "destination", true);
+                    otto_set_enabled(this.store, this.settings, "destination", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_20",
                 label: "Destination off",
                 execute: () => {
-                    otto_set_enabled(this.store, "destination", false);
+                    otto_set_enabled(this.store, this.settings, "destination", false);
                 }
             });
             break;
@@ -867,14 +877,14 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_21",
                 label: "Distance on",
                 execute: () => {
-                    otto_set_enabled(this.store, "distance", true);
+                    otto_set_enabled(this.store, this.settings, "distance", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_22",
                 label: "Distance off",
                 execute: () => {
-                    otto_set_enabled(this.store, "distance", false);
+                    otto_set_enabled(this.store, this.settings, "distance", false);
                 }
             });
             break;
@@ -888,7 +898,7 @@ search(["overlay", "ol"], (query, callback) => {
                     label: `New ruels: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "rules", otto_split(params));
+                        otto_set(this.store, this.settings, "rules", otto_split(params));
                     }
                 });
             }
@@ -897,14 +907,14 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Rules on",
                 subtext: `Current rules: ${this.store.rules}`,
                 execute: () => {
-                    otto_set_enabled(this.store, "rules", true);
+                    otto_set_enabled(this.store, this.settings, "rules", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_25",
                 label: "Rules off",
                 execute: () => {
-                    otto_set_enabled(this.store, "rules", false);
+                    otto_set_enabled(this.store, this.settings, "rules", false);
                 }
             });
             break;
@@ -917,7 +927,7 @@ search(["overlay", "ol"], (query, callback) => {
                     label: `New network: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "network", otto_split(params));
+                        otto_set(this.store, this.settings, "network", otto_split(params));
                     }
                 });
             }
@@ -926,14 +936,14 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Network on",
                 subtext: `Current network: ${this.store.network}`,
                 execute: () => {
-                    otto_set_enabled(this.store, "network", true);
+                    otto_set_enabled(this.store, this.settings, "network", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_28",
                 label: "Network off",
                 execute: () => {
-                    otto_set_enabled(this.store, "network", false);
+                    otto_set_enabled(this.store, this.settings, "network", false);
                 }
             });
             break;
@@ -944,14 +954,14 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_29",
                 label: "Airspeed on",
                 execute: () => {
-                    otto_set_enabled(this.store, "airspeed", true);
+                    otto_set_enabled(this.store, this.settings, "airspeed", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_30",
                 label: "Airspeed off",
                 execute: () => {
-                    otto_set_enabled(this.store, "airspeed", false);
+                    otto_set_enabled(this.store, this.settings, "airspeed", false);
                 }
             });
             break;
@@ -962,14 +972,14 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_31",
                 label: "Vertical speed on",
                 execute: () => {
-                    otto_set_enabled(this.store, "vertspeed", true);
+                    otto_set_enabled(this.store, this.settings, "vertspeed", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_32",
                 label: "Vertspeed off",
                 execute: () => {
-                    otto_set_enabled(this.store, "vertspeed", false);
+                    otto_set_enabled(this.store, this.settings, "vertspeed", false);
                 }
             });
             break;
@@ -979,14 +989,14 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_33",
                 label: "Altitude on",
                 execute: () => {
-                    otto_set_enabled(this.store, "altitude", true);
+                    otto_set_enabled(this.store, this.settings, "altitude", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_34",
                 label: "Altitude off",
                 execute: () => {
-                    otto_set_enabled(this.store, "altitude", false);
+                    otto_set_enabled(this.store, this.settings, "altitude", false);
                 }
             });
             break;
@@ -996,14 +1006,14 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_35",
                 label: "Heading on",
                 execute: () => {
-                    otto_set_enabled(this.store, "heading", true);
+                    otto_set_enabled(this.store, this.settings, "heading", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_36",
                 label: "Heading off",
                 execute: () => {
-                    otto_set_enabled(this.store, "heading", false);
+                    otto_set_enabled(this.store, this.settings, "heading", false);
                 }
             });
             break;
@@ -1013,14 +1023,14 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_37",
                 label: "Wind on",
                 execute: () => {
-                    otto_set_enabled(this.store, "wind", true);
+                    otto_set_enabled(this.store, this.settings, "wind", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_38",
                 label: "Wind off",
                 execute: () => {
-                    otto_set_enabled(this.store, "wind", false);
+                    otto_set_enabled(this.store, this.settings, "wind", false);
                 }
             });
             break;
@@ -1031,14 +1041,14 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_39",
                 label: "OAT on",
                 execute: () => {
-                    otto_set_enabled(this.store, "oat", true);
+                    otto_set_enabled(this.store, this.settings, "oat", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_40",
                 label: "OAT off",
                 execute: () => {
-                    otto_set_enabled(this.store, "oat", false);
+                    otto_set_enabled(this.store, this.settings, "oat", false);
                 }
             });
             results.push({
@@ -1046,7 +1056,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Fahrenheit on",
                 execute: () => {
                     this.store.oat_fahrenheit = true;
-                    ds_export(this.store);
+                    export_settings(this.store, this.settings);
                 }
             });
             results.push({
@@ -1054,7 +1064,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Fahrenheit off",
                 execute: () => {
                     this.store.oat_fahrenheit = false;
-                    ds_export(this.store);
+                    export_settings(this.store, this.settings);
                 }
             });
             break;
@@ -1066,7 +1076,7 @@ search(["overlay", "ol"], (query, callback) => {
                     label: `Custom text: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, "custom", otto_split(params));
+                        otto_set(this.store, this.settings, "custom", otto_split(params));
                     }
                 });
             }
@@ -1074,14 +1084,14 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_44",
                 label: "Custom field on",
                 execute: () => {
-                    otto_set_enabled(this.store, "custom", true);
+                    otto_set_enabled(this.store, this.settings, "custom", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_45",
                 label: "Custom field off",
                 execute: () => {
-                    otto_set_enabled(this.store, "custom", false);
+                    otto_set_enabled(this.store, this.settings, "custom", false);
                 }
             });
             break;
@@ -1094,7 +1104,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: `Custom icon: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
-                    otto_set(this.store, "custom_icon", otto_split(params));
+                    otto_set(this.store, this.settings, "custom_icon", otto_split(params));
                     custom_icon.src = `mdi/icons/${this.store.custom_icon}.svg`;
                 }
             });
@@ -1105,21 +1115,21 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_47",
                 label: "Pad number spacing on",
                 execute: () => {
-                    otto_set(this.store, "pad_numbers", true);
+                    otto_set(this.store, this.settings, "pad_numbers", true);
                 }
             });
             results.push({
                 uid: "overlay_otto_48",
                 label: "Pad number spacing off",
                 execute: () => {
-                    otto_set(this.store, "pad_numbers", false);
+                    otto_set(this.store, this.settings, "pad_numbers", false);
                 }
             });
             results.push({
                 uid: "overlay_otto_49",
                 label: "Pad with leading zeroes",
                 execute: () => {
-                    otto_set(this.store, "pad_with_zeroes", true);
+                    otto_set(this.store, this.settings, "pad_with_zeroes", true);
                     toggle_pad_visibility(pad_list, this.store.pad_with_zeroes);
                 }
             });
@@ -1127,7 +1137,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_50",
                 label: "Pad with leading spaces",
                 execute: () => {
-                    otto_set(this.store, "pad_with_zeroes", false);
+                    otto_set(this.store, this.settings, "pad_with_zeroes", false);
                     toggle_pad_visibility(pad_list, this.store.pad_with_zeroes);
                 }
             })
@@ -1141,7 +1151,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Increase font size by 1",
                 subtext: `Current font size: ${this.store.font_size}`,
                 execute: () => {
-                    otto_set(this.store, "font_size", this.store.font_size + 1);
+                    otto_set(this.store, this.settings, "font_size", this.store.font_size + 1);
                     resize_ui(this.store);
                 }
             });
@@ -1149,7 +1159,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_52",
                 label: "Decrease font size by 1",
                 execute: () => {
-                    otto_set(this.store, "font_size", this.store.font_size - 1);
+                    otto_set(this.store, this.settings, "font_size", this.store.font_size - 1);
                     resize_ui(this.store);
                 }
             });
@@ -1160,7 +1170,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_53",
                 label: "Overlay on top of screen",
                 execute: () => {
-                    otto_set(this.store, "overlay_bottom", false);
+                    otto_set(this.store, this.settings, "overlay_bottom", false);
                     container.style.alignSelf = this.store.overlay_bottom ? "flex-end" : "flex-start";
                 }
             });
@@ -1168,7 +1178,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_54",
                 label: "Overlay on bottom of screen",
                 execute: () => {
-                    otto_set(this.store, "overlay_bottom", true);
+                    otto_set(this.store, this.settings, "overlay_bottom", true);
                     container.style.alignSelf = this.store.overlay_bottom ? "flex-end" : "flex-start";
                 }
             });
@@ -1181,7 +1191,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_55",
                 label: "Icons on",
                 execute: () => {
-                    otto_set(this.store, "display_icons", true);
+                    otto_set(this.store, this.settings, "display_icons", true);
                     icon_toggle(this.store.display_icons);
                 }
             });
@@ -1189,7 +1199,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_56",
                 label: "Icons off",
                 execute: () => {
-                    otto_set(this.store, "display_icons", false);
+                    otto_set(this.store, this.settings, "display_icons", false);
                     icon_toggle(this.store.display_icons);
                 }
             });
@@ -1197,7 +1207,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_57",
                 label: "Use dark mode icons",
                 execute: () => {
-                    otto_set(this.store, "black_icons", true);
+                    otto_set(this.store, this.settings, "black_icons", true);
                     set_styles(this.store);
                 }
             });
@@ -1205,7 +1215,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_58",
                 label: "Use light mode icons",
                 execute: () => {
-                    otto_set(this.store, "black_icons", false);
+                    otto_set(this.store, this.settings, "black_icons", false);
                     set_styles(this.store);
                 }
             });
@@ -1217,7 +1227,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_59",
                 label: "Flow logo on",
                 execute: () => {
-                    otto_set(this.store, "logo_enabled", true);
+                    otto_set(this.store, this.settings, "logo_enabled", true);
                     toggle_element("#streamer_logo_container", true);
                 }
             });
@@ -1225,7 +1235,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_60",
                 label: "Flow logo off",
                 execute: () => {
-                    otto_set(this.store, "logo_enabled", false);
+                    otto_set(this.store, this.settings, "logo_enabled", false);
                     toggle_element("#streamer_logo_container", false);
                 }
             });
@@ -1237,7 +1247,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_61",
                 label: "Text outline on",
                 execute: () => {
-                    otto_set(this.store, "outline_text", true);
+                    otto_set(this.store, this.settings, "outline_text", true);
                     set_styles(this.store);
                 }
             });
@@ -1245,7 +1255,7 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_62",
                 label: "Text outline off",
                 execute: () => {
-                    otto_set(this.store, "outline_text", false);
+                    otto_set(this.store, this.settings, "outline_text", false);
                     set_styles(this.store);
                 }
             });
@@ -1258,7 +1268,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: `New wrapper color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
-                    otto_set(this.store, "color_wrapper", otto_split(params));
+                    otto_set(this.store, this.settings, "color_wrapper", otto_split(params));
                     set_styles(this.store);
                 }
             });
@@ -1271,7 +1281,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: `New outline color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
-                    otto_set(this.store, "color_outline", otto_split(params));
+                    otto_set(this.store, this.settings, "color_outline", otto_split(params));
                     set_styles(this.store);
                 }
             });
@@ -1284,7 +1294,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: `New background color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
-                    otto_set(this.store, "color_background", otto_split(params));
+                    otto_set(this.store, this.settings, "color_background", otto_split(params));
                     set_styles(this.store);
                 }
             });
@@ -1297,7 +1307,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: `New foreground color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
-                    otto_set(this.store, "color_text", otto_split(params));
+                    otto_set(this.store, this.settings, "color_text", otto_split(params));
                     set_styles(this.store);
                 }
             });
@@ -1525,12 +1535,12 @@ html_created((el) => {
     icon_list = el.querySelectorAll(".streamer_overlay_mdi");
 
     el.onmousewheel = (event) => {
-        scroll_handler(this.store, event);
+        scroll_handler(this.store, this.settings, event);
     };
 
     resize_ui(this.store);
     set_styles(this.store);
-    load_views(enabled_items, disabled_items);
+    load_views(this.enabled_items, this.disabled_items);
     icon_toggle(this.store.display_icons);
     custom_icon.src = `mdi/icons/${this.store.custom_icon}.svg`;
     reset_padding(pad_list);
