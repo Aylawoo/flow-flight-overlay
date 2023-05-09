@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.19.2";
+const VERSION = "0.19.3";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -296,7 +296,7 @@ function set_info(setting) {
         case "LOGO ENABLED":
             return ["FLOW LOGO ENABLED", "Display Flow branding in overlay"];
         case "OUTLINE TEXT":
-            return [setting, "Display outline around overlay text"];
+            return ["EMPHASIZE TEXT", "Display dark outline around overlay text"];
         case "COLOR WRAPPER":
             return ["CONTAINER COLOR", "Overlay container background color"];
         case "COLOR OUTLINE":
@@ -1629,12 +1629,14 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             break;
-        case "TEXTOL":
+        case "EMPHASIZE":
+        case "EMPH":
+        case "ET":
         case "TEXT":
         case "TXT":
             results.push({
                 uid: "overlay_otto_61",
-                label: "Text outline on",
+                label: "Text emphasis on",
                 execute: () => {
                     otto_set(this.store, this.settings, "outline_text", true);
                     set_styles(this.store);
@@ -1642,7 +1644,7 @@ search(["overlay", "ol"], (query, callback) => {
             });
             results.push({
                 uid: "overlay_otto_62",
-                label: "Text outline off",
+                label: "Text emphasis off",
                 execute: () => {
                     otto_set(this.store, this.settings, "outline_text", false);
                     set_styles(this.store);
