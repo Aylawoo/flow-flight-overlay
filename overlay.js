@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.18.4";
+const VERSION = "0.18.5";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -489,7 +489,7 @@ function init_store() {
         overlay_toggle: true,
         metric_units: false,
         simbrief_enabled: false,
-        simbrief_username: "USERNAME",
+        simbrief_username: "Default",
         type_enabled: false,
         type: "C172",
         registration_enabled: false,
