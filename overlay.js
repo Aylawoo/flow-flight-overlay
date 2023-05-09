@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.18.5";
+const VERSION = "0.19.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -322,11 +322,11 @@ function otto_set(store, settings, item, value) {
     export_settings(store, settings);
 }
 
-function otto_set_enabled(store, settings, item, value) {
+function otto_set_enabled(store, settings, enabled, disabled, item, value) {
     store[item + "_enabled"] = value;
     export_settings(store, settings);
-    toggle_lists(item, value, this.enabled_items, this.disabled_items);
-    load_views(this.enabled_items, this.disabled_items);
+    toggle_lists(item, value, enabled, disabled);
+    load_views(enabled, disabled);
 }
 
 function otto_split(params) {
@@ -477,7 +477,6 @@ function reset_padding(pad_items) {
         pad.innerText = "";
     });
 }
-
 
 // -- Settings init
 function init_store() {
@@ -744,14 +743,28 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Aircraft type on",
                 subtext: `Current type: ${this.store.type}`,
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "type", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "type",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_8",
                 label: "Aircraft type off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "type", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "type",
+                        false
+                    );
                 },
             });
             break;
@@ -779,14 +792,28 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Aircraft registration on",
                 subtext: `Current regstration: ${this.store.registration}`,
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "registration", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "registration",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_11",
                 label: "Aircraft registration off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "registration", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "registration",
+                        false
+                    );
                 },
             });
             break;
@@ -809,14 +836,28 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "IATA (Airline) on",
                 subtext: `Current IATA (Airline): ${this.store.iata}`,
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "iata", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "iata",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_14",
                 label: "IATA (Airline) off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "iata", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "iata",
+                        false
+                    );
                 },
             });
             break;
@@ -839,14 +880,28 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Origin on",
                 subtext: `Current origin: ${this.store.origin}`,
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "origin", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "origin",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_17",
                 label: "Origin off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "origin", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "origin",
+                        false
+                    );
                 },
             });
             break;
@@ -875,14 +930,28 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Destination on",
                 subtext: `Current destination: ${this.store.destination}`,
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "destination", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "destination",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_20",
                 label: "Destination off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "destination", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "destination",
+                        false
+                    );
                 },
             });
             break;
@@ -893,14 +962,28 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_21",
                 label: "Distance on",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "distance", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "distance",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_22",
                 label: "Distance off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "distance", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "distance",
+                        false
+                    );
                 },
             });
             break;
@@ -923,14 +1006,28 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Rules on",
                 subtext: `Current rules: ${this.store.rules}`,
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "rules", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "rules",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_25",
                 label: "Rules off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "rules", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "rules",
+                        false
+                    );
                 },
             });
             break;
@@ -957,14 +1054,28 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Network on",
                 subtext: `Current network: ${this.store.network}`,
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "network", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "network",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_28",
                 label: "Network off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "network", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "network",
+                        false
+                    );
                 },
             });
             break;
@@ -975,14 +1086,28 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_29",
                 label: "Airspeed on",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "airspeed", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "airspeed",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_30",
                 label: "Airspeed off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "airspeed", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "airspeed",
+                        false
+                    );
                 },
             });
             break;
@@ -993,14 +1118,28 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_31",
                 label: "Vertical speed on",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "vertspeed", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "vertspeed",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_32",
                 label: "Vertspeed off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "vertspeed", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "vertspeed",
+                        false
+                    );
                 },
             });
             break;
@@ -1010,14 +1149,28 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_33",
                 label: "Altitude on",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "altitude", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "altitude",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_34",
                 label: "Altitude off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "altitude", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "altitude",
+                        false
+                    );
                 },
             });
             break;
@@ -1027,14 +1180,28 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_35",
                 label: "Heading on",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "heading", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "heading",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_36",
                 label: "Heading off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "heading", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "heading",
+                        false
+                    );
                 },
             });
             break;
@@ -1044,14 +1211,28 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_37",
                 label: "Wind on",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "wind", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "wind",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_38",
                 label: "Wind off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "wind", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "wind",
+                        false
+                    );
                 },
             });
             break;
@@ -1062,14 +1243,28 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_39",
                 label: "OAT on",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "oat", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "oat",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_40",
                 label: "OAT off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "oat", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "oat",
+                        false
+                    );
                 },
             });
             results.push({
@@ -1105,14 +1300,28 @@ search(["overlay", "ol"], (query, callback) => {
                 uid: "overlay_otto_44",
                 label: "Custom field on",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "custom", true);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "custom",
+                        true
+                    );
                 },
             });
             results.push({
                 uid: "overlay_otto_45",
                 label: "Custom field off",
                 execute: () => {
-                    otto_set_enabled(this.store, this.settings, "custom", false);
+                    otto_set_enabled(
+                        this.store,
+                        this.settings,
+                        this.enabled_items,
+                        this.disabled_items,
+                        "custom",
+                        false
+                    );
                 },
             });
             break;
