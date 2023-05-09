@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.19.3";
+const VERSION = "0.19.4";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -298,7 +298,7 @@ function set_info(setting) {
         case "OUTLINE TEXT":
             return ["EMPHASIZE TEXT", "Display dark outline around overlay text"];
         case "COLOR WRAPPER":
-            return ["CONTAINER COLOR", "Overlay container background color"];
+            return ["BACKGROUND COLOR", "Overlay background color"];
         case "COLOR OUTLINE":
             return ["ITEM OUTLINE COLOR", "Overlay item outline color"];
         case "COLOR BACKGROUND":
@@ -1651,12 +1651,12 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             break;
-        case "WRAPPER":
-        case "WRAP":
-        case "WC":
+        case "BACKGROUND":
+        case "BGC":
+        case "BG":
             results.push({
                 uid: "overlay_otto_63",
-                label: `New wrapper color: ${otto_split(params)}`,
+                label: `New background color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
                     otto_set(
@@ -1687,12 +1687,12 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             break;
-        case "BACKGROUND":
-        case "BGC":
-        case "BG":
+        case "ITEM":
+        case "ITC":
+        case "IT":
             results.push({
                 uid: "overlay_otto_65",
-                label: `New background color: ${otto_split(params)}`,
+                label: `New item color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
                     otto_set(
