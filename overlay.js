@@ -640,9 +640,10 @@ style(() => {
 });
 
 search(["overlay", "ol"], (query, callback) => {
-    if (!query) { return };
+    if (!query) { return true; };
 
     let params = query.split(" ");
+    if (!params[1]) { return true; }
 
     let results = [];
 
