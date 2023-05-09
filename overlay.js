@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.18.0";
+const VERSION = "0.18.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -570,7 +570,7 @@ function init_settings(store, settings) {
     };
 
     settings.display_icons.changed = (value) => {
-        tstore.display_icons = value;
+        store.display_icons = value;
         export_settings(store, settings);
         icon_toggle(value);
     };
