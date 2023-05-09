@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.18.2";
+const VERSION = "0.18.3";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -414,6 +414,7 @@ function set_styles(store) {
     }
 
     label_list.forEach((label) => {
+        label.style.display = store.display_icons ? "none" : "inline-flex";
         label.style.color = store.color_text;
         if (store.outline_text) {
             label.classList.add("streamer_overlay_outline");
@@ -435,6 +436,7 @@ function set_styles(store) {
         pad.style.color = store.color_text;
     });
     icon_list.forEach((icon) => {
+        icon.style.display = store.display_icons ? "inline-flex" : "none";
         icon.style.filter = store.black_icons ? "invert(0%)" : "invert(100%)";
     });
 }
@@ -448,16 +450,6 @@ function toggle_pad_visibility(items, status) {
 function toggle_element(elem, value) {
     element = document.querySelector(elem);
     element.style.display = value ? "inline-flex" : "none";
-}
-
-function icon_toggle(value) {
-    let icons = document.querySelectorAll(".streamer_overlay_mdi");
-    let labels = document.querySelectorAll(".streamer_overlay_label");
-
-    for (i = 0; i < icons.length; i++) {
-        icons[i].style.display = value ? "inline-flex" : "none";
-        labels[i].style.display = value ? "none" : "inline-flex";
-    }
 }
 
 // -- Number padding
@@ -579,7 +571,7 @@ function init_settings(store, settings) {
     settings.display_icons.changed = (value) => {
         store.display_icons = value;
         export_settings(store, settings);
-        icon_toggle(value);
+        set_styles(store);
     };
 
     settings.logo_enabled.changed = (value) => {
@@ -1240,7 +1232,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Icons on",
                 execute: () => {
                     otto_set(this.store, this.settings, "display_icons", true);
-                    icon_toggle(this.store.display_icons);
+                    set_styles(this.store);
                 },
             });
             results.push({
@@ -1248,7 +1240,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Icons off",
                 execute: () => {
                     otto_set(this.store, this.settings, "display_icons", false);
-                    icon_toggle(this.store.display_icons);
+                    set_styles(this.store);
                 },
             });
             results.push({
@@ -1604,7 +1596,6 @@ html_created((el) => {
     resize_ui(this.store);
     set_styles(this.store);
     load_views(this.enabled_items, this.disabled_items);
-    icon_toggle(this.store.display_icons);
     custom_icon.src = `mdi/icons/${this.store.custom_icon}.svg`;
     reset_padding(pad_list);
     toggle_pad_visibility(pad_list, this.store.pad_with_zeroes);
