@@ -725,6 +725,7 @@ init_settings(this.store, this.settings);
 settings_define(this.settings);
 
 // ---- Events
+// -- Flow initialization
 run((event) => {
     this.store.overlay_toggle = !this.store.overlay_toggle;
     container.style.visibility = this.store.overlay_toggle ? "visible" : "hidden";
@@ -737,8 +738,9 @@ run((event) => {
     export_settings(this.store, this.settings);
 });
 
+// -- Flow wheel mouse scroll behavior
 scroll((event) => {
-    // Click wheel to update SimBrief, instead of toggle overlay
+    // Click wheel to update SimBrief
     if (!this.store.simbrief_enabled || this.store.simbrief_username === "USERNAME") {
         return false;
     }
@@ -757,15 +759,16 @@ scroll((event) => {
     load_simbrief(this.store, this.settings);
 });
 
+// -- Flow wheel widget icon state
 state(() => {
     return this.store.overlay_toggle ? "mdi:airplane-check" : "mdi:airplane-off";
 });
 
+// -- Flow wheel center hub information
 info(() => {
     if (!this.store.overlay_toggle) {
         return "Overlay disabled";
     } else {
-        // Display countdown for SimBrief refresh if applicable
         if (this.store.simbrief_enabled) {
             if (this.store.simbrief_username === "USERNAME") {
                 return "Please set SimBrief username";
@@ -779,10 +782,12 @@ info(() => {
     }
 });
 
+// -- Flow wheel icon style
 style(() => {
     return this.store.overlay_toggle ? "active" : null;
 });
 
+// -- Otto search
 search(["overlay", "ol"], (query, callback) => {
     if (!query) {
         return true;
@@ -795,7 +800,6 @@ search(["overlay", "ol"], (query, callback) => {
 
     let results = [];
 
-    // TODO: localization strings
     switch (params[1].toUpperCase()) {
         case "UNIT":
         case "UNITS":
@@ -1718,6 +1722,7 @@ search(["overlay", "ol"], (query, callback) => {
     callback(results);
 });
 
+// -- Run once per second
 loop_1hz(() => {
     metric = this.store.metric_units;
 
@@ -1753,7 +1758,6 @@ loop_1hz(() => {
 
     let display_distance = distance;
 
-    // Update the rest of the labels
     let airspeed = Math.round(get("A:AIRSPEED INDICATED", metric ? "kph" : "knots"));
     if (airspeed < 5) {
         airspeed = 0;
@@ -1845,6 +1849,7 @@ loop_1hz(() => {
     }
 });
 
+// -- Run 15 times per second
 loop_15hz(() => {
     metric = this.store.metric_units;
 
@@ -1867,8 +1872,8 @@ loop_15hz(() => {
     }
 });
 
+// -- HTML creation event
 html_created((el) => {
-    // Get referneces to the overlay elements
     container = el.querySelector("#streamer_overlay");
     var_list = el.querySelector("#streamer_overlay_vars");
     type_label = el.querySelector("#streamer_overlay_type > .streamer_overlay_itext");
