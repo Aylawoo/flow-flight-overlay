@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.20.3";
+const VERSION = "0.20.4";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -70,7 +70,7 @@ let wind_speed = 0;
 */
 let sb_refresh_timer = Date.now();
 
-let rules_choice = 0;
+let rules_choice = 1;
 
 this.settings = {};
 
