@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.19.4";
+const VERSION = "0.20.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -69,6 +69,8 @@ let wind_speed = 0;
     on the first load of the script.
 */
 let sb_refresh_timer = Date.now();
+
+let rules_choice = 0;
 
 this.settings = {};
 
@@ -723,6 +725,25 @@ ds_import(this.store);
 this.settings = load_enabled(this.store, this.enabled_items, this.disabled_items);
 init_settings(this.store, this.settings);
 settings_define(this.settings);
+
+// ---- Overlay click handlers
+function set_overlay_onclick(store, settings, item) {
+    switch(item.id) {
+        case "streamer_overlay_rules":
+            item.onclick = () => {
+                store.rules = ["VFR", "IFR", "SVFR"][rules_choice];
+                export_settings(store, settings);
+                rules_choice = (rules_choice + 1) % 3;
+            };
+            break;
+        case "streamer_overlay_oat":
+            item.onclick = () => {
+                store.oat_fahrenheit = !store.oat_fahrenheit;
+                export_settings(store, settings);
+            };
+            break;
+    }
+}
 
 // ---- Events
 // -- Flow initialization
@@ -1878,10 +1899,10 @@ loop_15hz(() => {
 // -- HTML creation event
 html_created((el) => {
     container = el.querySelector("#streamer_overlay");
-    var_list = el.querySelector("#streamer_overlay_vars");
-    type_label = el.querySelector("#streamer_overlay_type > .streamer_overlay_itext");
     logo_container = el.querySelector("#streamer_logo_container");
     logo_icon = el.querySelector(".streamer_overlay_logo");
+    var_list = el.querySelector("#streamer_overlay_vars");
+    type_label = el.querySelector("#streamer_overlay_type > .streamer_overlay_itext");
     registration_label = el.querySelector(
         "#streamer_overlay_registration .streamer_overlay_itext"
     );
@@ -1943,6 +1964,12 @@ html_created((el) => {
     el.onmousewheel = (event) => {
         scroll_handler(this.store, this.settings, event);
     };
+
+    let panels = document.querySelectorAll(".streamer_overlay_item");
+
+    panels.forEach((item) => {
+        set_overlay_onclick(this.store, this.settings, item);
+    });
 
     resize_ui(this.store);
     set_styles(this.store);
