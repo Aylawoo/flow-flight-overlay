@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.20.0";
+const VERSION = "0.20.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -543,6 +543,8 @@ function set_styles(store) {
         icon.style.display = store.display_icons ? "inline-flex" : "none";
         icon.style.filter = store.black_icons ? "invert(0%)" : "invert(100%)";
     });
+
+    toggle_element("#streamer_logo_container", store.logo_enabled);
 }
 
 /**
@@ -728,7 +730,7 @@ settings_define(this.settings);
 
 // ---- Overlay click handlers
 function set_overlay_onclick(store, settings, item) {
-    switch(item.id) {
+    switch (item.id) {
         case "streamer_overlay_rules":
             item.onclick = () => {
                 store.rules = ["VFR", "IFR", "SVFR"][rules_choice];
