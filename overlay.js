@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.20.1";
+const VERSION = "0.20.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -568,6 +568,15 @@ function toggle_element(elem, value) {
     element.style.display = value ? "inline-flex" : "none";
 }
 
+/**
+ * Set screen location of the overlay
+ * @param {Object} elem HTML element to toggle location of (Should always be `container`)
+ * @param {boolean} bottom Whether or not the overlay is positioned on bottom of screen
+ */
+function set_overlay_location(elem, bottom) {
+    elem.style.alignSelf = bottom ? "flex-end" : "flex-start";
+}
+
 // -- Number padding
 /**
  * Pad a number with leading zeroes to be a specified final character count while
@@ -704,7 +713,7 @@ function init_settings(store, settings) {
     settings.overlay_bottom.changed = (value) => {
         store.overlay_bottom = value;
         export_settings(store, settings);
-        container.style.alignSelf = store.overlay_bottom ? "flex-end" : "flex-start";
+        set_overlay_location(container, store.overlay_bottom);
     };
 
     settings.display_icons.changed = (value) => {
@@ -1574,14 +1583,14 @@ search(["overlay", "ol"], (query, callback) => {
             break;
         case "POSITION":
         case "POS":
+        case "TOP":
+        case "BOTTOM":
             results.push({
                 uid: "overlay_otto_53",
                 label: "Overlay on top of screen",
                 execute: () => {
                     otto_set(this.store, this.settings, "overlay_bottom", false);
-                    container.style.alignSelf = this.store.overlay_bottom
-                        ? "flex-end"
-                        : "flex-start";
+                    set_overlay_location(container, this.store.overlay_bottom);
                 },
             });
             results.push({
@@ -1589,9 +1598,7 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Overlay on bottom of screen",
                 execute: () => {
                     otto_set(this.store, this.settings, "overlay_bottom", true);
-                    container.style.alignSelf = this.store.overlay_bottom
-                        ? "flex-end"
-                        : "flex-start";
+                    set_overlay_location(container, this.store.overlay_bottom);
                 },
             });
             break;
@@ -1955,7 +1962,7 @@ html_created((el) => {
     custom_icon = el.querySelector("#streamer_overlay_custom > img");
 
     container.style.visibility = this.store.overlay_toggle ? "visible" : "hidden";
-    container.style.alignSelf = this.store.overlay_bottom ? "flex-end" : "flex-start";
+    set_overlay_location(container, this.store.overlay_bottom);
 
     label_list = el.querySelectorAll(".streamer_overlay_label");
     itext_list = el.querySelectorAll(".streamer_overlay_itext");
