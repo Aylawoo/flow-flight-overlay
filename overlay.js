@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.20.2";
+const VERSION = "0.20.3";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -496,6 +496,30 @@ function scroll_handler(store, settings, event) {
 }
 
 /**
+ * Set on-click handlers for given UI items
+ * @param {Object} store Local datastore
+ * @param {Object} settings Local settings hashmap
+ * @param {Object} item Array of elements returned from `document.querySelectorAll`
+ */
+function set_overlay_onclick(store, settings, item) {
+    switch (item.id) {
+        case "streamer_overlay_rules":
+            item.onclick = () => {
+                store.rules = ["VFR", "IFR", "SVFR"][rules_choice];
+                export_settings(store, settings);
+                rules_choice = (rules_choice + 1) % 3;
+            };
+            break;
+        case "streamer_overlay_oat":
+            item.onclick = () => {
+                store.oat_fahrenheit = !store.oat_fahrenheit;
+                export_settings(store, settings);
+            };
+            break;
+    }
+}
+
+/**
  * Set selected element styles for the entire UI.
  * @param {Object} store Local datastore
  * @returns {any}
@@ -736,25 +760,6 @@ ds_import(this.store);
 this.settings = load_enabled(this.store, this.enabled_items, this.disabled_items);
 init_settings(this.store, this.settings);
 settings_define(this.settings);
-
-// ---- Overlay click handlers
-function set_overlay_onclick(store, settings, item) {
-    switch (item.id) {
-        case "streamer_overlay_rules":
-            item.onclick = () => {
-                store.rules = ["VFR", "IFR", "SVFR"][rules_choice];
-                export_settings(store, settings);
-                rules_choice = (rules_choice + 1) % 3;
-            };
-            break;
-        case "streamer_overlay_oat":
-            item.onclick = () => {
-                store.oat_fahrenheit = !store.oat_fahrenheit;
-                export_settings(store, settings);
-            };
-            break;
-    }
-}
 
 // ---- Events
 // -- Flow initialization
