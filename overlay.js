@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.21.4";
+const VERSION = "0.21.5";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -463,7 +463,7 @@ function resize_ui(store) {
     }
 
     label_list.forEach((label) => {
-        label.style.fontSize = Math.round(store.font_size * 0.6) + "em";
+        label.style.fontSize = (store.font_size * 0.75).toFixed(2) + "em";
     });
     itext_list.forEach((itext) => {
         itext.style.fontSize = store.font_size + "em";
