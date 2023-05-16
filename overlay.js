@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.21.1";
+const VERSION = "0.21.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -1086,6 +1086,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "DESTINATION":
         case "DEST":
         case "ARRIVAL":
+        case "ARR":
         case "AR":
             if (params.length >= 3) {
                 results.push({
