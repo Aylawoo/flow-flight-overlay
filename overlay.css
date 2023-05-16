@@ -1,3 +1,24 @@
+:root {
+    /* Day Mode */
+    --day-bg: #00000010;
+    --day-ol: #FFFFFF30;
+    --day-it: #FFFFFF25;
+    --day-ft: #EEEEEEEE;
+
+    /* Night Mode */
+    --night-bg: #00000060;
+    --night-ol: #EECC33BB;
+    --night-it: #00000050;
+    --night-ft: #EEEEEEEE;
+
+    /* Default Colors */
+    --def-bg: #00000090;
+    --def-ol: #A0A0A0FF;
+    --def-it: #00000090;
+    --def-ft: #FFFFFFFF;
+    --shadow: #000000aa;
+}
+
 #streamer_overlay {
     display: inline-flex;
     visibility: visible;
@@ -20,7 +41,7 @@
     padding: 0.5em;
     padding-top: 0.5em;
 
-    background-color: #00000090;
+    background-color: var(--dark-bg);
     border-radius: 8px;
     transition: 250ms background linear;
 }
@@ -34,7 +55,7 @@
     margin-right: 0.2em;
     padding: 0.25em;
 
-    background-color: #00000090;
+    background-color: var(--dark-bg);
     border: 2px solid #a0a0a0ff;
     box-shadow: 0px 0px 10px #00000080;
     border-radius: 8px;
@@ -114,6 +135,6 @@
 }
 
 .streamer_overlay_outline {
-    text-shadow: -1px 1px 2px #000000aa, 1px 1px 2px #000000aa, 1px -1px 0 #000000aa,
-        -1px -1px 0 #000000aa;
+    text-shadow: -1px 1px 2px var(--shadow), 1px 1px 2px var(--shadow), 1px -1px 0 var(--shadow),
+        -1px -1px 0 var(--shadow);
 }
