@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.21.0";
+const VERSION = "0.21.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -657,6 +657,9 @@ function init_store() {
         metric_units: false,
         simbrief_enabled: false,
         simbrief_username: "Default",
+        custom_enabled: false,
+        custom_icon: "note-text",
+        custom: "Change me!",
         type_enabled: false,
         type: "C172",
         registration_enabled: false,
@@ -679,9 +682,6 @@ function init_store() {
         wind_enabled: false,
         oat_enabled: false,
         oat_fahrenheit: false,
-        custom_enabled: false,
-        custom_icon: "note-text",
-        custom: "Change me!",
         pad_numbers: true,
         pad_with_zeroes: false,
         font_size: 1.15,
