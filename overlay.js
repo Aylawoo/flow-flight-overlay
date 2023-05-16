@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.21.3";
+const VERSION = "0.21.4";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -463,7 +463,7 @@ function resize_ui(store) {
     }
 
     label_list.forEach((label) => {
-        label.style.fontSize = Math.round(store.font_size * 0.5) + "em";
+        label.style.fontSize = Math.round(store.font_size * 0.6) + "em";
     });
     itext_list.forEach((itext) => {
         itext.style.fontSize = store.font_size + "em";
@@ -491,7 +491,7 @@ function resize_ui(store) {
 function scroll_handler(store, settings, event) {
     event.deltaY < 0 ? (store.font_size += 0.05) : (store.font_size -= 0.05);
     store.font_size = store.font_size.toFixed(2);
-    store.font_size = clamp(store.font_size, 0.5, 6);
+    store.font_size = clamp(store.font_size, 0.85, 6);
     export_settings(store, settings);
     resize_ui(store);
 }
@@ -730,7 +730,7 @@ function init_settings(store, settings) {
     };
 
     settings.font_size.changed = (value) => {
-        store.font_size = clamp(value, 0.5, 6);
+        store.font_size = clamp(value, 0.85, 6);
         export_settings(store, settings);
         resize_ui(store);
     };
