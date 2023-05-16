@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.20.4";
+const VERSION = "0.20.5";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -282,7 +282,7 @@ function set_info(setting) {
         case "PAD WITH ZEROES":
             return [setting, "Display leading zeroes if PAD NUMBERS is enabled"];
         case "FONT SIZE":
-            return ["FONT (UI) SCALE", "Size of overlay font (in pixels); UI scale"];
+            return ["FONT (UI) SCALE", "Size of overlay font (in em); UI scale"];
         case "OVERLAY BOTTOM":
             return [
                 "OVERLAY ON BOTTOM",
@@ -463,23 +463,23 @@ function resize_ui(store) {
     }
 
     label_list.forEach((label) => {
-        label.style.fontSize = Math.round(store.font_size * 0.75) + "px";
+        label.style.fontSize = Math.round(store.font_size * 0.75) + "em";
     });
     itext_list.forEach((itext) => {
-        itext.style.fontSize = store.font_size + "px";
+        itext.style.fontSize = store.font_size + "em";
     });
     invisible_list.forEach((invis) => {
-        invis.style.fontSize = store.font_size + "px";
+        invis.style.fontSize = store.font_size + "em";
     });
     pad_list.forEach((pad) => {
-        pad.style.fontSize = store.font_size + "px";
+        pad.style.fontSize = store.font_size + "em";
     });
     icon_list.forEach((icon) => {
-        icon.style.width = store.font_size + "px";
-        icon.style.height = store.font_size + "px";
+        icon.style.width = store.font_size + "em";
+        icon.style.height = store.font_size + "em";
     });
 
-    logo_icon.style.width = store.font_size * 2 + "px";
+    logo_icon.style.width = store.font_size * 2 + "em";
 }
 
 /**
@@ -489,8 +489,9 @@ function resize_ui(store) {
  * @param {Object} event Scroll event
  */
 function scroll_handler(store, settings, event) {
-    event.deltaY < 0 ? (store.font_size += 1) : (store.font_size -= 1);
-    store.font_size = clamp(store.font_size, 8, 128);
+    event.deltaY < 0 ? (store.font_size += 0.05) : (store.font_size -= 0.05);
+    store.font_size = store.font_size.toFixed(2);
+    store.font_size = clamp(store.font_size, 0.5, 6);
     export_settings(store, settings);
     resize_ui(store);
 }
@@ -683,7 +684,7 @@ function init_store() {
         custom: "Change me!",
         pad_numbers: true,
         pad_with_zeroes: false,
-        font_size: 23,
+        font_size: 1.15,
         overlay_bottom: false,
         display_icons: true,
         black_icons: false,
@@ -729,7 +730,7 @@ function init_settings(store, settings) {
     };
 
     settings.font_size.changed = (value) => {
-        store.font_size = clamp(value, 8, 128);
+        store.font_size = clamp(value, 0.5, 6);
         export_settings(store, settings);
         resize_ui(store);
     };
@@ -1567,7 +1568,7 @@ search(["overlay", "ol"], (query, callback) => {
                         this.store,
                         this.settings,
                         "font_size",
-                        this.store.font_size + 1
+                        this.store.font_size + 0.05
                     );
                     resize_ui(this.store);
                 },
@@ -1580,7 +1581,7 @@ search(["overlay", "ol"], (query, callback) => {
                         this.store,
                         this.settings,
                         "font_size",
-                        this.store.font_size - 1
+                        this.store.font_size - 0.05
                     );
                     resize_ui(this.store);
                 },
