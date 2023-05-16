@@ -1,21 +1,21 @@
 :root {
     /* Day Mode */
     --day-bg: #00000010;
-    --day-ol: #FFFFFF30;
-    --day-it: #FFFFFF25;
-    --day-ft: #EEEEEEEE;
+    --day-ol: #ffffff30;
+    --day-it: #ffffff25;
+    --day-ft: #eeeeeeee;
 
     /* Night Mode */
     --night-bg: #00000060;
-    --night-ol: #EECC33BB;
+    --night-ol: #eecc33bb;
     --night-it: #00000050;
-    --night-ft: #EEEEEEEE;
+    --night-ft: #eeeeeeee;
 
     /* Default Colors */
     --def-bg: #00000090;
-    --def-ol: #A0A0A0FF;
+    --def-ol: #a0a0a0ff;
     --def-it: #00000090;
-    --def-ft: #FFFFFFFF;
+    --def-ft: #ffffffff;
     --shadow: #000000aa;
 }
 
@@ -104,7 +104,7 @@
 
     color: #ffffffff;
 
-    font-size: 1.20em;
+    font-size: 1.2em;
     font-weight: bold;
     transition: 250ms color linear;
 }
@@ -130,7 +130,7 @@
 
     align-self: center;
 
-    font-size: 1.20em;
+    font-size: 1.2em;
     transition: 250ms opacity linear;
 }
 
