@@ -88,7 +88,7 @@
 
     color: #ffffffff;
 
-    font-size: 1.15em;
+    font-size: 1.20em;
     font-weight: bold;
     transition: 250ms color linear;
 }
@@ -114,7 +114,7 @@
 
     align-self: center;
 
-    font-size: 1.15em;
+    font-size: 1.20em;
     transition: 250ms opacity linear;
 }
 

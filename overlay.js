@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.21.2";
+const VERSION = "0.21.3";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -282,7 +282,7 @@ function set_info(setting) {
         case "PAD WITH ZEROES":
             return [setting, "Display leading zeroes if PAD NUMBERS is enabled"];
         case "FONT SIZE":
-            return ["FONT (UI) SCALE", "Size of overlay font (in em); UI scale"];
+            return ["FONT (UI) SCALE", "Scale of overlay font (in em); UI scale"];
         case "OVERLAY BOTTOM":
             return [
                 "OVERLAY ON BOTTOM",
@@ -463,7 +463,7 @@ function resize_ui(store) {
     }
 
     label_list.forEach((label) => {
-        label.style.fontSize = Math.round(store.font_size * 0.75) + "em";
+        label.style.fontSize = Math.round(store.font_size * 0.5) + "em";
     });
     itext_list.forEach((itext) => {
         itext.style.fontSize = store.font_size + "em";
@@ -684,7 +684,7 @@ function init_store() {
         oat_fahrenheit: false,
         pad_numbers: true,
         pad_with_zeroes: false,
-        font_size: 1.15,
+        font_size: 1.20,
         overlay_bottom: false,
         display_icons: true,
         black_icons: false,
@@ -1562,8 +1562,8 @@ search(["overlay", "ol"], (query, callback) => {
         case "UI":
             results.push({
                 uid: "overlay_otto_51",
-                label: "Increase font size by 1",
-                subtext: `Current font size: ${this.store.font_size}`,
+                label: "Increase font scale by 0.05",
+                subtext: `Current font scale: ${this.store.font_size}`,
                 execute: () => {
                     otto_set(
                         this.store,
@@ -1576,7 +1576,7 @@ search(["overlay", "ol"], (query, callback) => {
             });
             results.push({
                 uid: "overlay_otto_52",
-                label: "Decrease font size by 1",
+                label: "Decrease font scale by 0.05",
                 execute: () => {
                     otto_set(
                         this.store,
