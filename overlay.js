@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.21.5";
+const VERSION = "0.22.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -298,7 +298,9 @@ function set_info(setting) {
         case "LOGO ENABLED":
             return ["FLOW LOGO ENABLED", "Display Flow branding in overlay"];
         case "OUTLINE TEXT":
-            return ["EMPHASIZE TEXT", "Display dark outline around overlay text"];
+            return [setting, "Display outline around overlay text"];
+        case "COLOR TEXTOL":
+            return ["TEXT OUTLINE COLOR", "Overlay text outline color"];
         case "COLOR WRAPPER":
             return ["BACKGROUND COLOR", "Overlay background color"];
         case "COLOR OUTLINE":
@@ -569,6 +571,8 @@ function set_styles(store) {
         icon.style.filter = store.black_icons ? "invert(0%)" : "invert(100%)";
     });
 
+    document.documentElement.style.setProperty("--shadow", store.color_textol);
+
     toggle_element("#streamer_logo_container", store.logo_enabled);
 }
 
@@ -690,6 +694,7 @@ function init_store() {
         black_icons: false,
         logo_enabled: true,
         outline_text: true,
+        color_textol: "#000000AA",
         color_wrapper: "#00000090",
         color_outline: "#A0A0A0FF",
         color_background: "#00000090",
@@ -1666,22 +1671,30 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             break;
-        case "EMPHASIZE":
-        case "EMPH":
-        case "ET":
         case "TEXT":
         case "TXT":
+            if (params.length >= 3) {
+                results.push({
+                    uid: "overlay_otto_61",
+                    label: `New text outline color: ${otto_split(params)}`,
+                    subtext: "Activate to save",
+                    execute: () => {
+                        otto_set(this.store, this.settings, "color_textol", otto_split(params));
+                        set_styles(this.store);
+                    },
+                });
+            }
             results.push({
-                uid: "overlay_otto_61",
-                label: "Text emphasis on",
+                uid: "overlay_otto_62",
+                label: "Text outline on",
                 execute: () => {
                     otto_set(this.store, this.settings, "outline_text", true);
                     set_styles(this.store);
                 },
             });
             results.push({
-                uid: "overlay_otto_62",
-                label: "Text emphasis off",
+                uid: "overlay_otto_63",
+                label: "Text outline off",
                 execute: () => {
                     otto_set(this.store, this.settings, "outline_text", false);
                     set_styles(this.store);
@@ -1692,7 +1705,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "BGC":
         case "BG":
             results.push({
-                uid: "overlay_otto_63",
+                uid: "overlay_otto_64",
                 label: `New background color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
@@ -1710,7 +1723,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "OLC":
         case "OL":
             results.push({
-                uid: "overlay_otto_64",
+                uid: "overlay_otto_65",
                 label: `New outline color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
@@ -1728,7 +1741,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "ITC":
         case "IT":
             results.push({
-                uid: "overlay_otto_65",
+                uid: "overlay_otto_66",
                 label: `New item color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
@@ -1746,7 +1759,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "FGC":
         case "FG":
             results.push({
-                uid: "overlay_otto_66",
+                uid: "overlay_otto_67",
                 label: `New foreground color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
