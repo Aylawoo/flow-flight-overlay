@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.20.5";
+const VERSION = "0.21.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -665,9 +665,9 @@ function init_store() {
         iata: "My Airline",
         origin_enabled: true,
         origin: "----",
+        distance_enabled: true,
         destination_enabled: true,
         destination: "----",
-        distance_enabled: true,
         rules_enabled: false,
         rules: "VFR",
         network_enabled: false,
