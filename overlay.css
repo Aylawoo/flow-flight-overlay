@@ -4,14 +4,16 @@
     --day-ol: #ffffff30;
     --day-it: #ffffff25;
     --day-ft: #eeeeeeee;
+    --day-sh: #000000aa;
 
     /* Night Mode */
     --night-bg: #00000060;
     --night-ol: #eecc33bb;
     --night-it: #00000050;
     --night-ft: #eeeeeeee;
+    --night-sh: #000000aa;
 
-    /* Default Colors */
+     /* Default Colors */
     --def-bg: #00000090;
     --def-ol: #a0a0a0ff;
     --def-it: #00000090;

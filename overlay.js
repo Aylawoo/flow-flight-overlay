@@ -1,12 +1,13 @@
 // ---- API function shorthands
 let get = this.$api.variables.get,
-    get_airport = this.$api.airports.find_airport_by_icao;
+    get_airport = this.$api.airports.find_airport_by_icao,
+    get_sun_pos = this.$api.time.get_sun_position;
 
 let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.23.0";
+const VERSION = "0.24.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -71,6 +72,17 @@ let wind_speed = 0;
 let sb_refresh_timer = Date.now();
 
 let rules_choice = 1;
+
+/*
+    Auto-Theme values
+*/
+
+let auto_color_bg = "#00000010",
+    auto_color_ol = "#FFFFFF30",
+    auto_color_it = "#FFFFFF25",
+    auto_color_ft = "#EEEEEEEE",
+    auto_color_sh = "#000000AA",
+    auto_last_sun_pos = 0;
 
 this.settings = {};
 
@@ -536,7 +548,9 @@ function set_styles(store) {
         "#streamer_overlay_vars > .streamer_overlay_item"
     );
 
-    var_list.style.backgroundColor = store.color_wrapper;
+    var_list.style.backgroundColor = store.auto_theme
+        ? auto_color_bg
+        : store.color_wrapper;
 
     if (store.outline_text) {
         var_list.classList.add("streamer_overlay_outline");
@@ -546,7 +560,9 @@ function set_styles(store) {
 
     label_list.forEach((label) => {
         label.style.display = store.display_icons ? "none" : "inline-flex";
-        label.style.color = store.color_text;
+
+        label.style.color = store.auto_theme ? auto_color_ft : store.color_text;
+
         if (store.outline_text) {
             label.classList.add("streamer_overlay_outline");
         } else {
@@ -554,24 +570,29 @@ function set_styles(store) {
         }
     });
     items.forEach((item) => {
-        item.style.borderColor = store.color_outline;
-        item.style.backgroundColor = store.color_background;
+        item.style.borderColor = store.auto_theme ? auto_color_ol : store.color_outline;
+        item.style.backgroundColor = store.auto_theme
+            ? auto_color_it
+            : store.color_background;
     });
     itext_list.forEach((itext) => {
-        itext.style.color = store.color_text;
+        itext.style.color = store.auto_theme ? auto_color_ft : store.color_text;
     });
     invisible_list.forEach((invis) => {
-        invis.style.color = store.color_text;
+        invis.style.color = store.auto_theme ? auto_color_ft : store.color_text;
     });
     pad_list.forEach((pad) => {
-        pad.style.color = store.color_text;
+        pad.style.color = store.auto_theme ? auto_color_ft : store.color_text;
     });
     icon_list.forEach((icon) => {
         icon.style.display = store.display_icons ? "inline-flex" : "none";
         icon.style.filter = store.black_icons ? "invert(0%)" : "invert(100%)";
     });
 
-    document.documentElement.style.setProperty("--shadow", store.color_textol);
+    document.documentElement.style.setProperty(
+        "--shadow",
+        store.auto_theme ? auto_color_sh : store.color_textol
+    );
 
     toggle_element("#streamer_logo_container", store.logo_enabled);
 }
@@ -659,6 +680,7 @@ function init_store() {
     return {
         overlay_toggle: true,
         metric_units: false,
+        auto_theme: false,
         simbrief_enabled: false,
         simbrief_username: "Default",
         custom_enabled: false,
@@ -688,7 +710,7 @@ function init_store() {
         oat_fahrenheit: false,
         pad_numbers: true,
         pad_with_zeroes: false,
-        font_size: 1.20,
+        font_size: 1.2,
         overlay_bottom: false,
         display_icons: true,
         black_icons: false,
@@ -860,6 +882,31 @@ search(["overlay", "ol"], (query, callback) => {
                 label: "Use imperial units (kt, fpm, nm)",
                 execute: () => {
                     otto_set(this.store, this.settings, "metric_units", false);
+                },
+            });
+            break;
+        case "DAY":
+        case "NIGHT":
+        case "AUTO":
+        case "LIGHT":
+        case "DARK":
+        case "THEME":
+            results.push({
+                uid: "overlay_otto_dn0",
+                label: "Enabled automatic day/night themes",
+                subtext: "This will disable any custom styles",
+                execute: () => {
+                    otto_set(this.store, this.settings, "auto_theme", true);
+                    set_styles(this.store);
+                },
+            });
+            results.push({
+                uid: "overlay_otto_dn1",
+                label: "Disable automatic day/night themes",
+                subtext: "Use custom styles",
+                execute: () => {
+                    otto_set(this.store, this.settings, "auto_theme", false);
+                    set_styles(this.store);
                 },
             });
             break;
@@ -1679,7 +1726,12 @@ search(["overlay", "ol"], (query, callback) => {
                     label: `New text outline color: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
-                        otto_set(this.store, this.settings, "color_textol", otto_split(params));
+                        otto_set(
+                            this.store,
+                            this.settings,
+                            "color_textol",
+                            otto_split(params)
+                        );
                         set_styles(this.store);
                     },
                 });
@@ -1778,6 +1830,30 @@ search(["overlay", "ol"], (query, callback) => {
 // -- Run once per second
 loop_1hz(() => {
     metric = this.store.metric_units;
+
+    let sun_deg = get_sun_pos()["altitudeDegrees"];
+
+    if (this.store.auto_theme && sun_deg != auto_last_sun_pos) {
+        if (sun_deg < 0) {
+            // Night
+            console.log("night");
+            auto_color_bg = "var(--night-bg)";
+            auto_color_ol = "var(--night-ol)";
+            auto_color_it = "var(--night-it)";
+            auto_color_ft = "var(--night-ft)";
+            auto_color_sh = "var(--night-sh)";
+        } else {
+            // Day
+            console.log("day");
+            auto_color_bg = "var(--day-bg)";
+            auto_color_ol = "var(--day-ol)";
+            auto_color_it = "var(--day-it)";
+            auto_color_ft = "var(--day-ft)";
+            auto_color_sh = "var(--day-sh)";
+        }
+        auto_last_sun_pos = sun_deg;
+        set_styles(this.store);
+    }
 
     let ac_lat = get("A:PLANE LATITUDE", "degrees");
     let ac_lon = get("A:PLANE LONGITUDE", "degrees");
