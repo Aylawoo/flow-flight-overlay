@@ -6,7 +6,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.22.0";
+const VERSION = "0.23.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -849,14 +849,14 @@ search(["overlay", "ol"], (query, callback) => {
         case "IMPERIAL":
         case "METRIC":
             results.push({
-                uid: "overlay_otto_0",
+                uid: "overlay_otto_units0",
                 label: "Use metric units (km/h, m/s, km)",
                 execute: () => {
                     otto_set(this.store, this.settings, "metric_units", true);
                 },
             });
             results.push({
-                uid: "overlay_otto_1",
+                uid: "overlay_otto_units1",
                 label: "Use imperial units (kt, fpm, nm)",
                 execute: () => {
                     otto_set(this.store, this.settings, "metric_units", false);
@@ -867,7 +867,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "SIMBRIEF":
             if (params.length >= 3) {
                 results.push({
-                    uid: "overlay_otto_2",
+                    uid: "overlay_otto_sb0",
                     label: `New SimBrief username: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
@@ -882,7 +882,7 @@ search(["overlay", "ol"], (query, callback) => {
                 });
             }
             results.push({
-                uid: "overlay_otto_3",
+                uid: "overlay_otto_sb1",
                 label: "SimBrief on",
                 subtext: `SimBrief username: ${this.store.simbrief_username}`,
                 execute: () => {
@@ -891,14 +891,14 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_4",
+                uid: "overlay_otto_sb2",
                 label: "SimBrief off",
                 execute: () => {
                     otto_set(this.store, this.settings, "simbrief_enabled", false);
                 },
             });
             results.push({
-                uid: "overlay_otto_5",
+                uid: "overlay_otto_sb3",
                 label: "Refresh SimBrief data",
                 subtext: "SimBrief must be on to have effect",
                 execute: () => {
@@ -912,7 +912,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "PLANE":
             if (params.length >= 3) {
                 results.push({
-                    uid: "overlay_otto_6",
+                    uid: "overlay_otto_type0",
                     label: `New aircraft type: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
@@ -921,7 +921,7 @@ search(["overlay", "ol"], (query, callback) => {
                 });
             }
             results.push({
-                uid: "overlay_otto_7",
+                uid: "overlay_otto_type1",
                 label: "Aircraft type on",
                 subtext: `Current type: ${this.store.type}`,
                 execute: () => {
@@ -936,7 +936,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_8",
+                uid: "overlay_otto_type2",
                 label: "Aircraft type off",
                 execute: () => {
                     otto_set_enabled(
@@ -956,7 +956,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "#":
             if (params.length >= 3) {
                 results.push({
-                    uid: "overlay_otto_9",
+                    uid: "overlay_otto_reg0",
                     label: `New registration: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
@@ -970,7 +970,7 @@ search(["overlay", "ol"], (query, callback) => {
                 });
             }
             results.push({
-                uid: "overlay_otto_10",
+                uid: "overlay_otto_reg1",
                 label: "Aircraft registration on",
                 subtext: `Current regstration: ${this.store.registration}`,
                 execute: () => {
@@ -985,7 +985,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_11",
+                uid: "overlay_otto_reg2",
                 label: "Aircraft registration off",
                 execute: () => {
                     otto_set_enabled(
@@ -1005,7 +1005,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "VA":
             if (params.length >= 3) {
                 results.push({
-                    uid: "overlay_otto_12",
+                    uid: "overlay_otto_iata0",
                     label: `New IATA (Airline): ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
@@ -1014,7 +1014,7 @@ search(["overlay", "ol"], (query, callback) => {
                 });
             }
             results.push({
-                uid: "overlay_otto_13",
+                uid: "overlay_otto_iata1",
                 label: "IATA (Airline) on",
                 subtext: `Current IATA (Airline): ${this.store.iata}`,
                 execute: () => {
@@ -1029,7 +1029,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_14",
+                uid: "overlay_otto_iata2",
                 label: "IATA (Airline) off",
                 execute: () => {
                     otto_set_enabled(
@@ -1050,7 +1050,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "DEP":
             if (params.length >= 3) {
                 results.push({
-                    uid: "overlay_otto_15",
+                    uid: "overlay_otto_dep0",
                     label: `New departure: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
@@ -1059,7 +1059,7 @@ search(["overlay", "ol"], (query, callback) => {
                 });
             }
             results.push({
-                uid: "overlay_otto_16",
+                uid: "overlay_otto_dep1",
                 label: "Departure on",
                 subtext: `Current departure: ${this.store.origin}`,
                 execute: () => {
@@ -1074,7 +1074,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_17",
+                uid: "overlay_otto_dep2",
                 label: "Departure off",
                 execute: () => {
                     otto_set_enabled(
@@ -1095,7 +1095,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "AR":
             if (params.length >= 3) {
                 results.push({
-                    uid: "overlay_otto_18",
+                    uid: "overlay_otto_dest0",
                     label: `New destination: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
@@ -1110,7 +1110,7 @@ search(["overlay", "ol"], (query, callback) => {
                 });
             }
             results.push({
-                uid: "overlay_otto_19",
+                uid: "overlay_otto_dest1",
                 label: "Destination on",
                 subtext: `Current destination: ${this.store.destination}`,
                 execute: () => {
@@ -1125,7 +1125,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_20",
+                uid: "overlay_otto_dest2",
                 label: "Destination off",
                 execute: () => {
                     otto_set_enabled(
@@ -1143,7 +1143,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "DIST":
         case "DTG":
             results.push({
-                uid: "overlay_otto_21",
+                uid: "overlay_otto_dist0",
                 label: "Distance on",
                 execute: () => {
                     otto_set_enabled(
@@ -1157,7 +1157,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_22",
+                uid: "overlay_otto_dist1",
                 label: "Distance off",
                 execute: () => {
                     otto_set_enabled(
@@ -1177,7 +1177,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "SVFR":
             if (params.length >= 3) {
                 results.push({
-                    uid: "overlay_otto_23",
+                    uid: "overlay_otto_rules0",
                     label: `New ruels: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
@@ -1186,7 +1186,7 @@ search(["overlay", "ol"], (query, callback) => {
                 });
             }
             results.push({
-                uid: "overlay_otto_24",
+                uid: "overlay_otto_rules1",
                 label: "Rules on",
                 subtext: `Current rules: ${this.store.rules}`,
                 execute: () => {
@@ -1201,7 +1201,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_25",
+                uid: "overlay_otto_rules2",
                 label: "Rules off",
                 execute: () => {
                     otto_set_enabled(
@@ -1220,7 +1220,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "NW":
             if (params.length >= 3) {
                 results.push({
-                    uid: "overlay_otto_26",
+                    uid: "overlay_otto_net0",
                     label: `New network: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
@@ -1234,7 +1234,7 @@ search(["overlay", "ol"], (query, callback) => {
                 });
             }
             results.push({
-                uid: "overlay_otto_27",
+                uid: "overlay_otto_net1",
                 label: "Network on",
                 subtext: `Current network: ${this.store.network}`,
                 execute: () => {
@@ -1249,7 +1249,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_28",
+                uid: "overlay_otto_net2",
                 label: "Network off",
                 execute: () => {
                     otto_set_enabled(
@@ -1267,7 +1267,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "SPEED":
         case "SPD":
             results.push({
-                uid: "overlay_otto_29",
+                uid: "overlay_otto_air0",
                 label: "Airspeed on",
                 execute: () => {
                     otto_set_enabled(
@@ -1281,7 +1281,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_30",
+                uid: "overlay_otto_air1",
                 label: "Airspeed off",
                 execute: () => {
                     otto_set_enabled(
@@ -1299,7 +1299,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "VSPEED":
         case "VS":
             results.push({
-                uid: "overlay_otto_31",
+                uid: "overlay_otto_vs0",
                 label: "Vertical speed on",
                 execute: () => {
                     otto_set_enabled(
@@ -1313,7 +1313,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_32",
+                uid: "overlay_otto_vs1",
                 label: "Vertspeed off",
                 execute: () => {
                     otto_set_enabled(
@@ -1330,7 +1330,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "ALTITUDE":
         case "ALT":
             results.push({
-                uid: "overlay_otto_33",
+                uid: "overlay_otto_alt0",
                 label: "Altitude on",
                 execute: () => {
                     otto_set_enabled(
@@ -1344,7 +1344,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_34",
+                uid: "overlay_otto_alt1",
                 label: "Altitude off",
                 execute: () => {
                     otto_set_enabled(
@@ -1361,7 +1361,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "HEADING":
         case "HDG":
             results.push({
-                uid: "overlay_otto_35",
+                uid: "overlay_otto_hdg0",
                 label: "Heading on",
                 execute: () => {
                     otto_set_enabled(
@@ -1375,7 +1375,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_36",
+                uid: "overlay_otto_hdg1",
                 label: "Heading off",
                 execute: () => {
                     otto_set_enabled(
@@ -1392,7 +1392,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "WIND":
         case "WND":
             results.push({
-                uid: "overlay_otto_37",
+                uid: "overlay_otto_wind0",
                 label: "Wind on",
                 execute: () => {
                     otto_set_enabled(
@@ -1406,7 +1406,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_38",
+                uid: "overlay_otto_wind1",
                 label: "Wind off",
                 execute: () => {
                     otto_set_enabled(
@@ -1424,7 +1424,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "TEMP":
         case "OAT":
             results.push({
-                uid: "overlay_otto_39",
+                uid: "overlay_otto_oat0",
                 label: "OAT on",
                 execute: () => {
                     otto_set_enabled(
@@ -1438,7 +1438,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_40",
+                uid: "overlay_otto_oat1",
                 label: "OAT off",
                 execute: () => {
                     otto_set_enabled(
@@ -1452,7 +1452,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_41",
+                uid: "overlay_otto_oat2",
                 label: "Fahrenheit on",
                 execute: () => {
                     this.store.oat_fahrenheit = true;
@@ -1460,7 +1460,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_42",
+                uid: "overlay_otto_oat3",
                 label: "Fahrenheit off",
                 execute: () => {
                     this.store.oat_fahrenheit = false;
@@ -1472,7 +1472,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "CS":
             if (params.length >= 3) {
                 results.push({
-                    uid: "overlay_otto_43",
+                    uid: "overlay_otto_cus0",
                     label: `Custom text: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
@@ -1481,7 +1481,7 @@ search(["overlay", "ol"], (query, callback) => {
                 });
             }
             results.push({
-                uid: "overlay_otto_44",
+                uid: "overlay_otto_cus1",
                 label: "Custom field on",
                 execute: () => {
                     otto_set_enabled(
@@ -1495,7 +1495,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_45",
+                uid: "overlay_otto_cus2",
                 label: "Custom field off",
                 execute: () => {
                     otto_set_enabled(
@@ -1514,7 +1514,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "CSI":
         case "CI":
             results.push({
-                uid: "overlay_otto_46",
+                uid: "overlay_otto_cus3",
                 label: `Custom icon: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
@@ -1531,21 +1531,21 @@ search(["overlay", "ol"], (query, callback) => {
         case "PADDING":
         case "PAD":
             results.push({
-                uid: "overlay_otto_47",
+                uid: "overlay_otto_pad0",
                 label: "Pad number spacing on",
                 execute: () => {
                     otto_set(this.store, this.settings, "pad_numbers", true);
                 },
             });
             results.push({
-                uid: "overlay_otto_48",
+                uid: "overlay_otto_pad1",
                 label: "Pad number spacing off",
                 execute: () => {
                     otto_set(this.store, this.settings, "pad_numbers", false);
                 },
             });
             results.push({
-                uid: "overlay_otto_49",
+                uid: "overlay_otto_pad2",
                 label: "Pad with leading zeroes",
                 execute: () => {
                     otto_set(this.store, this.settings, "pad_with_zeroes", true);
@@ -1553,7 +1553,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_50",
+                uid: "overlay_otto_pad3",
                 label: "Pad with leading spaces",
                 execute: () => {
                     otto_set(this.store, this.settings, "pad_with_zeroes", false);
@@ -1566,7 +1566,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "SCALE":
         case "UI":
             results.push({
-                uid: "overlay_otto_51",
+                uid: "overlay_otto_font0",
                 label: "Increase font scale by 0.05",
                 subtext: `Current font scale: ${this.store.font_size}`,
                 execute: () => {
@@ -1580,7 +1580,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_52",
+                uid: "overlay_otto_font1",
                 label: "Decrease font scale by 0.05",
                 execute: () => {
                     otto_set(
@@ -1598,7 +1598,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "TOP":
         case "BOTTOM":
             results.push({
-                uid: "overlay_otto_53",
+                uid: "overlay_otto_pos0",
                 label: "Overlay on top of screen",
                 execute: () => {
                     otto_set(this.store, this.settings, "overlay_bottom", false);
@@ -1606,7 +1606,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_54",
+                uid: "overlay_otto_pos1",
                 label: "Overlay on bottom of screen",
                 execute: () => {
                     otto_set(this.store, this.settings, "overlay_bottom", true);
@@ -1619,7 +1619,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "ICO":
         case "LABELS":
             results.push({
-                uid: "overlay_otto_55",
+                uid: "overlay_otto_ico0",
                 label: "Icons on",
                 execute: () => {
                     otto_set(this.store, this.settings, "display_icons", true);
@@ -1627,7 +1627,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_56",
+                uid: "overlay_otto_ico1",
                 label: "Icons off",
                 execute: () => {
                     otto_set(this.store, this.settings, "display_icons", false);
@@ -1635,7 +1635,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_57",
+                uid: "overlay_otto_ico2",
                 label: "Use dark mode icons",
                 execute: () => {
                     otto_set(this.store, this.settings, "black_icons", true);
@@ -1643,7 +1643,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_58",
+                uid: "overlay_otto_ico3",
                 label: "Use light mode icons",
                 execute: () => {
                     otto_set(this.store, this.settings, "black_icons", false);
@@ -1655,7 +1655,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "LOGO":
         case "BRAND":
             results.push({
-                uid: "overlay_otto_59",
+                uid: "overlay_otto_logo0",
                 label: "Flow logo on",
                 execute: () => {
                     otto_set(this.store, this.settings, "logo_enabled", true);
@@ -1663,7 +1663,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_60",
+                uid: "overlay_otto_logo1",
                 label: "Flow logo off",
                 execute: () => {
                     otto_set(this.store, this.settings, "logo_enabled", false);
@@ -1675,7 +1675,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "TXT":
             if (params.length >= 3) {
                 results.push({
-                    uid: "overlay_otto_61",
+                    uid: "overlay_otto_txt0",
                     label: `New text outline color: ${otto_split(params)}`,
                     subtext: "Activate to save",
                     execute: () => {
@@ -1685,7 +1685,7 @@ search(["overlay", "ol"], (query, callback) => {
                 });
             }
             results.push({
-                uid: "overlay_otto_62",
+                uid: "overlay_otto_txt1",
                 label: "Text outline on",
                 execute: () => {
                     otto_set(this.store, this.settings, "outline_text", true);
@@ -1693,7 +1693,7 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             results.push({
-                uid: "overlay_otto_63",
+                uid: "overlay_otto_txt2",
                 label: "Text outline off",
                 execute: () => {
                     otto_set(this.store, this.settings, "outline_text", false);
@@ -1705,7 +1705,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "BGC":
         case "BG":
             results.push({
-                uid: "overlay_otto_64",
+                uid: "overlay_otto_bg0",
                 label: `New background color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
@@ -1723,7 +1723,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "OLC":
         case "OL":
             results.push({
-                uid: "overlay_otto_65",
+                uid: "overlay_otto_ol1",
                 label: `New outline color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
@@ -1741,7 +1741,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "ITC":
         case "IT":
             results.push({
-                uid: "overlay_otto_66",
+                uid: "overlay_otto_it0",
                 label: `New item color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
@@ -1759,7 +1759,7 @@ search(["overlay", "ol"], (query, callback) => {
         case "FGC":
         case "FG":
             results.push({
-                uid: "overlay_otto_67",
+                uid: "overlay_otto_fg0",
                 label: `New foreground color: ${otto_split(params)}`,
                 subtext: "Activate to save",
                 execute: () => {
