@@ -232,7 +232,10 @@ function set_info(setting) {
         case "METRIC UNITS":
             return [setting, "Use metric units (km/h, m/s, km)"];
         case "AUTO THEME":
-            return ["AUTO DAY/NIGHT THEME", "Use built-in themes for day/night and change automatically. Overrides custom themes."];
+            return [
+                "AUTO DAY/NIGHT THEME",
+                "Use built-in themes for day/night and change automatically. Overrides custom themes.",
+            ];
         case "SIMBRIEF ENABLED":
             return [
                 setting,
@@ -667,9 +670,9 @@ function pad_required(number, target_length) {
  */
 function reset_padding(pad_items) {
     try {
-    pad_items.forEach((pad) => {
-        pad.innerText = "";
-    });
+        pad_items.forEach((pad) => {
+            pad.innerText = "";
+        });
     } catch (e) {
         ignore_type_error(e);
     }
