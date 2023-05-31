@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.24.2";
+const VERSION = "0.24.3";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -666,9 +666,13 @@ function pad_required(number, target_length) {
  * @param {Array} pad_items List of padding strings
  */
 function reset_padding(pad_items) {
+    try {
     pad_items.forEach((pad) => {
         pad.innerText = "";
     });
+    } catch (e) {
+        ignore_type_error(e);
+    }
 }
 
 // -- Settings init
