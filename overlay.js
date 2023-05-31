@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.24.1";
+const VERSION = "0.24.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -231,6 +231,8 @@ function set_info(setting) {
     switch (setting) {
         case "METRIC UNITS":
             return [setting, "Use metric units (km/h, m/s, km)"];
+        case "AUTO THEME":
+            return ["AUTO DAY/NIGHT THEME", "Use built-in themes for day/night and change automatically. Overrides custom themes."];
         case "SIMBRIEF ENABLED":
             return [
                 setting,
