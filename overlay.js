@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.24.3";
+const VERSION = "0.25.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -83,6 +83,9 @@ let auto_color_bg = "#00000010",
     auto_color_ft = "#EEEEEEEE",
     auto_color_sh = "#000000AA",
     auto_last_sun_pos = 0;
+
+let logo_dark = "img/flow_logo_dark.svg",
+    logo_bright = "img/flow_logo_bright.svg";
 
 this.settings = {};
 
@@ -598,6 +601,10 @@ function set_styles(store) {
         "--shadow",
         store.auto_theme ? auto_color_sh : store.color_textol
     );
+
+    if (!store.auto_theme) {
+        logo_icon.src = store.black_icons ? logo_dark : logo_bright;
+    }
 
     toggle_element("#streamer_logo_container", store.logo_enabled);
 }
@@ -1852,6 +1859,7 @@ loop_1hz(() => {
             auto_color_it = "var(--night-it)";
             auto_color_ft = "var(--night-ft)";
             auto_color_sh = "var(--night-sh)";
+            logo_icon.src = logo_bright;
         } else {
             // Day
             console.log("day");
@@ -1860,6 +1868,7 @@ loop_1hz(() => {
             auto_color_it = "var(--day-it)";
             auto_color_ft = "var(--day-ft)";
             auto_color_sh = "var(--day-sh)";
+            logo_icon.src = logo_dark;
         }
         auto_last_sun_pos = sun_deg;
         set_styles(this.store);
