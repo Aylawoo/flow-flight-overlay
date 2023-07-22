@@ -1853,7 +1853,6 @@ loop_1hz(() => {
     if (this.store.auto_theme && sun_deg != auto_last_sun_pos) {
         if (sun_deg < 0) {
             // Night
-            console.log("night");
             auto_color_bg = "var(--night-bg)";
             auto_color_ol = "var(--night-ol)";
             auto_color_it = "var(--night-it)";
@@ -1866,7 +1865,6 @@ loop_1hz(() => {
             }
         } else {
             // Day
-            console.log("day");
             auto_color_bg = "var(--day-bg)";
             auto_color_ol = "var(--day-ol)";
             auto_color_it = "var(--day-it)";
