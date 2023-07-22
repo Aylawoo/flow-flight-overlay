@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.25.0";
+const VERSION = "0.25.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -1859,7 +1859,11 @@ loop_1hz(() => {
             auto_color_it = "var(--night-it)";
             auto_color_ft = "var(--night-ft)";
             auto_color_sh = "var(--night-sh)";
-            logo_icon.src = logo_bright;
+            try {
+                logo_icon.src = logo_bright;
+            } catch (e) {
+                ignore_type_error(e);
+            }
         } else {
             // Day
             console.log("day");
@@ -1868,7 +1872,11 @@ loop_1hz(() => {
             auto_color_it = "var(--day-it)";
             auto_color_ft = "var(--day-ft)";
             auto_color_sh = "var(--day-sh)";
-            logo_icon.src = logo_dark;
+            try {
+                logo_icon.src = logo_dark;
+            } catch (e) {
+                ignore_type_error(e);
+            }
         }
         auto_last_sun_pos = sun_deg;
         set_styles(this.store);
