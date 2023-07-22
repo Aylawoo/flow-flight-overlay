@@ -359,7 +359,7 @@ function load_enabled(store, enabled, disabled) {
             store,
             item,
             desc,
-            enable_switch ? BOX : (item.startsWith("color") ? CLR : TXT),
+            enable_switch ? BOX : item.startsWith("color") ? CLR : TXT,
             name,
             enabled,
             disabled
