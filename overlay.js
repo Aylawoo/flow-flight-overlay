@@ -7,12 +7,13 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.25.2";
+const VERSION = "0.26.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
 const BOX = "checkbox",
-    TXT = "text";
+    TXT = "text",
+    CLR = "color";
 
 let container = null,
     var_list = null,
@@ -158,7 +159,7 @@ function calc_distance(lat_a, lon_a, lat_b, lon_b) {
  * @param {Object} store Local datastore object
  * @param {string} setting_name Datastore name of the setting being defined
  * @param {string} ui_desc Description string for the Flow widget editor
- * @param {string} input_type Either "checkbox" or "text" for Flow widget editor
+ * @param {string} input_type Either "checkbox". "color", or "text" for Flow widget editor
  * @param {string} ui_label Setting name for the Flow widget editor
  * @param {Array} enabled Local enabled_items Array
  * @param {Array} disabled Local disabled_items Array
@@ -358,7 +359,7 @@ function load_enabled(store, enabled, disabled) {
             store,
             item,
             desc,
-            enable_switch ? BOX : TXT,
+            enable_switch ? BOX : (item.startsWith("color") ? CLR : TXT),
             name,
             enabled,
             disabled
