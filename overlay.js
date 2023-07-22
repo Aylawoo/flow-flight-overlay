@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.25.1";
+const VERSION = "0.25.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -746,6 +746,12 @@ function init_store() {
  * @param {Object} settings Local settings hashmap
  */
 function init_settings(store, settings) {
+    settings.auto_theme.changed = (value) => {
+        store.auto_theme = value;
+        export_settings(store, settings);
+        set_styles(store);
+    };
+
     settings.destination.changed = (value) => {
         store.destination = value;
         export_settings(store, settings);
