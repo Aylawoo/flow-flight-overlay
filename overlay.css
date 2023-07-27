@@ -140,3 +140,7 @@
     text-shadow: -1px -1px 0 var(--shadow), 1px -1px 0 var(--shadow),
         -1px 1px 0 var(--shadow), 1px 1px 0 var(--shadow);
 }
+
+#streamer_overlay_nothing {
+    display: none;
+}

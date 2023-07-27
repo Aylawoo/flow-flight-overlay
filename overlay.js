@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.26.0";
+const VERSION = "0.27.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -45,13 +45,32 @@ let container = null,
     oat_pad = null,
     oat_icon = null,
     custom_label = null,
-    custom_icon = null;
+    custom_icon = null,
+    nothing_label = null;
 
 let label_list = null,
     itext_list = null,
     invisible_list = null,
     pad_list = null,
     icon_list = null;
+
+const visual_items = [
+        "custom",
+        "type",
+        "registration",
+        "origin",
+        "distance",
+        "destination",
+        "rules",
+        "network",
+        "airspeed",
+        "vertspeed",
+        "altitude",
+        "heading",
+        "wind",
+        "oat",
+        "iata"
+];
 
 this.enabled_items = [];
 this.disabled_items = [];
@@ -640,6 +659,27 @@ function set_overlay_location(elem, bottom) {
     elem.style.alignSelf = bottom ? "flex-end" : "flex-start";
 }
 
+/**
+ * Check that no visual items are present, and display the warning if so.
+ * @param {Array} visual List of visual items to be checked against
+ * @param {Array} enabled Local enabled_items Array
+ * @param {Array} disabled Local disabled_items Array
+ */
+function set_nothing_warning(visual, enabled, disabled) {
+    try {
+        if (visual.every(
+                item => !enabled.includes(item)
+            )) {
+            console.log(disabled);
+            nothing_label.style.display = "inline-flex";
+        } else {
+            nothing_label.style.display = "none";
+        }
+    } catch (e) {
+        ignore_type_error(e);
+    }
+}
+
 // -- Number padding
 /**
  * Pad a number with leading zeroes to be a specified final character count while
@@ -746,7 +786,7 @@ function init_store() {
  * @param {Object} store Local datastore
  * @param {Object} settings Local settings hashmap
  */
-function init_settings(store, settings) {
+function init_settings(store, settings, enabled, disabled) {
     settings.auto_theme.changed = (value) => {
         store.auto_theme = value;
         export_settings(store, settings);
@@ -764,7 +804,7 @@ function init_settings(store, settings) {
         export_settings(store, settings);
         toggle_element("#streamer_overlay_custom", value);
         toggle_element("#streamer_overlay_custom > .streamer_overlay_label", value);
-        toggle_lists("custom", value, this.enabled_items, this.disabled_items);
+        toggle_lists("custom", value, enabled, disabled);
     };
 
     settings.custom_icon.changed = (value) => {
@@ -809,7 +849,7 @@ this.store = init_store();
 ds_import(this.store);
 
 this.settings = load_enabled(this.store, this.enabled_items, this.disabled_items);
-init_settings(this.store, this.settings);
+init_settings(this.store, this.settings, this.enabled_items, this.disabled_items);
 settings_define(this.settings);
 
 // ---- Events
@@ -1853,6 +1893,7 @@ search(["overlay", "ol"], (query, callback) => {
 
 // -- Run once per second
 loop_1hz(() => {
+    set_nothing_warning(visual_items, this.enabled_items, this.disabled_items);
     metric = this.store.metric_units;
 
     let sun_deg = get_sun_pos()["altitudeDegrees"];
@@ -2088,6 +2129,7 @@ html_created((el) => {
     oat_icon = el.querySelector("#streamer_overlay_oat > img");
     custom_label = el.querySelector("#streamer_overlay_custom .streamer_overlay_itext");
     custom_icon = el.querySelector("#streamer_overlay_custom > img");
+    nothing_label = el.querySelector("#streamer_overlay_nothing");
 
     container.style.visibility = this.store.overlay_toggle ? "visible" : "hidden";
     set_overlay_location(container, this.store.overlay_bottom);
@@ -2114,4 +2156,6 @@ html_created((el) => {
     custom_icon.src = `mdi/icons/${this.store.custom_icon}.svg`;
     reset_padding(pad_list);
     toggle_pad_visibility(pad_list, this.store.pad_with_zeroes);
+
+    nothing_label.style.display = !this.enabled_items.includes == 0 ? "inline-flex" : "none";
 });
