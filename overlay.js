@@ -670,7 +670,6 @@ function set_nothing_warning(visual, enabled, disabled) {
         if (visual.every(
                 item => !enabled.includes(item)
             )) {
-            console.log(disabled);
             nothing_label.style.display = "inline-flex";
         } else {
             nothing_label.style.display = "none";
