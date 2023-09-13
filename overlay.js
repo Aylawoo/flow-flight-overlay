@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.28.0";
+const VERSION = "0.28.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -350,7 +350,10 @@ function set_info(setting) {
         case "COLOR TEXT":
             return ["FONT COLOR", "Overlay text color"];
         case "BACKGROUND IMAGE":
-            return ["BACKGROUND IMAGE", "Overlay background image"];
+            return [
+                "BACKGROUND IMAGE",
+                "Overlay background image, clear field to disable",
+            ];
         default:
             return [setting, ""];
     }
