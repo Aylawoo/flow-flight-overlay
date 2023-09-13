@@ -55,21 +55,21 @@ let label_list = null,
     icon_list = null;
 
 const visual_items = [
-        "custom",
-        "type",
-        "registration",
-        "origin",
-        "distance",
-        "destination",
-        "rules",
-        "network",
-        "airspeed",
-        "vertspeed",
-        "altitude",
-        "heading",
-        "wind",
-        "oat",
-        "iata"
+    "custom",
+    "type",
+    "registration",
+    "origin",
+    "distance",
+    "destination",
+    "rules",
+    "network",
+    "airspeed",
+    "vertspeed",
+    "altitude",
+    "heading",
+    "wind",
+    "oat",
+    "iata",
 ];
 
 this.enabled_items = [];
@@ -675,9 +675,7 @@ function set_overlay_location(elem, bottom) {
  */
 function set_nothing_warning(visual, enabled, disabled) {
     try {
-        if (visual.every(
-                item => !enabled.includes(item)
-            )) {
+        if (visual.every((item) => !enabled.includes(item))) {
             nothing_label.style.display = "inline-flex";
         } else {
             nothing_label.style.display = "none";
@@ -2189,5 +2187,6 @@ html_created((el) => {
     reset_padding(pad_list);
     toggle_pad_visibility(pad_list, this.store.pad_with_zeroes);
 
-    nothing_label.style.display = !this.enabled_items.includes == 0 ? "inline-flex" : "none";
+    nothing_label.style.display =
+        !this.enabled_items.includes == 0 ? "inline-flex" : "none";
 });
