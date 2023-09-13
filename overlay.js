@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.27.0";
+const VERSION = "0.28.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -349,6 +349,8 @@ function set_info(setting) {
             return ["ITEM BACKGROUND COLOR", "Overlay item background color"];
         case "COLOR TEXT":
             return ["FONT COLOR", "Overlay text color"];
+        case "BACKGROUND IMAGE":
+            return ["BACKGROUND IMAGE", "Overlay background image"];
         default:
             return [setting, ""];
     }
@@ -580,6 +582,12 @@ function set_styles(store) {
         ? auto_color_bg
         : store.color_wrapper;
 
+    let bg_img = store.background_image;
+    document.documentElement.style.setProperty(
+        "--url-bg",
+        bg_img ? `url(${bg_img})` : "hidden"
+    );
+
     if (store.outline_text) {
         var_list.classList.add("streamer_overlay_outline");
     } else {
@@ -777,6 +785,7 @@ function init_store() {
         color_outline: "#A0A0A0FF",
         color_background: "#00000090",
         color_text: "#FFFFFFFF",
+        background_image: "",
     };
 }
 
@@ -840,6 +849,12 @@ function init_settings(store, settings, enabled, disabled) {
         store.logo_enabled = value;
         export_settings(store, settings);
         toggle_element("#streamer_logo_container", value);
+    };
+
+    settings.background_image.changed = (value) => {
+        store.background_image = value;
+        export_settings(store, settings);
+        set_styles(store);
     };
 }
 
@@ -1879,6 +1894,24 @@ search(["overlay", "ol"], (query, callback) => {
                 subtext: "Activate to save",
                 execute: () => {
                     otto_set(this.store, this.settings, "color_text", otto_split(params));
+                    set_styles(this.store);
+                },
+            });
+            break;
+        case "IMAGE":
+        case "IMG":
+        case "BGIMG":
+            results.push({
+                uid: "overlay_otto_img0",
+                label: `New background image url: ${otto_split(params)}`,
+                subtext: "Activate to save",
+                execute: () => {
+                    otto_set(
+                        this.store,
+                        this.settings,
+                        "background_image",
+                        otto_split(params)
+                    );
                     set_styles(this.store);
                 },
             });

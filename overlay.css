@@ -19,6 +19,9 @@
     --def-it: #00000090;
     --def-ft: #ffffffff;
     --shadow: #000000aa;
+
+    /* Background URL */
+    --url-bg: url(none);
 }
 
 #streamer_overlay {
@@ -43,6 +46,7 @@
     padding: 0.5em;
     padding-top: 0.5em;
 
+    background-image: var(--url-bg);
     background-color: var(--dark-bg);
     border-radius: 8px;
     transition: 250ms background linear;
