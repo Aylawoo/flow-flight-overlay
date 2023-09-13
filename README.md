@@ -57,6 +57,7 @@ Note: Display with all many, or all options enabled may not display correctly on
   - Item outline color
   - Item background color
   - Text color
+  - Custom image as baclground (URL)
   - Supports all HTML color formats (#000000, color name, rgb(), rgba(), etc)
 
 ## Installation
