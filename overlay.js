@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.28.1";
+const VERSION = "0.28.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -2055,8 +2055,14 @@ loop_1hz(() => {
             }
             airspeed_pad.innerText = "0".repeat(pad_required(airspeed, 3));
             vertspeed_pad.innerText = "0".repeat(vs_pad);
-            altitude_pad.innerText = "0".repeat(pad_required(altitude, 5));
-            oat_pad.innerText = "0".repeat(pad_required(oat, 3));
+            let alt_req = pad_required(altitude, 5);
+            altitude_pad.innerText = `${
+                altitude >= 0 ? "0".repeat(alt_req) : `-${"0".repeat(alt_req - 0)}`
+            }`;
+            let oat_req = pad_required(oat, 3);
+            oat_pad.innerText = `${
+                oat >= 0 ? "0".repeat(oat_req) : `-${"0".repeat(oat_req)}`
+            }`;
         } catch (e) {
             ignore_type_error(e);
         }
@@ -2075,9 +2081,13 @@ loop_1hz(() => {
         network_label.innerText = this.store.network;
         airspeed_label.innerText = `${airspeed}${metric ? "km/h" : "kt"}`;
         vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
-        altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
+        altitude_label.innerText = `${altitude >= 0 ? altitude : Math.abs(altitude)}${
+            metric ? "m" : "ft"
+        }`;
         heading_label.innerText = heading;
-        oat_label.innerText = `${oat}${this.store.oat_fahrenheit ? "f" : "c"}`;
+        oat_label.innerText = `${oat >= 0 ? oat : Math.abs(oat)}${
+            this.store.oat_fahrenheit ? "f" : "c"
+        }`;
         custom_label.innerText = this.store.custom;
     } catch (e) {
         ignore_type_error(e);
