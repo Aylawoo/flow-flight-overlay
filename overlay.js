@@ -13,7 +13,8 @@ const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
 const BOX = "checkbox",
     TXT = "text",
-    CLR = "color";
+    CLR = "color",
+    SEP = "separator";
 
 let container = null,
     var_list = null,
@@ -383,7 +384,7 @@ function load_enabled(store, enabled, disabled) {
             store,
             item,
             desc,
-            enable_switch ? BOX : item.startsWith("color") ? CLR : TXT,
+            enable_switch ? BOX : item.startsWith("color") ? CLR : item.startsWith("settings_section") ? SEP : TXT,
             name,
             enabled,
             disabled
@@ -743,7 +744,7 @@ function reset_padding(pad_items) {
  */
 function init_store() {
     return {
-        settings_section_common: "^^^^^^^^",
+        settings_section_common: "Common",
         overlay_toggle: true,
         origin_enabled: true,
         origin: "----",
@@ -754,7 +755,7 @@ function init_store() {
         registration_enabled: false,
         registration: "N172SP",
         metric_units: false,
-        settings_section_visual: "^^^^^^^^",
+        settings_section_visual: "Visual",
         font_size: 1.2,
         auto_theme: false,
         pad_numbers: true,
@@ -770,7 +771,7 @@ function init_store() {
         color_background: "#00000090",
         color_text: "#FFFFFFFF",
         background_image: "",
-        settings_section_fields: "^^^^^^^^",
+        settings_section_fields: "Fields",
         custom_enabled: false,
         custom_icon: "note-text",
         custom: "Change me!",
@@ -788,7 +789,7 @@ function init_store() {
         wind_enabled: false,
         oat_enabled: false,
         oat_fahrenheit: false,
-        settings_section_simbrief: "^^^^^^",
+        settings_section_simbrief: "Integrations",
         simbrief_enabled: false,
         simbrief_username: "Default",
     };
