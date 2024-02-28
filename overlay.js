@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "0.28.2";
+const VERSION = "1.0.0";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -322,7 +322,7 @@ function set_info(setting) {
         case "PAD WITH ZEROES":
             return [setting, "Display leading zeroes if PAD NUMBERS is enabled"];
         case "FONT SIZE":
-            return ["FONT (UI) SCALE", "Scale of overlay font (in em); UI scale"];
+            return ["OVERLAY SIZE", "Scale of overlay"];
         case "OVERLAY BOTTOM":
             return [
                 "OVERLAY ON BOTTOM",
@@ -351,7 +351,7 @@ function set_info(setting) {
             return ["FONT COLOR", "Overlay text color"];
         case "BACKGROUND IMAGE":
             return [
-                "BACKGROUND IMAGE",
+                "BG IMAGE URL",
                 "Overlay background image, clear field to disable",
             ];
         default:
@@ -743,25 +743,40 @@ function reset_padding(pad_items) {
  */
 function init_store() {
     return {
+        settings_section_common: "^^^^^^^^",
         overlay_toggle: true,
-        metric_units: false,
-        auto_theme: false,
-        simbrief_enabled: false,
-        simbrief_username: "Default",
-        custom_enabled: false,
-        custom_icon: "note-text",
-        custom: "Change me!",
+        origin_enabled: true,
+        origin: "----",
+        destination_enabled: true,
+        destination: "----",
         type_enabled: false,
         type: "C172",
         registration_enabled: false,
         registration: "N172SP",
+        metric_units: false,
+        settings_section_visual: "^^^^^^^^",
+        font_size: 1.2,
+        auto_theme: false,
+        pad_numbers: true,
+        pad_with_zeroes: false,
+        logo_enabled: true,
+        overlay_bottom: false,
+        display_icons: true,
+        black_icons: false,
+        outline_text: true,
+        color_textol: "#000000AA",
+        color_wrapper: "#00000090",
+        color_outline: "#A0A0A0FF",
+        color_background: "#00000090",
+        color_text: "#FFFFFFFF",
+        background_image: "",
+        settings_section_fields: "^^^^^^^^",
+        custom_enabled: false,
+        custom_icon: "note-text",
+        custom: "Change me!",
         iata_enabled: false,
         iata: "My Airline",
-        origin_enabled: true,
-        origin: "----",
         distance_enabled: true,
-        destination_enabled: true,
-        destination: "----",
         rules_enabled: false,
         rules: "VFR",
         network_enabled: false,
@@ -773,20 +788,9 @@ function init_store() {
         wind_enabled: false,
         oat_enabled: false,
         oat_fahrenheit: false,
-        pad_numbers: true,
-        pad_with_zeroes: false,
-        font_size: 1.2,
-        overlay_bottom: false,
-        display_icons: true,
-        black_icons: false,
-        logo_enabled: true,
-        outline_text: true,
-        color_textol: "#000000AA",
-        color_wrapper: "#00000090",
-        color_outline: "#A0A0A0FF",
-        color_background: "#00000090",
-        color_text: "#FFFFFFFF",
-        background_image: "",
+        settings_section_simbrief: "^^^^^^",
+        simbrief_enabled: false,
+        simbrief_username: "Default",
     };
 }
 
