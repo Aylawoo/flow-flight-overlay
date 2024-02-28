@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -569,6 +569,18 @@ function set_overlay_onclick(store, settings, item) {
 }
 
 /**
+ * Set the background image of the flow bar.
+ * This function is a protection case against the image not loading correctly.
+ * @param {string} bg_img Image URL
+ */
+function refresh_bg_image(bg_img) {
+    document.documentElement.style.setProperty(
+        "--url-bg",
+        bg_img ? `url(${bg_img})` : "hidden"
+    );
+}
+
+/**
  * Set selected element styles for the entire UI.
  * @param {Object} store Local datastore
  * @returns {any}
@@ -586,11 +598,7 @@ function set_styles(store) {
         ? auto_color_bg
         : store.color_wrapper;
 
-    let bg_img = store.background_image;
-    document.documentElement.style.setProperty(
-        "--url-bg",
-        bg_img ? `url(${bg_img})` : "hidden"
-    );
+    refresh_bg_image(store.background_image);
 
     if (store.outline_text) {
         var_list.classList.add("streamer_overlay_outline");
@@ -2094,6 +2102,8 @@ loop_1hz(() => {
             this.store.oat_fahrenheit ? "f" : "c"
         }`;
         custom_label.innerText = this.store.custom;
+
+        refresh_bg_image(this.store.background_image);
     } catch (e) {
         ignore_type_error(e);
     }
