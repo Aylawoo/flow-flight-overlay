@@ -353,10 +353,7 @@ function set_info(setting) {
         case "COLOR TEXT":
             return ["FONT COLOR", "Overlay text color"];
         case "BACKGROUND IMAGE":
-            return [
-                "BG IMAGE URL",
-                "Overlay background image, clear field to disable",
-            ];
+            return ["BG IMAGE URL", "Overlay background image, clear field to disable"];
         default:
             return [setting, ""];
     }
@@ -386,7 +383,13 @@ function load_enabled(store, enabled, disabled) {
             store,
             item,
             desc,
-            enable_switch ? BOX : item.startsWith("color") ? CLR : item.startsWith("settings_section") ? SEP : TXT,
+            enable_switch
+                ? BOX
+                : item.startsWith("color")
+                ? CLR
+                : item.startsWith("settings_section")
+                ? SEP
+                : TXT,
             name,
             enabled,
             disabled
@@ -578,9 +581,11 @@ function set_overlay_onclick(store, settings, item) {
  */
 function refresh_bg_image(bg_img, changed = false) {
     if (bg_img != "" && changed) {
-        fetch(bg_img).then((response) => response.blob()).then((data) => {
-            bg_img_cache = URL.createObjectURL(data);
-        });
+        fetch(bg_img)
+            .then((response) => response.blob())
+            .then((data) => {
+                bg_img_cache = URL.createObjectURL(data);
+            });
     }
 
     document.documentElement.style.setProperty(
