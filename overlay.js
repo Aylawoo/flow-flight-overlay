@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "1.0.2";
+const VERSION = "1.0.3";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -2109,8 +2109,6 @@ loop_1hz(() => {
             this.store.oat_fahrenheit ? "f" : "c"
         }`;
         custom_label.innerText = this.store.custom;
-
-        refresh_bg_image(this.store.background_image);
     } catch (e) {
         ignore_type_error(e);
     }
