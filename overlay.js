@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "1.0.3";
+const VERSION = "1.0.4";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -108,7 +108,7 @@ let auto_color_bg = "#00000010",
 let logo_dark = "img/flow_logo_dark.svg",
     logo_bright = "img/flow_logo_bright.svg";
 
-let bg_img_cache = {};
+let bg_img_cache = null;
 
 this.settings = {};
 
@@ -572,26 +572,41 @@ function set_overlay_onclick(store, settings, item) {
             break;
     }
 }
-
 /**
- * Set the background image of the flow bar.
- * This function is a protection case against the image not loading correctly.
- * @param {string} bg_img Image URL
- * @param {boolean} changed Whether the image setting has been changed
+ * Apply the set background image to the overlay if properly set
+ * @param {string} bg_img The background image SETTING URL (not cached image URL)
  */
-function refresh_bg_image(bg_img, changed = false) {
-    if (bg_img != "" && changed) {
-        fetch(bg_img)
-            .then((response) => response.blob())
-            .then((data) => {
-                bg_img_cache = URL.createObjectURL(data);
-            });
-    }
-
+function apply_bg_image(bg_img) {
     document.documentElement.style.setProperty(
         "--url-bg",
         bg_img ? `url(${bg_img_cache})` : "hidden"
     );
+}
+
+/**
+ * Fetch the set background image to use for the flow bar
+ * @param {string} bg_img Image URL
+ */
+function refresh_bg_image(bg_img) {
+    if (bg_img == "") {
+        apply_bg_image(bg_img);
+        return;
+    }
+
+    fetch(bg_img)
+        .then((response) => {
+            if (
+                !response.ok ||
+                !response.headers.get("content-type").startsWith("image")
+            ) {
+                return;
+            }
+            return response.blob();
+        })
+        .then((data) => {
+            bg_img_cache = URL.createObjectURL(data);
+            apply_bg_image(bg_img);
+        });
 }
 
 /**
@@ -880,7 +895,7 @@ function init_settings(store, settings, enabled, disabled) {
     settings.background_image.changed = (value) => {
         store.background_image = value;
         export_settings(store, settings);
-        refresh_bg_image(value, true);
+        refresh_bg_image(value);
     };
 }
 
@@ -1927,18 +1942,14 @@ search(["overlay", "ol"], (query, callback) => {
         case "IMAGE":
         case "IMG":
         case "BGIMG":
+            let image_link = otto_split(params);
             results.push({
                 uid: "overlay_otto_img0",
-                label: `New background image url: ${otto_split(params)}`,
+                label: `New background image url: ${image_link}`,
                 subtext: "Activate to save",
                 execute: () => {
-                    otto_set(
-                        this.store,
-                        this.settings,
-                        "background_image",
-                        otto_split(params)
-                    );
-                    set_styles(this.store);
+                    otto_set(this.store, this.settings, "background_image", image_link);
+                    refresh_bg_image(image_link);
                 },
             });
             break;
@@ -2219,6 +2230,7 @@ html_created((el) => {
     });
 
     resize_ui(this.store);
+    refresh_bg_image(this.store.background_image);
     set_styles(this.store);
     load_views(this.enabled_items, this.disabled_items);
     custom_icon.src = `mdi/icons/${this.store.custom_icon}.svg`;
