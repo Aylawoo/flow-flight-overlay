@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "1.0.1";
+const VERSION = "1.0.2";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -107,6 +107,8 @@ let auto_color_bg = "#00000010",
 
 let logo_dark = "img/flow_logo_dark.svg",
     logo_bright = "img/flow_logo_bright.svg";
+
+let bg_img_cache = {};
 
 this.settings = {};
 
@@ -572,11 +574,18 @@ function set_overlay_onclick(store, settings, item) {
  * Set the background image of the flow bar.
  * This function is a protection case against the image not loading correctly.
  * @param {string} bg_img Image URL
+ * @param {boolean} changed Whether the image setting has been changed
  */
-function refresh_bg_image(bg_img) {
+function refresh_bg_image(bg_img, changed = false) {
+    if (bg_img != "" && changed) {
+        fetch(bg_img).then((response) => response.blob()).then((data) => {
+            bg_img_cache = URL.createObjectURL(data);
+        });
+    }
+
     document.documentElement.style.setProperty(
         "--url-bg",
-        bg_img ? `url(${bg_img})` : "hidden"
+        bg_img ? `url(${bg_img_cache})` : "hidden"
     );
 }
 
@@ -597,8 +606,6 @@ function set_styles(store) {
     var_list.style.backgroundColor = store.auto_theme
         ? auto_color_bg
         : store.color_wrapper;
-
-    refresh_bg_image(store.background_image);
 
     if (store.outline_text) {
         var_list.classList.add("streamer_overlay_outline");
@@ -868,7 +875,7 @@ function init_settings(store, settings, enabled, disabled) {
     settings.background_image.changed = (value) => {
         store.background_image = value;
         export_settings(store, settings);
-        set_styles(store);
+        refresh_bg_image(value, true);
     };
 }
 
