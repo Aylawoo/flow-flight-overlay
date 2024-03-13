@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "1.0.5";
+const VERSION = "1.0.6";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -79,6 +79,7 @@ this.disabled_items = [];
 // -- Global flight variables
 let metric = false;
 let target_airport = null;
+let target_refresh_timer = Date.now();
 let ap_lat = null;
 let ap_lon = null;
 let distance = "---";
@@ -2004,9 +2005,20 @@ loop_1hz(() => {
 
     if (this.store.distance_enabled && this.store.destination != "----") {
         if (target_airport == null) {
-            get_airport("streamer-overlay-lookup", this.store.destination, (results) => {
-                target_airport = typeof results[0] != undefined ? results[0] : null;
-            });
+            let time_now = Date.now();
+            let time_since_search = (time_now - target_refresh_timer) / 1000;
+
+            if (time_since_search > 1) {
+                get_airport(
+                    "streamer-overlay-lookup",
+                    this.store.destination,
+                    (results) => {
+                        target_airport =
+                            typeof results[0] != undefined ? results[0] : null;
+                        target_refresh_timer = time_now;
+                    }
+                );
+            }
         }
 
         if (target_airport != null) {
