@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "1.0.4";
+const VERSION = "1.0.5";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -2055,6 +2055,8 @@ loop_1hz(() => {
     vertspeed = Math.abs(vertspeed);
 
     let altitude = Math.round(get("A:PLANE ALTITUDE", metric ? "meters" : "feet"));
+    let alt_below_zero = (altitude < 0);
+    altitude = Math.abs(altitude);
 
     let heading = pad_number(
         Math.round(get("A:PLANE HEADING DEGREES MAGNETIC", "degrees")),
@@ -2063,6 +2065,7 @@ loop_1hz(() => {
     );
 
     let oat = Math.round(get("A:AMBIENT TEMPERATURE", "celsius"));
+    let below_zero = oat < 0;
 
     try {
         if (oat <= 0) {
@@ -2080,6 +2083,8 @@ loop_1hz(() => {
         oat = Math.round(oat * 1.8 + 32);
     }
 
+    oat = Math.abs(oat);
+
     if (this.store.pad_numbers) {
         let vs_pad = pad_required(vertspeed, 4);
 
@@ -2093,11 +2098,11 @@ loop_1hz(() => {
             vertspeed_pad.innerText = "0".repeat(vs_pad);
             let alt_req = pad_required(altitude, 5);
             altitude_pad.innerText = `${
-                altitude >= 0 ? "0".repeat(alt_req) : `-${"0".repeat(alt_req - 0)}`
+                alt_below_zero ? `-${"0".repeat(alt_req - 0)}` : "0".repeat(alt_req)
             }`;
             let oat_req = pad_required(oat, 3);
             oat_pad.innerText = `${
-                oat >= 0 ? "0".repeat(oat_req) : `-${"0".repeat(oat_req)}`
+                below_zero ? `-${"0".repeat(oat_req)}` : "0".repeat(oat_req)
             }`;
         } catch (e) {
             ignore_type_error(e);
@@ -2107,6 +2112,7 @@ loop_1hz(() => {
     }
 
     try {
+        let add_neg_symbol = (!this.store.pad_with_zeroes || !this.store.pad_numbers);
         type_label.innerText = this.store.type;
         registration_label.innerText = this.store.registration;
         iata_label.innerText = this.store.iata;
@@ -2117,13 +2123,17 @@ loop_1hz(() => {
         network_label.innerText = this.store.network;
         airspeed_label.innerText = `${airspeed}${metric ? "km/h" : "kt"}`;
         vertspeed_label.innerText = `${vertspeed}${metric ? "m/s" : "fpm"}`;
-        altitude_label.innerText = `${altitude >= 0 ? altitude : Math.abs(altitude)}${
-            metric ? "m" : "ft"
-        }`;
+        altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
+        if (alt_below_zero && add_neg_symbol) {
+            altitude_pad.innerText = altitude_pad.innerText.slice(1);
+            altitude_label.innerText = `-${altitude_label.innerText}`
+        }
         heading_label.innerText = heading;
-        oat_label.innerText = `${oat >= 0 ? oat : Math.abs(oat)}${
-            this.store.oat_fahrenheit ? "f" : "c"
-        }`;
+        oat_label.innerText = `${oat}${this.store.oat_fahrenheit ? "f" : "c"}`;
+        if (below_zero && add_neg_symbol) {
+            oat_pad.innerText = oat_pad.innerText.slice(1);
+            oat_label.innerText = `-${oat_label.innerText}`;
+        }
         custom_label.innerText = this.store.custom;
     } catch (e) {
         ignore_type_error(e);
