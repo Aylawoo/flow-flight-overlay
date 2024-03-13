@@ -2067,7 +2067,7 @@ loop_1hz(() => {
     vertspeed = Math.abs(vertspeed);
 
     let altitude = Math.round(get("A:PLANE ALTITUDE", metric ? "meters" : "feet"));
-    let alt_below_zero = (altitude < 0);
+    let alt_below_zero = altitude < 0;
     altitude = Math.abs(altitude);
 
     let heading = pad_number(
@@ -2124,7 +2124,7 @@ loop_1hz(() => {
     }
 
     try {
-        let add_neg_symbol = (!this.store.pad_with_zeroes || !this.store.pad_numbers);
+        let add_neg_symbol = !this.store.pad_with_zeroes || !this.store.pad_numbers;
         type_label.innerText = this.store.type;
         registration_label.innerText = this.store.registration;
         iata_label.innerText = this.store.iata;
@@ -2138,7 +2138,7 @@ loop_1hz(() => {
         altitude_label.innerText = `${altitude}${metric ? "m" : "ft"}`;
         if (alt_below_zero && add_neg_symbol) {
             altitude_pad.innerText = altitude_pad.innerText.slice(1);
-            altitude_label.innerText = `-${altitude_label.innerText}`
+            altitude_label.innerText = `-${altitude_label.innerText}`;
         }
         heading_label.innerText = heading;
         oat_label.innerText = `${oat}${this.store.oat_fahrenheit ? "f" : "c"}`;
