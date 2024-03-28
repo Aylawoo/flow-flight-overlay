@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "1.0.6";
+const VERSION = "1.0.7";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -108,8 +108,8 @@ let auto_color_bg = "#00000010",
 
 let logo_dark = "img/flow_logo_dark.svg",
     logo_bright = "img/flow_logo_bright.svg";
-
-let bg_img_cache = null;
+// Currently disabled for further testing
+// let bg_img_cache = null;
 
 this.settings = {};
 
@@ -575,40 +575,42 @@ function set_overlay_onclick(store, settings, item) {
 }
 /**
  * Apply the set background image to the overlay if properly set
+ * Currently disabled for further testing
  * @param {string} bg_img The background image SETTING URL (not cached image URL)
  */
-function apply_bg_image(bg_img) {
-    document.documentElement.style.setProperty(
-        "--url-bg",
-        bg_img ? `url(${bg_img_cache})` : "hidden"
-    );
-}
+// function apply_bg_image(bg_img) {
+//     document.documentElement.style.setProperty(
+//         "--url-bg",
+//         bg_img ? `url(${bg_img_cache})` : "hidden"
+//     );
+// }
 
 /**
  * Fetch the set background image to use for the flow bar
+ * Currently disabled for further testing
  * @param {string} bg_img Image URL
  */
-function refresh_bg_image(bg_img) {
-    if (bg_img == "") {
-        apply_bg_image(bg_img);
-        return;
-    }
+// function refresh_bg_image(bg_img) {
+//     if (bg_img == "") {
+//         apply_bg_image(bg_img);
+//         return;
+//     }
 
-    fetch(bg_img)
-        .then((response) => {
-            if (
-                !response.ok ||
-                !response.headers.get("content-type").startsWith("image")
-            ) {
-                return;
-            }
-            return response.blob();
-        })
-        .then((data) => {
-            bg_img_cache = URL.createObjectURL(data);
-            apply_bg_image(bg_img);
-        });
-}
+//     fetch(bg_img)
+//         .then((response) => {
+//             if (
+//                 !response.ok ||
+//                 !response.headers.get("content-type").startsWith("image")
+//             ) {
+//                 return;
+//             }
+//             return response.blob();
+//         })
+//         .then((data) => {
+//             bg_img_cache = URL.createObjectURL(data);
+//             apply_bg_image(bg_img);
+//         });
+// }
 
 /**
  * Set selected element styles for the entire UI.
@@ -807,7 +809,8 @@ function init_store() {
         color_outline: "#A0A0A0FF",
         color_background: "#00000090",
         color_text: "#FFFFFFFF",
-        background_image: "",
+        // Currently disabled for further testing
+        // background_image: "",
         settings_section_fields: "Fields",
         custom_enabled: false,
         custom_icon: "note-text",
@@ -892,12 +895,12 @@ function init_settings(store, settings, enabled, disabled) {
         export_settings(store, settings);
         toggle_element("#streamer_logo_container", value);
     };
-
-    settings.background_image.changed = (value) => {
-        store.background_image = value;
-        export_settings(store, settings);
-        refresh_bg_image(value);
-    };
+    // Currently disabled for further testing
+    // settings.background_image.changed = (value) => {
+    //     store.background_image = value;
+    //     export_settings(store, settings);
+    //     refresh_bg_image(value);
+    // };
 }
 
 // ---- Load configuration
@@ -1940,20 +1943,21 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             break;
-        case "IMAGE":
-        case "IMG":
-        case "BGIMG":
-            let image_link = otto_split(params);
-            results.push({
-                uid: "overlay_otto_img0",
-                label: `New background image url: ${image_link}`,
-                subtext: "Activate to save",
-                execute: () => {
-                    otto_set(this.store, this.settings, "background_image", image_link);
-                    refresh_bg_image(image_link);
-                },
-            });
-            break;
+        // Currently disabled for further testing
+        // case "IMAGE":
+        // case "IMG":
+        // case "BGIMG":
+        //     let image_link = otto_split(params);
+        //     results.push({
+        //         uid: "overlay_otto_img0",
+        //         label: `New background image url: ${image_link}`,
+        //         subtext: "Activate to save",
+        //         execute: () => {
+        //             otto_set(this.store, this.settings, "background_image", image_link);
+        //             refresh_bg_image(image_link);
+        //         },
+        //     });
+        //     break;
         default:
             break;
     }
@@ -2252,7 +2256,8 @@ html_created((el) => {
     });
 
     resize_ui(this.store);
-    refresh_bg_image(this.store.background_image);
+    // Currently disabled for further testing
+    // refresh_bg_image(this.store.background_image);
     set_styles(this.store);
     load_views(this.enabled_items, this.disabled_items);
     custom_icon.src = `mdi/icons/${this.store.custom_icon}.svg`;
