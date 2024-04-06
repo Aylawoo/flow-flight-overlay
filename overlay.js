@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "1.0.6";
+const VERSION = "1.0.8";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -335,7 +335,7 @@ function set_info(setting) {
         case "DISPLAY ICONS":
             return [
                 "USE ICONS",
-                "Display icons instead of text labels for overlay items",
+                "Display icons instead of text labels for overlay module",
             ];
         case "BLACK ICONS":
             return ["DARK MODE ICONS", "Display icons in dark mode"];
@@ -346,13 +346,13 @@ function set_info(setting) {
         case "COLOR TEXTOL":
             return ["TEXT OUTLINE COLOR", "Overlay text outline color"];
         case "COLOR WRAPPER":
-            return ["BACKGROUND COLOR", "Overlay background color"];
+            return ["BAR BACKGROUND COLOR", "Overlay bar background color"];
         case "COLOR OUTLINE":
-            return ["ITEM OUTLINE COLOR", "Overlay item outline color"];
+            return ["MODULE OUTLINE COLOR", "Overlay module outline color"];
         case "COLOR BACKGROUND":
-            return ["ITEM BACKGROUND COLOR", "Overlay item background color"];
+            return ["MODULE BACKGROUND COLOR", "Overlay module background color"];
         case "COLOR TEXT":
-            return ["FONT COLOR", "Overlay text color"];
+            return ["TEXT COLOR", "Overlay text color"];
         case "BACKGROUND IMAGE":
             return ["BG IMAGE URL", "Overlay background image, clear field to disable"];
         default:
@@ -802,12 +802,12 @@ function init_store() {
         display_icons: true,
         black_icons: false,
         outline_text: true,
-        color_textol: "#000000AA",
         color_wrapper: "#00000090",
-        color_outline: "#A0A0A0FF",
         color_background: "#00000090",
+        color_outline: "#A0A0A0FF",
         color_text: "#FFFFFFFF",
-        background_image: "",
+        color_textol: "#000000AA",
+        // background_image: "",
         settings_section_fields: "Fields",
         custom_enabled: false,
         custom_icon: "note-text",
@@ -892,12 +892,11 @@ function init_settings(store, settings, enabled, disabled) {
         export_settings(store, settings);
         toggle_element("#streamer_logo_container", value);
     };
-
-    settings.background_image.changed = (value) => {
-        store.background_image = value;
-        export_settings(store, settings);
-        refresh_bg_image(value);
-    };
+    // settings.background_image.changed = (value) => {
+    //     store.background_image = value;
+    //     export_settings(store, settings);
+    //     refresh_bg_image(value);
+    // };
 }
 
 // ---- Load configuration
@@ -1940,20 +1939,20 @@ search(["overlay", "ol"], (query, callback) => {
                 },
             });
             break;
-        case "IMAGE":
-        case "IMG":
-        case "BGIMG":
-            let image_link = otto_split(params);
-            results.push({
-                uid: "overlay_otto_img0",
-                label: `New background image url: ${image_link}`,
-                subtext: "Activate to save",
-                execute: () => {
-                    otto_set(this.store, this.settings, "background_image", image_link);
-                    refresh_bg_image(image_link);
-                },
-            });
-            break;
+        // case "IMAGE":
+        // case "IMG":
+        // case "BGIMG":
+        //     let image_link = otto_split(params);
+        //     results.push({
+        //         uid: "overlay_otto_img0",
+        //         label: `New background image url: ${image_link}`,
+        //         subtext: "Activate to save",
+        //         execute: () => {
+        //             otto_set(this.store, this.settings, "background_image", image_link);
+        //             refresh_bg_image(image_link);
+        //         },
+        //     });
+        //     break;
         default:
             break;
     }
@@ -2252,7 +2251,7 @@ html_created((el) => {
     });
 
     resize_ui(this.store);
-    refresh_bg_image(this.store.background_image);
+    refresh_bg_image("");
     set_styles(this.store);
     load_views(this.enabled_items, this.disabled_items);
     custom_icon.src = `mdi/icons/${this.store.custom_icon}.svg`;
