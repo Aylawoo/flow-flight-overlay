@@ -533,7 +533,7 @@ function resize_ui(store) {
         icon.style.height = store.font_size + "em";
     });
 
-    logo_icon.style.width = store.font_size * 2 + "em";
+    logo_icon.style.width = (store.font_size * 2).toFixed(2) + "em";
 }
 
 /**
@@ -870,7 +870,7 @@ function init_settings(store, settings, enabled, disabled) {
     };
 
     settings.font_size.changed = (value) => {
-        store.font_size = clamp(value, 0.85, 6);
+        store.font_size = clamp(value, 0.85, 6).toFixed(2);
         export_settings(store, settings);
         resize_ui(store);
     };
