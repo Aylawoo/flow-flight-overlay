@@ -1732,8 +1732,8 @@ search(["overlay", "ol"], (query, callback) => {
         case "UI":
             results.push({
                 uid: "overlay_otto_font0",
-                label: "Increase font scale by 0.05",
-                subtext: `Current font scale: ${this.store.font_size}`,
+                label: "Increase text scale by 0.05",
+                subtext: `Current text scale: ${this.store.font_size}`,
                 execute: () => {
                     otto_set(
                         this.store,
@@ -1746,7 +1746,7 @@ search(["overlay", "ol"], (query, callback) => {
             });
             results.push({
                 uid: "overlay_otto_font1",
-                label: "Decrease font scale by 0.05",
+                label: "Decrease text scale by 0.05",
                 execute: () => {
                     otto_set(
                         this.store,
