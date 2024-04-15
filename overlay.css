@@ -80,7 +80,7 @@
     height: 1.4em;
 
     filter: invert(100%);
-    transition: 350ms transform linear, 250ms filter linear;
+    transition: 250ms filter linear;
 }
 
 #streamer_logo_container {
