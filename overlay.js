@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "1.0.8";
+const VERSION = "1.0.9";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -2076,7 +2076,6 @@ loop_1hz(() => {
     );
 
     let oat = Math.round(get("A:AMBIENT TEMPERATURE", "celsius"));
-    let below_zero = oat < 0;
 
     try {
         if (oat <= 0) {
@@ -2094,10 +2093,12 @@ loop_1hz(() => {
         oat = Math.round(oat * 1.8 + 32);
     }
 
+    let below_zero = oat < 0;
+
     oat = Math.abs(oat);
 
     if (this.store.pad_numbers) {
-        let vs_pad = pad_required(vertspeed, 4);
+        let vs_pad = clamp(pad_required(vertspeed, 4), 0, 4);
 
         try {
             if (distance != "---") {
@@ -2107,14 +2108,18 @@ loop_1hz(() => {
             }
             airspeed_pad.innerText = "0".repeat(pad_required(airspeed, 3));
             vertspeed_pad.innerText = "0".repeat(vs_pad);
-            let alt_req = pad_required(altitude, 5);
+            let alt_req = clamp(pad_required(altitude, 5), 0, 5);
+            let alt_pad_repeat = "0".repeat(
+                alt_below_zero && alt_req >= 1 ? alt_req - 1 : alt_req
+            );
             altitude_pad.innerText = `${
-                alt_below_zero ? `-${"0".repeat(alt_req - 0)}` : "0".repeat(alt_req)
+                alt_below_zero ? "-" + alt_pad_repeat : alt_pad_repeat
             }`;
-            let oat_req = pad_required(oat, 3);
-            oat_pad.innerText = `${
-                below_zero ? `-${"0".repeat(oat_req)}` : "0".repeat(oat_req)
-            }`;
+            let oat_req = clamp(pad_required(oat, 3), 0, 3);
+            let oat_pad_repeat = "0".repeat(
+                below_zero && oat_req >= 1 ? oat_req - 1 : oat_req
+            );
+            oat_pad.innerText = `${below_zero ? "-" + oat_pad_repeat : oat_pad_repeat}`;
         } catch (e) {
             ignore_type_error(e);
         }
