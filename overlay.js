@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "1.0.10";
+const VERSION = "1.0.11";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -2028,11 +2028,6 @@ loop_1hz(() => {
         }
     }
 
-    // Don't calculate anything if the user is in slew mode
-    if (get("A:IS SLEW ACTIVE", "number")) {
-        return;
-    }
-
     if (metric && distance != "---") {
         distance = Math.round(distance * 1.852);
     }
@@ -2161,7 +2156,8 @@ loop_15hz(() => {
 
     let wind_direction = Math.round(get("A:AMBIENT WIND DIRECTION", "degrees"));
     wind_speed = Math.round(get("A:AMBIENT WIND VELOCITY", metric ? "kph" : "knots"));
-    let compass = get("A:PLANE HEADING DEGREES GYRO", "degrees");
+    //let compass = get("A:PLANE HEADING DEGREES GYRO", "degrees");
+    let compass = get("A:PLANE HEADING DEGREES MAGNETIC", "degrees");
     relative_wind = -Math.abs((360 + (compass - wind_direction)) % 360) + 180;
 
     try {
