@@ -61,11 +61,14 @@ Note: Display with all many, or all options enabled may not display correctly on
 
 ## Installation
 
-### Latest "Released" version
-Visit [The releases page](https://github.com/AylaCodes/flow-flight-overlay/releases/) and download/install the latest Release.
+### Latest "Release" version
+Included in [Flow Pro](https://parallel42.com/products/flow-pro) by //42
+
+### Latest "Experimental" version
+Visit [The releases page](https://github.com/AylaCodes/flow-flight-overlay/releases/) and download/install the latest tagged Release to your community folder as any other community widget.
 
 ### Latest "Dev" version
-Simply copy the HTML/CSS/JS into a new script on Flow, and configure the settings in the panel.
+Simply copy the HTML/CSS/JS from the main source tree into a new script on Flow, and configure the settings in the panel. Warning: May be unstable
 
 ## Example
 
