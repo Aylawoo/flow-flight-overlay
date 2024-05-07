@@ -7,7 +7,7 @@ let ds_export = this.$api.datastore.export,
     ds_import = this.$api.datastore.import;
 
 // ---- Script variables
-const VERSION = "1.0.11";
+const VERSION = "1.0.12";
 
 const SIMBRIEF_URL = "https://www.simbrief.com/api/xml.fetcher.php?username=";
 
@@ -79,6 +79,7 @@ this.disabled_items = [];
 // -- Global flight variables
 let metric = false;
 let target_airport = null;
+let last_airport_searched = null;
 let target_refresh_timer = Date.now();
 let ap_lat = null;
 let ap_lon = null;
@@ -125,6 +126,24 @@ function ignore_type_error(e) {
     } else {
         throw e;
     }
+}
+
+/**
+ * Fetch the airport information for the requested `target` destination.
+ * @param {string} target the ICAO code of the desired destination
+ * @returns {Promise<Object>} promise of the destination
+ */
+function fetch_destination(target) {
+    return new Promise((resolve, reject) => {
+        get_airport(
+            "streamer-overlay-lookup",
+            target,
+            (results) => {
+                const result = typeof results[0] != undefined ? results[0] : null;
+                resolve(result);
+            }
+        );
+    });
 }
 
 // -- Math
@@ -2002,20 +2021,20 @@ loop_1hz(() => {
     let ap_lon = null;
 
     if (this.store.distance_enabled && this.store.destination != "----") {
-        if (target_airport == null) {
+        if (target_airport == null || last_airport_searched.icao != this.store.destination) {
             let time_now = Date.now();
             let time_since_search = (time_now - target_refresh_timer) / 1000;
 
             if (time_since_search > 1) {
-                get_airport(
-                    "streamer-overlay-lookup",
-                    this.store.destination,
-                    (results) => {
-                        target_airport =
-                            typeof results[0] != undefined ? results[0] : null;
+                fetch_destination(this.store.destination)
+                    .then((result) => {
+                        target_airport = result;
                         target_refresh_timer = time_now;
-                    }
-                );
+                        last_airport_searched = target_airport;
+                    })
+                    .catch((e) => {
+                        ignore_type_error(e);
+                    });
             }
         }
 
