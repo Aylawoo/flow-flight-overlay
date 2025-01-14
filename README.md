@@ -69,7 +69,3 @@ Visit [The releases page](https://github.com/AylaCodes/flow-flight-overlay/relea
 
 ### Latest "Dev" version
 Simply copy the HTML/CSS/JS from the main source tree into a new script on Flow, and configure the settings in the panel. Warning: May be unstable
-
-## Example
-
-![example](https://cdn.wolfie.space/images/FlightSimulator_1685577767.png)
